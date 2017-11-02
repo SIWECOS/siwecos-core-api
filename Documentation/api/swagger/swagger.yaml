@@ -27,10 +27,23 @@ paths:
       parameters:
       - in: body
         required: true
-        name: scanStartRequest
-        description: scanStartRequest
+        name: scan
+        description: Details about the scan that shall be started
         schema: 
-          $ref: '#/definitions/scanStartRequest'
+          type: object
+          required:
+          - url
+          properties:
+            url:
+              type: string
+            dangerLevel:
+              type: integer
+              minimum: 0
+              maximum: 10
+            callbackurls:
+              type: array
+              items:
+                type: string
               
       responses:
         "200":
@@ -53,8 +66,8 @@ paths:
       parameters:
       - in: query
         required: true
-        name: scanId
-        type: integer
+        name: url
+        type: string
               
       responses:
         "200":
@@ -67,26 +80,328 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
+            
+  /scan/result:
+    x-swagger-router-controller: scan
+    get:
+      description: Gets the last scan result for a specified domain
+      operationId: scanResult
+      parameters:
+      - in: query
+        required: true
+        name: url
+        type: string
+        
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/scanResultResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+  /scan/result/raw:
+    x-swagger-router-controller: scan
+    get:
+      description: Gets the last raw scan result for a specified domain
+      operationId: scanRawResult
+      parameters:
+      - in: query
+        required: true
+        name: url
+        type: string
+        
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/scanRawResultResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+     
+  /domain/add:
+    x-swagger-router-controller: domain
+    post:
+      description: Adds a domain to an user account
+      operationId: domainAdd
+      parameters:
+      - in: body
+        required: true
+        name: domain
+        description: Domain info
+        schema: 
+          type: object
+          required:
+          - domain
+          properties:
+            domain:
+              type: string
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/addDomainResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+                 
+  /domain/verify:
+    x-swagger-router-controller: domain
+    get:
+      description: Verifies a domain ownership
+      operationId: domainVerify
+      parameters:
+      - in: query
+        required: true
+        name: domain
+        type: string
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/verifyDomainResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+  /domains:
+    x-swagger-router-controller: domain
+    get:
+      description: domains of current user
+      operationId: domainList
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            $ref: "#/definitions/listDomainsResponse"
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+            
+  /domain/remove:
+    post:
+      description: Removes a domain form a user acocunt
+      operationId: domainRemove
+      parameters:
+      - in: body
+        required: true
+        name: domain
+        description: Domain info
+        schema: 
+          type: object
+          required:
+          - domain
+          properties:
+            domain:
+              type: string
+      
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/removeDomainResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+  /token/add:
+    post:
+      description: Add a new token for a user
+      operationId: tokenAdd
+      parameters:
+      - in: body
+        required: true
+        name: token
+        description: token info
+        schema:
+          type: object
+          required:
+          - aclLevel
+          - credits
+          properties:
+            aclLevel:
+              type: integer
+            credits:
+              type: integer
+          
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/addTokenResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+            
+  /token/revoke:
+    post:
+      description: Revokes a token
+      operationId: tokenRevoke
+      parameters:
+      - in: body
+        required: true
+        name: token
+        description: token info
+        schema:
+          type: object
+          required:
+          - token
+          properties:
+            token:
+              type: string
+          
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/removeTokenResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse" 
+            
+  /token/status:
+    post:
+      description: Get a token status
+      operationId: tokenStatus
+      parameters:
+      - in: body
+        required: true
+        name: token
+        description: token info
+        schema:
+          type: object
+          required:
+          - token
+          properties:
+            token:
+              type: string
+          
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/tokenStatusResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"   
+            
+            
+  /token/setcredits:
+    post:
+      description: Sets the remaining credits for a token, limited to master token
+      operationId: tokenSetCredits
+      parameters:
+      - in: body
+        required: true
+        name: token
+        description: token info
+        schema:
+          type: object
+          required:
+          - token
+          - credits
+          properties:
+            token:
+              type: string
+            credits:
+              type: integer
+          
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/tokenSetCreditsResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/ErrorResponse"      
 
 # complex objects have schema definitions
 definitions:
-  scanStartRequest:
-    type: object
-    required:
-    - domainName
+  listDomainsResponse:
     properties:
-      domainName:
-        type: string
-      dangerLevel:
-        type: integer
-        minimum: 0
-        maximum: 10
-      callbackurls:
+      domains:
         type: array
         items:
-          type: string
-          
+          $ref: "#/definitions/Domain"
   
+  tokenSetCreditsResponse:
+    properties:
+      message:
+        type: string
+  
+  addTokenResponse:
+    properties:
+      token:
+        type: string
+
+  removeTokenResponse:
+    properties:
+      message:
+        type: string
+        
+        
+  tokenStatusResponse:
+    properties:
+      credits:
+        type: integer
+      aclLevel:
+        type: integer
+      active:
+        type: boolean
+        description: We are using soft-deletes for tokens
+
+  verifyDomainResponse:
+    properties:
+      message:
+        type: string
+
+  addDomainResponse:
+    properties:
+      message:
+        type: string
+      verificationStatus:
+        type: boolean
+      domainId:
+        type: integer
+
+  removeDomainResponse:
+    properties:
+      message:
+        type: string
   
   scanStartResponse:
     properties:
@@ -100,7 +415,103 @@ definitions:
     properties:
       statusMessage:
         type: string
+      status:
+        type: integer
+        minimum: 1
+        maximum: 3
+        description: 1 is queued, 2 is running, 3 is done
+      progress:
+        type: integer
+        minimum: 0
+        maximum: 100
+    
+  scanResultResponse:
+    properties:
+      score:
+        type: integer
+        minimum: 0
+        maximum: 100
+      capped:
+        type: boolean
+      cappedMessage:
+        type: string
+      scanStarted:
+        type: string
+        format: date-time
+      scanFinished:
+        type: string
+        format: date-time
+      scanners:
+        type: array
+        items:
+          $ref: "#/definitions/ScannerResult"
+                 
+  scanRawResultResponse:
+    properties:
+      scanStarted:
+        type: string
+        format: date-time
+      scanFinished:
+        type: string
+        format: date-time
+      scanners:
+        type: array
+        items:
+          type: object
+        
+        
+  ScannerResult:
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      score:
+        type: integer
+        minimum: 0
+        maximum: 100
+      tests:
+        type: array
+        items:
+          $ref: "#/definitions/TestResult"
+     
+        
+  TestResult:
+    properties:
+      name:
+        type: string
+      description:
+        type: string
+      score:
+        type: integer
+        minimum: 0
+        maximum: 100
+      scoreType:
+        type: string
+        enum: [critical, info, warning, bonus, success]
+      testDetails:
+        type: array
+        items:
+          $ref: "#/definitions/TestDetail"
       
+  TestDetail:
+    properties:
+      placeholder:
+        type: string
+        description: language string for i18n
+      values:
+        type: array
+        items:
+          type: string
+          
+  Domain:
+    properties:
+      domain:
+        type: string
+      verificationStatus:
+        type: boolean
+      id:
+        type: integer
 
   ErrorResponse:
     required:
