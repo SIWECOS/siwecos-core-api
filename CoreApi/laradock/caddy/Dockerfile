@@ -10,7 +10,7 @@ ARG plugins="git"
 
 RUN go get github.com/abiosoft/caddyplug/caddyplug \
     && caddyplug install-caddy \
-    && caddyplug install git
+    && caddyplug install git cors
 RUN caddy --version
 
 EXPOSE 80 443 2015
