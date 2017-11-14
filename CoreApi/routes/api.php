@@ -12,7 +12,7 @@
 |
 */
 
-Route::prefix('api')->group(function () {
+Route::prefix('v1')->group(function () {
     Route::post('/scan/start', 'ScanController@start');
     Route::get('/scan/status', 'ScanController@status');
     Route::get('/scan/result', 'ScanController@result');
