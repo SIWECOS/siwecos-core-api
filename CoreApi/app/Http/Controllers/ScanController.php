@@ -6,22 +6,22 @@ use Illuminate\Http\Request;
 
 class ScanController extends Controller
 {
-    public function start()
+    public function start(Request $request)
     {
         // to be implemented
     }
 
-    public function status()
+    public function status(Request $request)
     {
         // to be implemented
     }
 
-    public function result()
+    public function result(Request $request)
     {
         // to be implemented
     }
 
-    public function resultRaw()
+    public function resultRaw(Request $request)
     {
         // to be implemented
     }

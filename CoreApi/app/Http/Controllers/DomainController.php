@@ -6,22 +6,22 @@ use Illuminate\Http\Request;
 
 class DomainController extends Controller
 {
-    public function add()
+    public function add(Request $request)
     {
         // to be implemented
     }
 
-    public function verify()
+    public function verify(Request $request)
     {
         // to be implemented
     }
 
-    public function list()
+    public function list(Request $request)
     {
         // to be implemented
     }
 
-    public function remove()
+    public function remove(Request $request)
     {
         // to be implemented
     }
