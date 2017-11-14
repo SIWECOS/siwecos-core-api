@@ -1,6 +1,17 @@
+/node_modules
+/public/hot
+/public/storage
+/storage/*.key
+/vendor
 /.idea
-/laradock
-
+/.vagrant
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+.env
+!/laradock/.env
+/.idea
 
 # Created by https://www.gitignore.io/api/linux,macos,windows,laravel,composer,phpstorm,sublimetext
 
