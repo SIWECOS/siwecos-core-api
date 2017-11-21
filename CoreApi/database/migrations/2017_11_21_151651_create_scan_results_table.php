@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateScansTable extends Migration
+class CreateScanResultsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateScansTable extends Migration
      */
     public function up()
     {
-        Schema::create('scans', function (Blueprint $table) {
+        Schema::create('scan_results', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('url');
-            $table->integer('dangerLevel')->nullable();
-            $table->string('callbackurls')->nullable();
+            $table->integer('scan_id');
+            $table->string('scanner_type');
+            $table->text('result');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateScansTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('scans');
+        Schema::dropIfExists('scan_results');
     }
 }
