@@ -16,6 +16,7 @@ class ScanHeadersJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $scan;
+    protected $result;
 
     /**
      * Create a new job instance.
@@ -35,10 +36,15 @@ class ScanHeadersJob implements ShouldQueue
     public function handle()
     {
         $this->runScan();
-
-        
+        $this->notifyCallbacks();
     }
 
+    
+    /**
+     * Runs the defined scan and stores the result in the database.
+     *
+     * @return void
+     */
     public function runScan()
     {
         $client = new Client();
@@ -48,9 +54,25 @@ class ScanHeadersJob implements ShouldQueue
             ]
         ]);
         
-        $this->scan->results()->create([
+        $this->result = $this->scan->results()->create([
             'scanner_type' => 'hsts',
             'result' => $response->getBody()
         ]);
+    }
+
+    /**
+     * Sends the ScanResult to the given callback urls.
+     *
+     * @return void
+     */
+    public function notifyCallbacks()
+    {
+        foreach ($this->scan->callbackurls as $callback) {
+            $client = new Client();
+            $client->post($callback, [
+                'http_errors' => false,
+                'body' => $this->result,
+            ]);
+        }
     }
 }

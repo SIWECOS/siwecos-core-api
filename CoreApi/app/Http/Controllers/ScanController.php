@@ -14,7 +14,12 @@ class ScanController extends Controller
         // Todo: Reduce credits
 
         // create a new scan order
-        $scan = Scan::create($request->all());
+        $scan = Scan::create([
+            'token_id' => 7272,
+            'url' => $request->get('url'),
+            'callbackurls' => $request->get('callbackurls'),
+            'dangerLevel' => $request->get('dangerLevel')
+        ]);
 
         // dispatch each scanner to the queue
         ScanHeadersJob::dispatch($scan);

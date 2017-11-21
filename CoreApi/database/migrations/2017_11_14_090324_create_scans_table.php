@@ -15,6 +15,7 @@ class CreateScansTable extends Migration
     {
         Schema::create('scans', function (Blueprint $table) {
             $table->increments('id');
+            // $table->integer('token_id'); TODO: enable this relationship
             $table->string('url');
             $table->integer('dangerLevel')->nullable();
             $table->string('callbackurls')->nullable();
