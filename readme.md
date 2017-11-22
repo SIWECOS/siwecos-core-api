@@ -1,5 +1,7 @@
 # SIWECOS-Core-API
 
+[![Build Status](https://travis-ci.org/SIWECOS/siwecos-core-api.svg?branch=master)](https://travis-ci.org/SIWECOS/siwecos-core-api)
+
 ### Vagrant / Valet
 
 For usage with a mac, we recommend the usage of Valet, a leightweight Vagrant wrapper for Laravel
