@@ -1,5 +1,20 @@
 # SIWECOS-Core-API
 
+### Vagrant / Valet
+
+For usage with a mac, we recommend the usage of Valet, a leightweight Vagrant wrapper for Laravel
+[Laravel Valet](https://github.com/laravel/valet)
+
+
+### Swagger npm Package
+[Github Page swagger npm package](https://www.npmjs.com/package/swagger)
+
+just start from /Documentation
+
+```
+swagger project edit
+```
+
 ### Laradock
 To start development in a docker environment just switch to the `laradock` folder and run:
 
