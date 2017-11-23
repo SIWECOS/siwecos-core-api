@@ -5,6 +5,7 @@ namespace App;
 use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
+use App\Scan;
 
 /**
  * Class Token
@@ -59,6 +60,26 @@ class Token extends Model
     public function setAclLevel(int $aclLevel)
     {
         $this->acl_level = $aclLevel;
+    }
+
+    public function reduceCredits($amount = 1)
+    {
+        $this->credits -= $amount;
+        
+        try{
+            $this->save();
+                return true;
+        }
+        catch (\Illuminate\Database\QueryException $queryException)
+        {
+            // TODO: Log error to Papertrail with Token
+            return false;
+        }
+    }
+
+    public function scan()
+    {
+        return $this->hasMany(Scan::class);
     }
 
     public static function reduceToken(string $token, $amount = 1)

@@ -18,7 +18,7 @@ use App\ScanResult;
  */
 class Scan extends Model
 {
-    protected $fillable = ['url', 'dangerLevel', 'callbackurls'];
+    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls'];
     protected $casts = [
         'callbackurls' => 'collection'
     ];
