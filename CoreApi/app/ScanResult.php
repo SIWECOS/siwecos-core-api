@@ -9,6 +9,9 @@ class ScanResult extends Model
 {
     protected $fillable = ['result', 'scanner_type'];
 
+    protected $casts = [
+        'result' => 'collection'
+    ];
     
     /**
      * Returns an Eloquent Relationship for the belonging Scan

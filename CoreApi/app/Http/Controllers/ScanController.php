@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Scan;
-use App\Jobs\ScanHeadersJob;
 use Illuminate\Http\Request;
 use App\Http\Requests\ScannerStartRequest;
+use App\Jobs\ScanHeadersJob;
+use App\Jobs\ScanDOMXSSJob;
+use App\Jobs\ScanInfoLeakJob;
 
 class ScanController extends Controller
 {
@@ -23,6 +25,9 @@ class ScanController extends Controller
 
         // dispatch each scanner to the queue
         ScanHeadersJob::dispatch($scan);
+        ScanDOMXSSJob::dispatch($scan);
+        ScanInfoLeakJob::dispatch($scan);
+        // Todo: dispatch TLS-Scanner
     }
 
     public function status(Request $request)

@@ -31,6 +31,9 @@ class ScannerStartTest extends TestCase
     /** @test */
     public function the_dangerLevel_has_a_valid_range()
     {
+
+        Queue::fake();
+
         $response = $this->json('POST', '/api/v1/scan/start', [
             'url' => 'https://example.com',
             'dangerLevel' => -1
