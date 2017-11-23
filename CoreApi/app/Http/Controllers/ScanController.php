@@ -19,7 +19,7 @@ class ScanController extends Controller
         if ($token->reduceCredits() ) {
 
             // create a new scan order
-            $scan = $token->scan()->create([
+            $scan = $token->scans()->create([
                 'token_id' => $token->id,
                 'url' => $request->get('url'),
                 'callbackurls' => $request->get('callbackurls'),

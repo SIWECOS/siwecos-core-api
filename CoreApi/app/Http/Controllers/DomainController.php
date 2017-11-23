@@ -16,18 +16,26 @@ class DomainController extends Controller
     public function add(DomainAddRequest $request)
     {
         $newdomain = new Domain(['domain' => $request->json('domain'), 'token' => $request->header('siwecosToken')]);
-        try{
+        try {
             $newdomain->save();
             return response()->json(new DomainAddResponse($newdomain));
-        }
-        catch (QueryException $queryException){
+        } catch (QueryException $queryException) {
             return response($queryException->getMessage(), 500);
         }
     }
 
     public function verify(Request $request)
     {
-
+        $token = Token::getTokenByString($request->header('siwecosToken'));
+        $domain = Domain::getDomainOrFail($request->json('domain'), $token->id);
+        if (!$domain->checkHtmlPage())
+        {
+            if (!$domain->checkMetatags())
+            {
+                return response("Page not validate", 417);
+            }
+        }
+        return response()->json(new SiwecosBaseReponse('Page successful validated'));
     }
 
     public function list(Request $request)
@@ -40,12 +48,8 @@ class DomainController extends Controller
     public function remove(DomainAddRequest $request)
     {
         $token = Token::getTokenByString($request->header('siwecosToken'));
-        $domain = Domain::getDomain($request->json('domain'), $token->id);
-        if ($domain instanceof Domain)
-        {
-            $domain->delete();
-            return response()->json(new SiwecosBaseReponse('Domain removed'));
-        }
-        return response('Domain not found or no matching token', 404);
+        $domain = Domain::getDomainOrFail($request->json('domain'), $token->id);
+        $domain->delete();
+        return response()->json(new SiwecosBaseReponse('Domain removed'));
     }
 }
