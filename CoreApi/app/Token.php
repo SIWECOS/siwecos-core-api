@@ -28,6 +28,7 @@ use App\Domain;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereUpdatedAt($value)
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Domain[] $domains
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scan
  */
 class Token extends Model
 {
@@ -82,6 +83,8 @@ class Token extends Model
     public function scan()
     {
         return $this->hasMany(Scan::class);
+    }
+    
     public function domains()
     {
         return $this->hasMany('App\Domain');
