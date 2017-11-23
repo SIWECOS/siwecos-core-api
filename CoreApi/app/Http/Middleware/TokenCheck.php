@@ -16,7 +16,7 @@ class TokenCheck
      */
     public function handle($request, Closure $next)
     {
-        $headerToken = Token::where('token', $request->header('siwecosToken'))->first();
+        $headerToken = Token::getTokenByString($request->header('siwecosToken'));
         if ($headerToken instanceof Token)
         {
             return $next($request);

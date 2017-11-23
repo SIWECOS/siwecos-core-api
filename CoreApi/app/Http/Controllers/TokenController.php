@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TokenAddRequest;
 use App\Http\Requests\TokenRequest;
 use App\Http\Requests\TokenSetCreditRequest;
-use App\Siweocs\Models\AddTokenResponse;
+use App\Siweocs\Models\TokenAddResponse;
 use App\Siweocs\Models\ErrorResponse;
 use App\Siweocs\Models\SiwecosBaseReponse;
 use App\Siweocs\Models\TokenStatusResponse;
@@ -20,11 +20,13 @@ class TokenController extends Controller
     {
         // Create new token instance
         $newToken = new Token(['credits' => $request->json('credits')]);
-        $newToken->setAclLevel($request->json('aclLevel'));
+        if (array_key_exists('aclLevel', $request->json())){
+            $newToken->setAclLevel($request->json('aclLevel'));
+        }
         // Try insertion to database
         try {
             $newToken->save();
-            return response()->json(new AddTokenResponse($newToken->token));
+            return response()->json(new TokenAddResponse($newToken->token));
         } catch (QueryException $queryException) {
             // Query has failed
             return response($queryException->getMessage(), 500);

@@ -9,7 +9,7 @@
 namespace App\Siweocs\Models;
 
 
-class AddTokenResponse extends SiwecosBaseReponse
+class TokenAddResponse extends SiwecosBaseReponse
 {
 
     /**
