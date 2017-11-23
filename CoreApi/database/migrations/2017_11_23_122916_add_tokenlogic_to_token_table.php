@@ -15,7 +15,7 @@ class AddTokenlogicToTokenTable extends Migration
     {
         //
         Schema::table('tokens', function (Blueprint $table) {
-            $table->string('token');
+            $table->string('token', 191);
             $table->integer('credits');
             $table->boolean('active')->default(true);
             $table->integer('acl_level')->default(0);

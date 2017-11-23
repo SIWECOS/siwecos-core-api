@@ -14,7 +14,7 @@ class MakeTokenCreditsNotNullTokenTable extends Migration
     public function up()
     {
         Schema::table('tokens', function (Blueprint $table) {
-            $table->string('token')->nullable(false)->change();
+            $table->string('token', 191)->nullable(false)->change();
             $table->integer('credits')->nullable(false)->change();
         }
         );
