@@ -8,7 +8,7 @@ class DomainController extends Controller
 {
     public function add(Request $request)
     {
-        // to be implemented
+
     }
 
     public function verify(Request $request)

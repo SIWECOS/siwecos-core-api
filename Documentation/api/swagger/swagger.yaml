@@ -3,7 +3,7 @@ info:
   version: "0.0.1"
   title: Siwecos Core Api
 # during dev, should point to your local machine
-host: localhost:10010
+host: coreapi.dev
 # basePath prefixes all resource paths 
 basePath: /
 # 
