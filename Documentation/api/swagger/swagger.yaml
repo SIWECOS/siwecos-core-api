@@ -393,6 +393,8 @@ definitions:
     properties:
       message:
         type: string
+      domainToken:
+        type: string
       verificationStatus:
         type: boolean
       domainId:

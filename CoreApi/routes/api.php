@@ -21,9 +21,9 @@ Route::prefix('v1')->group(function () {
         Route::get('/scan/result/raw', 'ScanController@resultRaw');
 
         Route::post('/domain/add', 'DomainController@add');
-        Route::get('/domain/verify', 'DomainController@verify');
+        Route::post('/domain/verify', 'DomainController@verify');
         Route::get('/domains', 'DomainController@list');
-        Route::get('/domain/remove', 'DomainController@remove');
+        Route::post('/domain/remove', 'DomainController@remove');
     });
 
 

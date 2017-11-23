@@ -15,6 +15,14 @@ use App\ScanResult;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ScanResult[] $results
+ * @property-read \App\Token $token
+ * @property string $url
+ * @property int|null $dangerLevel
+ * @property \Illuminate\Support\Collection $callbackurls
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereCallbackurls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereDangerLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUrl($value)
  */
 class Scan extends Model
 {

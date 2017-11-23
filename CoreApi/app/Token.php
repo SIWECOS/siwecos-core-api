@@ -6,6 +6,7 @@ use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
 use App\Scan;
+use App\Domain;
 
 /**
  * Class Token
@@ -26,6 +27,7 @@ use App\Scan;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereToken($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Domain[] $domains
  */
 class Token extends Model
 {
@@ -80,6 +82,9 @@ class Token extends Model
     public function scan()
     {
         return $this->hasMany(Scan::class);
+    public function domains()
+    {
+        return $this->hasMany('App\Domain');
     }
 
     public static function reduceToken(string $token, $amount = 1)
