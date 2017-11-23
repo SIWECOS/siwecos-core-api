@@ -15,10 +15,10 @@
 Route::prefix('v1')->group(function () {
 
     Route::middleware(['tokencheck'])->group(function () {
-        Route::post('/scan/start', 'ScanController@start')->middleware('creditcheck');
-        Route::get('/scan/status', 'ScanController@status');
-        Route::get('/scan/result', 'ScanController@result');
-        Route::get('/scan/result/raw', 'ScanController@resultRaw');
+        Route::post('/scan/start', 'ScanController@start')->middleware(['creditcheck', 'domaincheck']);
+        Route::get('/scan/status', 'ScanController@status')->middleware('domaincheck');
+        Route::get('/scan/result', 'ScanController@result')->middleware('domaincheck');;
+        Route::get('/scan/result/raw', 'ScanController@resultRaw')->middleware('domaincheck');;
 
         Route::post('/domain/add', 'DomainController@add');
         Route::post('/domain/verify', 'DomainController@verify');

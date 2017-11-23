@@ -80,14 +80,14 @@ class Token extends Model
         }
     }
 
-    public function scan()
+    public function scans()
     {
         return $this->hasMany(Scan::class);
     }
     
     public function domains()
     {
-        return $this->hasMany('App\Domain');
+        return $this->hasMany(Domain::class);
     }
 
     public static function reduceToken(string $token, $amount = 1)
