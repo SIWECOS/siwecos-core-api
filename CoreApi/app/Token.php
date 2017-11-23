@@ -5,6 +5,7 @@ namespace App;
 use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
+use App\Scan;
 use App\Domain;
 
 /**
@@ -63,6 +64,24 @@ class Token extends Model
         $this->acl_level = $aclLevel;
     }
 
+    public function reduceCredits($amount = 1)
+    {
+        $this->credits -= $amount;
+        
+        try{
+            $this->save();
+                return true;
+        }
+        catch (\Illuminate\Database\QueryException $queryException)
+        {
+            // TODO: Log error to Papertrail with Token
+            return false;
+        }
+    }
+
+    public function scan()
+    {
+        return $this->hasMany(Scan::class);
     public function domains()
     {
         return $this->hasMany('App\Domain');

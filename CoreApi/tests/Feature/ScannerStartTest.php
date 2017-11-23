@@ -8,18 +8,33 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use App\Scan;
 use App\ScanResult;
+use App\Token;
 
 class ScannerStartTest extends TestCase
 {
+    
+    use DatabaseMigrations, DatabaseTransactions, WithoutMiddleware;
 
-    use DatabaseMigrations, DatabaseTransactions;
+
+    protected $token;
+
+    public function setUp()
+    {
+        parent::setUp();
+
+        $this->token = Token::create([
+            'credits' => 200,
+            'token' => \str_random()
+        ]);
+    }
 
     /** @test */
     public function a_url_is_required()
     {
-        $this->json('POST', '/api/v1/scan/start')
+        $this->json('POST', '/api/v1/scan/start', [], ['siwecosToken' => $this->token->token])
             ->assertJson([
                 'message' => 'The given data was invalid.',
                 'errors' => [
@@ -37,7 +52,7 @@ class ScannerStartTest extends TestCase
         $response = $this->json('POST', '/api/v1/scan/start', [
             'url' => 'https://example.com',
             'dangerLevel' => -1
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $response->assertJson([
             'message' => 'The given data was invalid.',
@@ -49,7 +64,7 @@ class ScannerStartTest extends TestCase
         $response = $this->json('POST', '/api/v1/scan/start', [
             'url' => 'https://example.com',
             'dangerLevel' => 15
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $response->assertJson([
             'message' => 'The given data was invalid.',
@@ -61,7 +76,7 @@ class ScannerStartTest extends TestCase
         $response = $this->json('POST', '/api/v1/scan/start', [
             'url' => 'https://example.com',
             'dangerLevel' => "five"
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $response->assertJson([
             'message' => 'The given data was invalid.',
@@ -73,7 +88,7 @@ class ScannerStartTest extends TestCase
         $response = $this->json('POST', '/api/v1/scan/start', [
             'url' => 'https://example.com',
             'dangerLevel' => 4
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(200);
     }
@@ -86,7 +101,7 @@ class ScannerStartTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/scan/start', [
             'url' => 'https://example.com'
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(200);
 
@@ -102,7 +117,7 @@ class ScannerStartTest extends TestCase
 
         $response = $this->post('/api/v1/scan/start', [
             'url' => 'https://example.com'
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $this->assertEquals(1, Scan::all()->count());
     }
@@ -116,7 +131,7 @@ class ScannerStartTest extends TestCase
 
         $response = $this->post('/api/v1/scan/start', [
             'url' => 'https://example.com'
-        ]);
+        ], ['siwecosToken' => $this->token->token]);
 
         $this->assertEquals(1, ScanResult::all()->count());
         $this->assertEquals('https://example.com', ScanResult::first()->scan->url);
