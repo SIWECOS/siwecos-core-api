@@ -9,6 +9,7 @@ use App\Jobs\ScanHeadersJob;
 use App\Jobs\ScanDOMXSSJob;
 use App\Jobs\ScanInfoLeakJob;
 use App\Token;
+use App\Domain;
 
 class ScanController extends Controller
 {
@@ -21,7 +22,7 @@ class ScanController extends Controller
             // create a new scan order
             $scan = $token->scans()->create([
                 'token_id' => $token->id,
-                'url' => $request->get('url'),
+                'url' => Domain::getDomainOrFail($request->get('url'), $token->id),
                 'callbackurls' => $request->get('callbackurls'),
                 'dangerLevel' => $request->get('dangerLevel')
             ]);
