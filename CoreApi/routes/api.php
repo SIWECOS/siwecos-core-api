@@ -24,6 +24,8 @@ Route::prefix('v1')->group(function () {
         Route::post('/domain/verify', 'DomainController@verify');
         Route::get('/domains', 'DomainController@list');
         Route::post('/domain/remove', 'DomainController@remove');
+
+        Route::post('/callback/{token}/{scanResult}', 'ScanController@callback')->name('callback');
     });
 
 

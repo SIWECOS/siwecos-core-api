@@ -17,7 +17,7 @@ class CreateScanResultsTable extends Migration
             $table->increments('id');
             $table->integer('scan_id');
             $table->string('scanner_type');
-            $table->text('result');
+            $table->text('result')->nullable();
             $table->timestamps();
         });
     }
