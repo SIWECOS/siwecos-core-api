@@ -24,7 +24,7 @@ class TokenSetCreditRequest extends FormRequest
     public function rules()
     {
         return [
-            'credit' => 'integer|required',
+            'credits' => 'integer|required',
             'token' => 'string|required'
         ];
     }
