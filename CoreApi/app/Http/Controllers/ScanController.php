@@ -25,7 +25,7 @@ class ScanController extends Controller
             // create a new scan order
             $scan = $token->scans()->create([
                 'token_id' => $token->id,
-                'url' => Domain::getDomainOrFail($request->get('url'), $token->id),
+                'url' => Domain::getDomainOrFail($request->get('domain'), $token->id)->domain,
                 'callbackurls' => $request->get('callbackurls'),
                 'dangerLevel' => $request->get('dangerLevel')
             ]);
@@ -56,7 +56,7 @@ class ScanController extends Controller
     {
         // get last ScanResults
         $token = Token::getTokenByString(($request->header('siwecosToken')));
-        $domain = Domain::getDomainOrFail($request->get('url', $token->id));
+        $domain = Domain::getDomainOrFail($request->get('domain', $token->id));
 
         $latestScan = $token->scans()->whereUrl($domain->domain)->whereStatus(3)->latest();
 
