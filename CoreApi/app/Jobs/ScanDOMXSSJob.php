@@ -11,7 +11,7 @@ use GuzzleHttp\Client;
 use App\Scan;
 use GuzzleHttp\Psr7\Request;
 
-class ScanHeadersJob implements ShouldQueue
+class ScanDOMXSSJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -39,13 +39,13 @@ class ScanHeadersJob implements ShouldQueue
         ]);
 
         $scanResult = $this->scan->results()->create([
-            'scanner_type' => 'hsts',
+            'scanner_type' => 'domxss',
         ]);
 
         $callbackUrl = route('callback', [ 'token' => $scan->token->token, 'scanResult' => $scanResult->id ]);
 
         $client = new Client();
-        $request = new Request('GET', env('HEADER_SCANNER_URL') . '/api/v1/header', [
+        $request = new Request('GET', env('DOMXSS_SCANNER_URL') . '/api/v1/header', [
             'query' => [
                 'url' => $this->scan->url,
                 'callbackUrl' => $callbackUrl

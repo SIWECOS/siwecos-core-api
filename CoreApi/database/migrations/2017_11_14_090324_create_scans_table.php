@@ -15,10 +15,11 @@ class CreateScansTable extends Migration
     {
         Schema::create('scans', function (Blueprint $table) {
             $table->increments('id');
-            // $table->integer('token_id'); TODO: enable this relationship
+            $table->integer('token_id');
             $table->string('url');
             $table->integer('dangerLevel')->nullable();
             $table->string('callbackurls')->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }
