@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  version: "0.0.1"
+  version: "0.0.2"
   title: Siwecos Core Api
 # during dev, should point to your local machine
 host: coreapi.dev
@@ -60,7 +60,7 @@ paths:
   /scan/status:
     x-swagger-router-controller: scan
     get:
-      description: Get the actual state of give scan id
+      description: Get the actual state of the latest scan
       # used as the method name of the controller
       operationId: scanStatus
       parameters:
@@ -107,7 +107,7 @@ paths:
   /scan/result/raw:
     x-swagger-router-controller: scan
     get:
-      description: Gets the last raw scan result for a specified domain
+      description: Gets the last finished scan result in raw format for a specified domain
       operationId: scanRawResult
       parameters:
       - in: query
@@ -126,7 +126,8 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/ErrorResponse"
-     
+            
+  
   /domain/add:
     x-swagger-router-controller: domain
     post:
@@ -415,7 +416,7 @@ definitions:
 
   scanStatusResponse:
     properties:
-      statusMessage:
+      message:
         type: string
       status:
         type: integer
@@ -460,8 +461,7 @@ definitions:
         type: array
         items:
           type: object
-        
-        
+
   ScannerResult:
     properties:
       name:
