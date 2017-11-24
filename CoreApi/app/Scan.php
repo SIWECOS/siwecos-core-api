@@ -42,7 +42,7 @@ class Scan extends Model
         return $this->hasMany(ScanResult::class);
     }
 
-    // TODO: Verify Token implementation
+
     /**
      * Returns an Eloquent Relationship for the belonging Token
      *
@@ -51,5 +51,13 @@ class Scan extends Model
     public function token()
     {
         return $this->belongsTo(Token::class);
+    }
+
+
+    public function getProgress() {
+        $allResults = $this->results()->count();
+        $doneResults = $this->results()->whereNotNull('result')->count();
+
+        return round(($doneResults / $allResults) * 100);
     }
 }
