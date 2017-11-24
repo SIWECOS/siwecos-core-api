@@ -19,6 +19,7 @@ class CreateScansTable extends Migration
             $table->string('url');
             $table->integer('dangerLevel')->nullable();
             $table->string('callbackurls')->nullable();
+            $table->integer('status')->default(1);
             $table->timestamps();
         });
     }

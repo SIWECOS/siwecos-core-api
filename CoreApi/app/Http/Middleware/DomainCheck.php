@@ -17,6 +17,7 @@ class DomainCheck
      */
     public function handle($request, Closure $next)
     {
+        print_r($request->json());
         $headerToken = Token::getTokenByString($request->header('siwecosToken'));
         $domainCheck = Domain::getDomainOrFail($request->json('domain'), $headerToken->id);
         if ($domainCheck instanceof Domain)

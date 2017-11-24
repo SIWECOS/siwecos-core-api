@@ -9,14 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use GuzzleHttp\Client;
 use App\Scan;
-use App\ScanResult;
+use GuzzleHttp\Psr7\Request;
 
 class ScanDOMXSSJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $scan;
-    protected $result;
 
     /**
      * Create a new job instance.
@@ -25,7 +24,7 @@ class ScanDOMXSSJob implements ShouldQueue
      */
     public function __construct(Scan $scan)
     {
-        $this->scan = $scan;
+        $this->scan = $scan;        
     }
 
     /**
@@ -35,44 +34,25 @@ class ScanDOMXSSJob implements ShouldQueue
      */
     public function handle()
     {
-        $this->runScan();
-        $this->notifyCallbacks();
-    }
+        $this->scan->update([
+            'status' => 2
+        ]);
 
-    
-    /**
-     * Runs the defined scan and stores the result in the database.
-     *
-     * @return void
-     */
-    public function runScan()
-    {
+        $scanResult = $this->scan->results()->create([
+            'scanner_type' => 'domxss',
+        ]);
+
+        $callbackUrl = route('callback', [ 'token' => $scan->token->token, 'scanResult' => $scanResult->id ]);
+
         $client = new Client();
-        $response = $client->get(env('DOMXSS_SCANNER_URL') . '/api/v1/domxss', [
+        $request = new Request('GET', env('DOMXSS_SCANNER_URL') . '/api/v1/header', [
             'query' => [
-                'url' => $this->scan->url
+                'url' => $this->scan->url,
+                'callbackUrl' => $callbackUrl
             ]
         ]);
-        
-        $this->result = $this->scan->results()->create([
-            'scanner_type' => 'xss',
-            'result' => $response->getBody()
-        ]);
+
+        $client->sendAsync($request);
     }
 
-    /**
-     * Sends the ScanResult to the given callback urls.
-     *
-     * @return void
-     */
-    public function notifyCallbacks()
-    {
-        foreach ($this->scan->callbackurls as $callback) {
-            $client = new Client();
-            $client->post($callback, [
-                'http_errors' => false,
-                'body' => $this->result,
-            ]);
-        }
-    }
 }

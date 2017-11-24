@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ScannerStartRequest extends FormRequest
+class CallbackRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,8 @@ class ScannerStartRequest extends FormRequest
      */
     public function authorize()
     {
-        // TODO: Check if thoken is authorized and have enough Credits.
+        // TODO: Maybe check, if request comes from trusted scanner IP / etc.
+        // aka Firewall
         return true;
     }
 
@@ -24,11 +25,10 @@ class ScannerStartRequest extends FormRequest
      */
     public function rules()
     {
+        // TODO: Adjust this according to the swagger definition
         return [
-            'domain' => 'required|url',
-            'dangerLevel' => 'integer|min:0|max:10',
-            'callbackurls' => 'array',
-            'callbackurls.*' => 'url'
+            'status' => 'required|string',
+            'result' => 'array'
         ];
     }
 }
