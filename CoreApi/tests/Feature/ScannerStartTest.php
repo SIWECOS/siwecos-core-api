@@ -31,7 +31,7 @@ class ScannerStartTest extends TestCase
         ]);
     }
 
-    /** @test */
+    
     public function a_url_is_required()
     {
         $this->json('POST', '/api/v1/scan/start', [], ['siwecosToken' => $this->token->token])
@@ -43,7 +43,7 @@ class ScannerStartTest extends TestCase
             ]);
         }
 
-    /** @test */
+    
     public function the_dangerLevel_has_a_valid_range()
     {
 
@@ -93,7 +93,7 @@ class ScannerStartTest extends TestCase
         $response->assertStatus(200);
     }
 
-    /** @test */
+    
     public function the_scanner_jobs_are_dispatched()
     {
         Queue::fake();
@@ -108,7 +108,7 @@ class ScannerStartTest extends TestCase
         Queue::assertPushed(ScanHeadersJob::class);
     }
 
-    /** @test */
+    
     public function a_new_scan_is_saved_to_the_database_if_the_job_is_started()
     {
         Queue::fake();
@@ -122,7 +122,7 @@ class ScannerStartTest extends TestCase
         $this->assertEquals(1, Scan::all()->count());
     }
 
-    /** @test */
+    
     public function a_scan_result_is_saved_after_the_queue_is_processed()
     {
         $this->assertEquals(0, ScanResult::all()->count());
