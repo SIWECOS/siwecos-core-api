@@ -16,10 +16,14 @@ class TokenCheck
      */
     public function handle($request, Closure $next)
     {
-        $headerToken = Token::getTokenByString($request->header('siwecosToken'));
-        if ($headerToken instanceof Token)
+        $token = $request->header('siwecosToken');
+        if (isset($token))
         {
-            return $next($request);
+            $headerToken = Token::getTokenByString($request->header('siwecosToken'));
+            if ($headerToken instanceof Token)
+            {
+                return $next($request);
+            }
         }
         return response('Token not allowed', 403);
     }
