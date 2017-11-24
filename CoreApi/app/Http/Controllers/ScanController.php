@@ -13,6 +13,7 @@ use App\Domain;
 use App\ScanResult;
 use App\Http\Requests\CallbackRequest;
 use App\Siweocs\Models\ScanRawResultResponse;
+use App\Siweocs\Models\ScanStatusResponse;
 
 class ScanController extends Controller
 {
@@ -43,7 +44,13 @@ class ScanController extends Controller
 
     public function status(Request $request)
     {
-        // to be implemented
+        $token = Token::getTokenByString(($request->header('siwecosToken')));
+        $domain = Domain::getDomainOrFail($request->get('url', $token->id));
+
+        $scan = Scan::whereDomain($domain->domain)->latest()->first();
+
+        return response()->json(new ScanStatusResponse($scan));
+
     }
 
     public function result(Request $request)
@@ -54,7 +61,6 @@ class ScanController extends Controller
     
     public function resultRaw(Request $request)
     {
-        // get last ScanResults
         $token = Token::getTokenByString(($request->header('siwecosToken')));
         $domain = Domain::getDomainOrFail($request->get('url', $token->id));
 
@@ -95,17 +101,11 @@ class ScanController extends Controller
     
     protected function updateScanStatus(Scan $scan)
     {
-        if ( $this->getScanProgress >= 100) {
+        if ( $scan->getProgress() >= 100) {
             $scan->update([
                 'status' => 3
             ]);
         }
     }
 
-    protected function getScanProgress(Scan $scan) {
-        $allResults = $scan->results()->count();
-        $doneResults = $scan->results()->whereNotNull('result')->count();
-
-        return round(($doneResults / $allResults) * 100);
-    }
 }
