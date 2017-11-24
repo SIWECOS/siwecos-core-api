@@ -15,7 +15,7 @@ class ScanController extends Controller
 {
     public function start(ScannerStartRequest $request)
     {
-        $token = Token::whereToken($request->header('siwecosToken'))->first();
+        $token = Token::getTokenByString(($request->header('siwecosToken')));
         
         if ($token->reduceCredits() ) {
 
