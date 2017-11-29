@@ -62,6 +62,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'tokencheck' => TokenCheck::class,
         'creditcheck' => CreditCheck::class,
-        'domaincheck' => DomainCheck::class
+        'domaincheck' => DomainCheck::class,
+        'cors' => \App\Http\Middleware\Cors::class
     ];
 }

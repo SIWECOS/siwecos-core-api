@@ -5,7 +5,7 @@ info:
 # during dev, should point to your local machine
 host: coreapi.dev
 # basePath prefixes all resource paths 
-basePath: /
+basePath: /api/v1
 # 
 schemes:
   # tip: remove http to make production-grade
@@ -25,6 +25,11 @@ paths:
       # used as the method name of the controller
       operationId: scanStart
       parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       - in: body
         required: true
         name: scan
@@ -64,6 +69,11 @@ paths:
       # used as the method name of the controller
       operationId: scanStatus
       parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       - in: query
         required: true
         name: url
@@ -87,6 +97,11 @@ paths:
       description: Gets the last scan result for a specified domain
       operationId: scanResult
       parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       - in: query
         required: true
         name: url
@@ -110,6 +125,11 @@ paths:
       description: Gets the last finished scan result in raw format for a specified domain
       operationId: scanRawResult
       parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       - in: query
         required: true
         name: url
@@ -134,6 +154,11 @@ paths:
       description: Adds a domain to an user account
       operationId: domainAdd
       parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       - in: body
         required: true
         name: domain
@@ -160,14 +185,25 @@ paths:
                  
   /domain/verify:
     x-swagger-router-controller: domain
-    get:
+    post:
       description: Verifies a domain ownership
       operationId: domainVerify
       parameters:
-      - in: query
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
+      - in: body
         required: true
         name: domain
-        type: string
+        schema: 
+          type: object
+          required:
+          - domain
+          properties:
+            domain:
+              type: string
       
       responses:
         "200":
@@ -186,7 +222,12 @@ paths:
     get:
       description: domains of current user
       operationId: domainList
-      
+      parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       responses:
         "200":
           description: Success
@@ -203,6 +244,11 @@ paths:
       description: Removes a domain form a user acocunt
       operationId: domainRemove
       parameters:
+      - in: header
+        name: siwecosToken
+        required: true
+        schema:
+          type: string
       - in: body
         required: true
         name: domain
