@@ -215,6 +215,11 @@ paths:
     get:
       description: domains of current user
       operationId: domainList
+      parameters:
+      - in: header
+        name: siwecosToken
+        type: string
+        required: true
       responses:
         "200":
           description: Success
