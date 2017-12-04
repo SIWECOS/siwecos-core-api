@@ -78,6 +78,13 @@ just start from /Documentation
 swagger project edit
 ```
 
+### Domain verification
+1. Metatagentry
+    - Enter the given key to METATAG "siwecostoken" in the head of your website
+1. File validation
+    - create a file name "key".html in to your website root folder
+    - insert the key as the only value inside the file
+
 ### Laradock
 To start development in a docker environment just switch to the `laradock` folder and run:
 
