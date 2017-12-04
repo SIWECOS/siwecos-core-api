@@ -269,6 +269,10 @@ paths:
       description: Add a new token for a user
       operationId: tokenAdd
       parameters:
+      - in: header
+        name: masterToken
+        type: string
+        required: true
       - in: body
         required: true
         name: token
@@ -301,6 +305,10 @@ paths:
       description: Revokes a token
       operationId: tokenRevoke
       parameters:
+      - in: header
+        name: masterToken
+        type: string
+        required: true
       - in: body
         required: true
         name: token
@@ -360,6 +368,10 @@ paths:
       description: Sets the remaining credits for a token, limited to master token
       operationId: tokenSetCredits
       parameters:
+      - in: header
+        name: masterToken
+        type: string
+        required: true
       - in: body
         required: true
         name: token

@@ -62,6 +62,16 @@ DB_DATABASE=siwecos_core_api
 DB_USERNAME=siwecos
 DB_PASSWORD=siwecos
 ```
+- Create Mastertoken (needed in header "masterToken" for creating / revoking / credit other tokens)
+```
+$ php artisan create:mastertoken
+```
+```
+create Mastertoken
+Please save the following token, it is required for any token operation
+mastertoken: Mlt0PRYYy+fBAE6LpSruASUx
+```
+
 - Link Valet to Laravel Application
 ```
 $ valet link

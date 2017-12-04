@@ -29,8 +29,8 @@ Route::prefix('v1')->group(function () {
     });
 
 
-    Route::post('/token/add', 'TokenController@add');
-    Route::post('/token/revoke', 'TokenController@revoke');
-    Route::post('/token/status', 'TokenController@status');
-    Route::post('/token/setcredits', 'TokenController@setCredits');
+    Route::post('/token/add', 'TokenController@add')->middleware('mastertokencheck');
+    Route::post('/token/revoke', 'TokenController@revoke')->middleware('mastertokencheck');
+    Route::post('/token/status', 'TokenController@status')->middleware('mastertokencheck');
+    Route::post('/token/setcredits', 'TokenController@setCredits')->middleware('mastertokencheck');
 });

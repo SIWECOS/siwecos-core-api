@@ -4,6 +4,7 @@ namespace App\Http;
 
 use App\Http\Middleware\CreditCheck;
 use App\Http\Middleware\DomainCheck;
+use App\Http\Middleware\MastertokenCheck;
 use App\Http\Middleware\TokenCheck;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -62,5 +63,6 @@ class Kernel extends HttpKernel
         'tokencheck' => TokenCheck::class,
         'creditcheck' => CreditCheck::class,
         'domaincheck' => DomainCheck::class,
+        'mastertokencheck' => MastertokenCheck::class,
     ];
 }
