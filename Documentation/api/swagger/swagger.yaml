@@ -10,7 +10,6 @@ basePath: /api/v1
 schemes:
   # tip: remove http to make production-grade
   - http
-  - https
 # format of bodies a client can send (Content-Type)
 consumes:
   - application/json
@@ -25,30 +24,29 @@ paths:
       # used as the method name of the controller
       operationId: scanStart
       parameters:
-      - in: header
-        name: siwecosToken
-        required: true
-        schema:
+        - in: header
+          name: siwecosToken
           type: string
-      - in: body
-        required: true
-        name: scan
-        description: Details about the scan that shall be started
-        schema: 
-          type: object
-          required:
-          - url
-          properties:
-            url:
-              type: string
-            dangerLevel:
-              type: integer
-              minimum: 0
-              maximum: 10
-            callbackurls:
-              type: array
-              items:
+          required: true
+        - in: body
+          required: true
+          name: scan
+          description: Details about the scan that shall be started
+          schema: 
+            type: object
+            required:
+            - url
+            properties:
+              url:
                 type: string
+              dangerLevel:
+                type: integer
+                minimum: 0
+                maximum: 10
+              callbackurls:
+                type: array
+                items:
+                  type: string
               
       responses:
         "200":
@@ -71,9 +69,8 @@ paths:
       parameters:
       - in: header
         name: siwecosToken
+        type: string
         required: true
-        schema:
-          type: string
       - in: query
         required: true
         name: url
@@ -99,9 +96,8 @@ paths:
       parameters:
       - in: header
         name: siwecosToken
+        type: string
         required: true
-        schema:
-          type: string
       - in: query
         required: true
         name: url
@@ -127,9 +123,8 @@ paths:
       parameters:
       - in: header
         name: siwecosToken
+        type: string
         required: true
-        schema:
-          type: string
       - in: query
         required: true
         name: url
@@ -156,9 +151,8 @@ paths:
       parameters:
       - in: header
         name: siwecosToken
+        type: string
         required: true
-        schema:
-          type: string
       - in: body
         required: true
         name: domain
@@ -191,9 +185,8 @@ paths:
       parameters:
       - in: header
         name: siwecosToken
+        type: string
         required: true
-        schema:
-          type: string
       - in: body
         required: true
         name: domain
@@ -222,12 +215,6 @@ paths:
     get:
       description: domains of current user
       operationId: domainList
-      parameters:
-      - in: header
-        name: siwecosToken
-        required: true
-        schema:
-          type: string
       responses:
         "200":
           description: Success
@@ -246,9 +233,8 @@ paths:
       parameters:
       - in: header
         name: siwecosToken
+        type: string
         required: true
-        schema:
-          type: string
       - in: body
         required: true
         name: domain
