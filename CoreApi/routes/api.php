@@ -12,7 +12,7 @@
 |
 */
 
-Route::prefix('v1')->middleware(['cors'])->group(function () {
+Route::prefix('v1')->group(function () {
 
     Route::middleware(['tokencheck'])->group(function () {
         Route::post('/scan/start', 'ScanController@start')->middleware(['creditcheck', 'domaincheck']);
