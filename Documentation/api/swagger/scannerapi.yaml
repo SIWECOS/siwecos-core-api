@@ -1,0 +1,118 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: SIWECOS Scanner Api
+paths:
+  /start:
+    post:
+      description: 'Api endpoint for start scan. If dangerlevel is not defined, 0 is given.'
+      operationId: scanStart
+      responses:
+        '200':
+          description: Success
+        default:
+          description: Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - url
+                - callbackurls
+              properties:
+                url:
+                  type: string
+                dangerLevel:
+                  type: integer
+                  minimum: 0
+                  maximum: 10
+                callbackurls:
+                  type: array
+                  items:
+                    type: string
+                    description: URL of callback
+        description: Details about the scan that shall be started
+        required: true
+      callbacks: # Callback definition
+        scanFinished: # Event name
+          '{$request.body#/callbackurls}': # The callback URL,
+            post:
+              requestBody: # Contents of the callback message
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      $ref: '#/components/schemas/ScanResult'
+              responses: # Expected responses to the callback message
+                '200':
+                  description: Your server returns this code if it accepts the callback
+
+components:
+  schemas:
+    ScanResult:
+      required:
+        - name
+        - hasError
+      properties:
+        name:
+          type: string
+          description: human readable language placeholder for i18n - all uppercase with underscores instead of spaces
+        hasError:
+          type: boolean
+        errorMessage:
+          type: object
+          $ref: '#/components/schemas/TranslateableMessage'
+        score: # global score for this scanner, no weight necessary, just a plain average score
+          type: integer
+          minimum: 0
+          maximum: 100
+        tests:
+          type: array
+          items:
+            $ref: '#/components/schemas/TestResult'
+            type: object
+
+    TestResult:
+      required:
+        - name
+        - hasError
+      properties:
+        name:
+          type: string
+          description: human readable language placeholder name
+        hasError:
+          type: boolean
+        errorMessage:
+          type: object
+          $ref: '#/components/schemas/TranslateableMessage'
+        score:
+          type: integer
+          minimum: 0
+          maximum: 100
+          description: use 0 for "complete fail" and 100 for "all fine"
+        scoreType:
+          type: string
+          enum:
+            - critical # Critical security issue like hacked site or vulnerability that might lead to a full site takeover
+            - warning # Standard level for vulnerabilities
+            - success # All fine
+            - bonus # Additional things that a user can do on top
+            - info # Should be used if a vulnerability might be a theoretical issue but doesn't have a real world impact
+            - hidden # If a test i.e. only fails in 1 in 100000 cases there's no need to show it in the UI per default, so use this level if your test should be only visible if it fails (= not 100 score)
+        testDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/TranslateableMessage'
+
+    TranslateableMessage:
+      required:
+        - placeholder
+      properties:
+        placeholder:
+          type: string
+          description: human readable language placeholder name i.e. HACKED_FILE_FOUND
+        values:
+          type: string
+          description: Key-value pairs that will be used within the language string

@@ -1,6 +1,6 @@
 swagger: "2.0"
 info:
-  version: "0.0.2"
+  version: "0.0.3"
   title: Siwecos Core Api
 # during dev, should point to your local machine
 host: coreapi.dev
@@ -486,7 +486,7 @@ definitions:
       capped:
         type: boolean
       cappedMessage:
-        type: string
+        $ref: "#/definitions/TranslateableMessage"
       scanStarted:
         type: string
         format: date-time
@@ -512,11 +512,15 @@ definitions:
           type: object
 
   ScannerResult:
+    required: ["name", "hasError"]
     properties:
       name:
         type: string
-      description:
-        type: string
+        description: human readable language placeholder for i18n - all uppercase with underscores instead of spaces 
+      hasError:
+        type: boolean
+      errorMessage:
+        $ref: "#/definitions/TranslateableMessage"
       score:
         type: integer
         minimum: 0
@@ -528,33 +532,37 @@ definitions:
      
         
   TestResult:
+    required: ["name", "hasError"]
     properties:
       name:
         type: string
-      description:
-        type: string
+        description: human readable language placeholder name
+      hasError:
+        type: boolean
+      errorMessage:
+        $ref: "#/definitions/TranslateableMessage"
       score:
         type: integer
         minimum: 0
         maximum: 100
       scoreType:
         type: string
-        enum: [critical, info, warning, bonus, success]
+        enum: [critical, info, warning, bonus, success, hidden]
       testDetails:
         type: array
         items:
-          $ref: "#/definitions/TestDetail"
-      
-  TestDetail:
+          $ref: "#/definitions/TranslateableMessage"
+
+  TranslateableMessage:
+    required: ["placeholder"]
     properties:
       placeholder:
         type: string
-        description: language string for i18n
+        description: human readable language placeholder name i.e. HACKED_FILE_FOUND
       values:
-        type: array
-        items:
-          type: string
-          
+        type: object
+        description: Key-value pairs that will be used within the language string
+
   Domain:
     properties:
       domain:
