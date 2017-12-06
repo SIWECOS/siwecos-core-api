@@ -114,5 +114,5 @@ components:
           type: string
           description: human readable language placeholder name i.e. HACKED_FILE_FOUND
         values:
-          type: string
+          type: object
           description: Key-value pairs that will be used within the language string
