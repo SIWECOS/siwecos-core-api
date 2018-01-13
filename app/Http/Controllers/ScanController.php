@@ -33,8 +33,8 @@ class ScanController extends Controller
 
             // dispatch each scanner to the queue
             ScanHeadersJob::dispatch($scan);
-            ScanDOMXSSJob::dispatch($scan);
-            ScanInfoLeakJob::dispatch($scan);
+            //ScanDOMXSSJob::dispatch($scan);
+            //ScanInfoLeakJob::dispatch($scan);
             // TODO: dispatch TLS-Scanner
 
             // TODO: Send Response
