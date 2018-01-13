@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ScannerStartRequest extends FormRequest
 {
@@ -15,6 +17,11 @@ class ScannerStartRequest extends FormRequest
     {
         // TODO: Check if thoken is authorized and have enough Credits.
         return true;
+    }
+
+    protected function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 
     /**
