@@ -42,7 +42,7 @@ class ScanDOMXSSJob implements ShouldQueue
             'scanner_type' => 'domxss',
         ]);
 
-        $callbackUrl = route('callback', [ 'token' => $scan->token->token, 'scanResult' => $scanResult->id ]);
+        $callbackUrl = route('callback', [ 'token' => $this->scan->token->token, 'scanResult' => $scanResult->id ]);
 
         $client = new Client();
         $request = new Request('GET', env('DOMXSS_SCANNER_URL') . '/api/v1/header', [
