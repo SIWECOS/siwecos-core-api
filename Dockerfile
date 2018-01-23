@@ -15,6 +15,9 @@ ENV    DB_PORT=3306
 ENV    DB_DATABASE=siwecos_core_api
 ENV    DB_USERNAME=siwecos
 ENV    DB_PASSWORD=n0ucav3z
+ENV    HEADER_SCANNER_URL='siwecoshshs:8001'
+ENV    DOMXSS_SCANNER_URL='siwecoswstlsscanner:4848'
+ENV    INFOLEAK_SCANNER_URL='siwecosinfoleakscanner:8000'
 
 #RUN php artisan migrate
 

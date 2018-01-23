@@ -13,6 +13,8 @@ yarn-error.log
 !/laradock/.env
 /.idea
 
+vendor/
+
 # Created by https://www.gitignore.io/api/linux,macos,windows,laravel,composer,phpstorm,sublimetext
 
 ### Composer ###
