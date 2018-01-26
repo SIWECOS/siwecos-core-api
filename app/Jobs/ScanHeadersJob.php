@@ -42,17 +42,16 @@ class ScanHeadersJob implements ShouldQueue
             'scanner_type' => 'hsts',
         ]);
 
-        $callbackUrl = route('callback', [ 'token' => $this->scan->token->token, 'scanResult' => $scanResult->id ]);
+        $callbackUrl = route('callback', [ 'scanId' => $scanResult->id ]);
         $callbackUrl .= '?XDEBUG_SESSION_START=PHPSTORM';
-        $client = new Client();
-        $request = new Request('GET', env('HEADER_SCANNER_URL') . '/api/v1/header', [
-            'query' => [
-                'url' => $this->scan->url,
-                'callbackUrl' => $callbackUrl
-            ]
-        ]);
 
-        $client->sendAsync($request);
+        $client = new Client();
+        $request = new Request('POST', env('HEADER_SCANNER_URL') . '/api/v1/header?XDEBUG_SESSION_START=PHPSTORM', [], \GuzzleHttp\json_encode([
+                'url' => $this->scan->url,
+                'callbackurls' => [$callbackUrl]
+        ]));
+
+        $response = $client->send($request);
     }
 
 }

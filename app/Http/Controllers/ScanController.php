@@ -33,8 +33,8 @@ class ScanController extends Controller
 
             // dispatch each scanner to the queue
             ScanHeadersJob::dispatch($scan);
-            ScanDOMXSSJob::dispatch($scan);
-            ScanInfoLeakJob::dispatch($scan);
+            //ScanDOMXSSJob::dispatch($scan);
+            //ScanInfoLeakJob::dispatch($scan);
             // TODO: dispatch TLS-Scanner
 
             // TODO: Send Response
@@ -74,11 +74,13 @@ class ScanController extends Controller
 
 
     // TODO: Check and Test
-    public function callback(Token $token, ScanResult $scanResult, CallbackRequest $request)
+    public function callback(Request $request, int $scanId)
     {
-        if ($request->get('status') == 'success') {
+
+        $scanResult = ScanResult::findOrFail($scanId);
+        if (!$request->json('hasError')) {
             $scanResult->update([
-                'result' => $request->get('result')
+                'result' => $request->json('tests')
             ]);
 
             //   Sends the ScanResult to the given callback urls.

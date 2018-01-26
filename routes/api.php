@@ -13,7 +13,7 @@
 */
 
 Route::prefix('v1')->group(function () {
-
+    Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
     Route::middleware(['tokencheck'])->group(function () {
         Route::post('/scan/start', 'ScanController@start')->middleware(['creditcheck', 'domaincheck']);
         Route::get('/scan/status', 'ScanController@status')->middleware('domaincheck');
@@ -25,7 +25,7 @@ Route::prefix('v1')->group(function () {
         Route::get('/domains', 'DomainController@list');
         Route::post('/domain/remove', 'DomainController@remove');
 
-        Route::post('/callback/{token}/{scanResult}', 'ScanController@callback')->name('callback');
+
     });
 
 
