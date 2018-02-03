@@ -23,32 +23,32 @@ use App\ScanResult;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereCallbackurls($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereDangerLevel($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUrl($value)
+ * @property int $token_id
+ * @property int $status
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereTokenId($value)
  */
 class Scan extends Model
 {
-    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls'];
+    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status'];
     protected $casts = [
         'callbackurls' => 'collection'
     ];
 
-    
-    /**
-     * Returns an Eloquent Relationship for the ScanResults.
-     *
-     * @return void
-     */
-    public function results()
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function results()
     {
         return $this->hasMany(ScanResult::class);
     }
 
 
-    /**
-     * Returns an Eloquent Relationship for the belonging Token
-     *
-     * @return void
-     */
-    public function token()
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function token()
     {
         return $this->belongsTo(Token::class);
     }

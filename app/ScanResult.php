@@ -30,13 +30,12 @@ class ScanResult extends Model
     protected $casts = [
         'result' => 'collection'
     ];
-    
-    /**
-     * Returns an Eloquent Relationship for the belonging Scan
-     *
-     * @return void
-     */
-    public function scan()
+
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+	 */
+	public function scan()
     {
         return $this->belongsTo(Scan::class);
     }

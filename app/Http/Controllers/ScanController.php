@@ -28,13 +28,13 @@ class ScanController extends Controller
                 'token_id' => $token->id,
                 'url' => Domain::getDomainOrFail($request->get('domain'), $token->id)->domain,
                 'callbackurls' => $request->get('callbackurls'),
-                'dangerLevel' => $request->get('dangerLevel')
+                'dangerLevel' => $request->get('dangerLevel'),
             ]);
 
             // dispatch each scanner to the queue
             ScanHeadersJob::dispatch($scan);
-            //ScanDOMXSSJob::dispatch($scan);
-            //ScanInfoLeakJob::dispatch($scan);
+            ScanDOMXSSJob::dispatch($scan);
+            ScanInfoLeakJob::dispatch($scan);
             // TODO: dispatch TLS-Scanner
 
             // TODO: Send Response
@@ -62,9 +62,9 @@ class ScanController extends Controller
     public function resultRaw(Request $request)
     {
         $token = Token::getTokenByString(($request->header('siwecosToken')));
-        $domain = Domain::getDomainOrFail($request->get('domain', $token->id));
+        $domain = Domain::getDomainOrFail($request->get('domain'), $token->id);
 
-        $latestScan = $token->scans()->whereUrl($domain->domain)->whereStatus(3)->latest();
+        $latestScan = $token->scans()->whereUrl($domain->domain)->whereStatus(3)->latest()->first();
 
         if ($latestScan instanceof Scan)
             return response()->json(new ScanRawResultResponse($latestScan));
@@ -98,15 +98,16 @@ class ScanController extends Controller
             // TODO: Log error message
         }
         
-        $this->updateScanStatus($scanResult->scan);
+        $this->updateScanStatus(Scan::find($scanResult->scan_id)->first());
     }
     
     protected function updateScanStatus(Scan $scan)
     {
-        if ( $scan->getProgress() >= 100) {
+        if ( $scan->getProgress() >= 99) {
             $scan->update([
                 'status' => 3
             ]);
+            $scan->save();
         }
     }
 

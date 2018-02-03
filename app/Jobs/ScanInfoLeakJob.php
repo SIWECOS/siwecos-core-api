@@ -42,17 +42,17 @@ class ScanInfoLeakJob implements ShouldQueue
             'scanner_type' => 'infoLeak',
         ]);
 
-        $callbackUrl = route('callback', [ 'token' => $this->scan->token->token, 'scanResult' => $scanResult->id ]);
+        $callbackUrl = route('callback', [ 'scanId' => $scanResult->id ]);
 
         $client = new Client();
-        $request = new Request('GET', env('INFOLEAK_SCANNER_URL'), [
-            'query' => [
+        $request = new Request('POST', env('INFOLEAK_SCANNER_URL') . '', [], \GuzzleHttp\json_encode([
                 'url' => $this->scan->url,
-                'callbackUrl' => $callbackUrl
-            ]
-        ]);
+                'dangerLevel' => '1',
+                'callbackurls' => [$callbackUrl]
+        ]));
 
-        $client->sendAsync($request);
+        $response = $client->send($request);
+
     }
 
 }

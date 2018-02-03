@@ -29,6 +29,7 @@ use App\Domain;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Domain[] $domains
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scan
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scans
  */
 class Token extends Model
 {

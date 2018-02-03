@@ -45,6 +45,7 @@ const METATAGNAME = 'siwecostoken';
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified($value)
  * @mixin \Eloquent
+ * @property-read \App\Token $token
  */
 class Domain extends Model
 {
