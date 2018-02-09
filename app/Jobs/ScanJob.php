@@ -29,7 +29,6 @@ class ScanJob implements ShouldQueue
         $this->scan = $scan;
         $this->name = $name;
         $this->scanner_url = $scanner_url;
-        error_log($name);
     }
 
     /**

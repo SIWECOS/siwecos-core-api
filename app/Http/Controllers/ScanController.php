@@ -31,15 +31,12 @@ class ScanController extends Controller
 
             // dispatch each scanner to the queue
             foreach ($_ENV as $key => $value) {
-                error_log($key);
                 if ( ! preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
                     continue;
                 }
-                error_log($scanner_name[1]);
                 if (! preg_match("/^https?:\/\//", $value)) {
                     continue;
                 }
-                error_log($value);
                 ScanJob::dispatch($scanner_name[1], $value, $scan);
             }
         }
