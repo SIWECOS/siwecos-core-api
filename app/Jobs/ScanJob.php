@@ -11,20 +11,25 @@ use GuzzleHttp\Client;
 use App\Scan;
 use GuzzleHttp\Psr7\Request;
 
-class ScanDOMXSSJob implements ShouldQueue
+class ScanJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $scan;
+    protected $name;
+    protected $scanner_url;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct(Scan $scan)
+    public function __construct(string $name, string $scanner_url, Scan $scan)
     {
-        $this->scan = $scan;        
+        $this->scan = $scan;
+        $this->name = $name;
+        $this->scanner_url = $scanner_url;
+        error_log($name);
     }
 
     /**
@@ -39,13 +44,13 @@ class ScanDOMXSSJob implements ShouldQueue
         ]);
 
         $scanResult = $this->scan->results()->create([
-            'scanner_type' => 'domxss',
+            'scanner_type' => $this->name,
         ]);
 
         $callbackUrl = route('callback', [ 'scanId' => $scanResult->id ]);
 
         $client = new Client();
-        $request = new Request('POST', env('DOMXSS_SCANNER_URL') . '/api/v1/domxss', [], \GuzzleHttp\json_encode([
+        $request = new Request('POST', $this->scanner_url, [], \GuzzleHttp\json_encode([
                 'url' => $this->scan->url,
                 'callbackurls' => [$callbackUrl]
         ]));

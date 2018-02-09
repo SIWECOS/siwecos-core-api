@@ -5,9 +5,7 @@ namespace App\Http\Controllers;
 use App\Scan;
 use Illuminate\Http\Request;
 use App\Http\Requests\ScannerStartRequest;
-use App\Jobs\ScanHeadersJob;
-use App\Jobs\ScanDOMXSSJob;
-use App\Jobs\ScanInfoLeakJob;
+use App\Jobs\ScanJob;
 use App\Token;
 use App\Domain;
 use App\ScanResult;
@@ -20,7 +18,7 @@ class ScanController extends Controller
     public function start(ScannerStartRequest $request)
     {
         $token = Token::getTokenByString(($request->header('siwecosToken')));
-        
+
         if ($token->reduceCredits() ) {
 
             // create a new scan order
@@ -32,13 +30,18 @@ class ScanController extends Controller
             ]);
 
             // dispatch each scanner to the queue
-            ScanHeadersJob::dispatch($scan);
-            ScanDOMXSSJob::dispatch($scan);
-            ScanInfoLeakJob::dispatch($scan);
-            // TODO: dispatch TLS-Scanner
-
-            // TODO: Send Response
-
+            foreach ($_ENV as $key => $value) {
+                error_log($key);
+                if ( ! preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
+                    continue;
+                }
+                error_log($scanner_name[1]);
+                if (! preg_match("/^https?:\/\//", $value)) {
+                    continue;
+                }
+                error_log($value);
+                ScanJob::dispatch($scanner_name[1], $value, $scan);
+            }
         }
     }
 
@@ -58,7 +61,7 @@ class ScanController extends Controller
         // to be implemented
     }
 
-    
+
     public function resultRaw(Request $request)
     {
         $token = Token::getTokenByString(($request->header('siwecosToken')));
@@ -86,21 +89,21 @@ class ScanController extends Controller
             //   Sends the ScanResult to the given callback urls.
             foreach ($scanResult->scan->callbackurls as $callback) {
                 $client = new Client();
-                
+
                 $request = new Request('POST', $callback, [
                     'body' => $scanResult
                 ]);
-                
+
                 $client->sendAsync($request);
             }
         }
         else {
             // TODO: Log error message
         }
-        
+
         $this->updateScanStatus(Scan::find($scanResult->scan_id)->first());
     }
-    
+
     protected function updateScanStatus(Scan $scan)
     {
         if ( $scan->getProgress() >= 99) {

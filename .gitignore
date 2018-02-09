@@ -12,6 +12,7 @@ yarn-error.log
 .env
 !/laradock/.env
 /.idea
+*postman_collection*
 
 vendor/
 
