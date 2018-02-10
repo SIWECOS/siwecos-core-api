@@ -57,7 +57,7 @@ class ScanInisJob implements ShouldQueue
 		} catch ( Exception $ex ) {
 			// only way to make it async
 			// promise running against timeout
-			Log::warning( 'ini-s has started' );
+			Log::info( 'ini-s has started' );
 		}
 	}
 

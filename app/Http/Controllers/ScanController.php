@@ -82,6 +82,7 @@ class ScanController extends Controller
     {
 
         $scanResult = ScanResult::findOrFail($scanId);
+        Log::warning('Callback: ' . $request->json());
         if (!$request->json('hasError')) {
             $scanResult->update([
                 'result' => $request->json('tests')
@@ -98,10 +99,7 @@ class ScanController extends Controller
                 $client->sendAsync($request);
             }
         }
-        else {
-            // TODO: Log error message
-        }
-        
+
         $this->updateScanStatus(Scan::find($scanResult->scan_id)->first());
     }
     

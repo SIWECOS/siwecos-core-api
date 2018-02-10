@@ -56,7 +56,7 @@ class ScanHeadersJob implements ShouldQueue {
 		} catch ( Exception $ex ) {
 			// only way to make it async
 			// promise running against timeout
-			Log::warning( 'headerscan has started' );
+			Log::info( 'headerscan has started' );
 		}
 	}
 

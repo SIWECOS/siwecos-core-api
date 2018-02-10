@@ -55,7 +55,7 @@ class ScanDOMXSSJob implements ShouldQueue {
 			$response->wait();
 		} catch ( Exception $ex ) {
 			// only way to make it async
-			Log::warning( 'domxss has started' );
+			Log::info( 'domxss has started' );
 		}
 	}
 

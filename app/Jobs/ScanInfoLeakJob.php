@@ -57,7 +57,7 @@ class ScanInfoLeakJob implements ShouldQueue {
 			$response->wait();
 		} catch ( Exception $ex ) {
 			// only way to make it async
-			Log::warning( 'infoLeak has started' );
+			Log::info( 'infoLeak has started' );
 		}
 
 
