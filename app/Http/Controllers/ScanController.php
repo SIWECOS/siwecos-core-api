@@ -21,8 +21,9 @@ class ScanController extends Controller
 {
     public function start(ScannerStartRequest $request)
     {
+    	Log::info('start scan start request');
         $token = Token::getTokenByString(($request->header('siwecosToken')));
-        
+        Log::info('User ' . $token->id . ' requested Scan Start');
         if ($token->reduceCredits() ) {
 			Log::info('User ' . $token->id . ' requested Scan Start');
             // create a new scan order
