@@ -54,7 +54,7 @@ class ScanHeadersJob implements ShouldQueue {
 			$response->wait();
 		} catch ( Exception $ex ) {
 			// only way to make it async
-			Log::warning( 'domXss has started' );
+			Log::warning( 'headerscan has started' );
 		}
 	}
 
