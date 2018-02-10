@@ -2,26 +2,27 @@
 
 namespace App\Jobs;
 
+use App\Scan;
 use Exception;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-use GuzzleHttp\Client;
-use App\Scan;
-use GuzzleHttp\Psr7\Request;
 use Log;
 
-class ScanHeadersJob implements ShouldQueue {
-	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+class ScanInisJob implements ShouldQueue
+{
+    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-	protected $scan;
+   protected $scan;
 
 	/**
 	 * Create a new job instance.
 	 *
-	 * @return void
+	 * @param Scan $scan
 	 */
 	public function __construct( Scan $scan ) {
 		$this->scan = $scan;
@@ -38,13 +39,13 @@ class ScanHeadersJob implements ShouldQueue {
 		] );
 
 		$scanResult = $this->scan->results()->create( [
-			'scanner_type' => 'hsts',
+			'scanner_type' => 'ini-s',
 		] );
 
 		$callbackUrl = route( 'callback', [ 'scanId' => $scanResult->id ] );
 
 		$client  = new Client();
-		$request = new Request( 'POST', env( 'HEADER_SCANNER_URL' ) . '/api/v1/header', [ 'timeout' => 0.5 ], \GuzzleHttp\json_encode( [
+		$request = new Request( 'POST', env( 'INI_S_SCANNER_URL' ) , [ 'timeout' => 0.5 ], \GuzzleHttp\json_encode( [
 			'url'          => $this->scan->url,
 			'callbackurls' => [ $callbackUrl ]
 		] ) );
@@ -55,7 +56,7 @@ class ScanHeadersJob implements ShouldQueue {
 		} catch ( Exception $ex ) {
 			// only way to make it async
 			// promise running against timeout
-			Log::warning( 'headerscan has started' );
+			Log::warning( 'ini-s has started' );
 		}
 	}
 
