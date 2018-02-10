@@ -45,12 +45,13 @@ class ScanDOMXSSJob implements ShouldQueue
         $callbackUrl = route('callback', [ 'scanId' => $scanResult->id ]);
 
         $client = new Client();
-        $request = new Request('POST', env('DOMXSS_SCANNER_URL') . '/api/v1/domxss', [], \GuzzleHttp\json_encode([
+        $request = new Request('POST', env('DOMXSS_SCANNER_URL') . '/api/v1/domxss', ['connect_timeout' => 0.5], \GuzzleHttp\json_encode([
                 'url' => $this->scan->url,
                 'callbackurls' => [$callbackUrl]
         ]));
 
-        $response = $client->send($request);
+        $response = $client->sendAsync($request);
+        $response->wait();
     }
 
 }
