@@ -22,7 +22,7 @@ class ScanController extends Controller
         $token = Token::getTokenByString(($request->header('siwecosToken')));
         
         if ($token->reduceCredits() ) {
-
+			Log::info('User ' . $token->id . ' requested Scan Start');
             // create a new scan order
             $scan = $token->scans()->create([
                 'token_id' => $token->id,
