@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
+use Log;
 
 /**
  * App\Domain
@@ -117,19 +118,22 @@ class Domain extends Model
     }
 
 
-    /**
-     * @param string $domain
-     * @param int $tokenId
-     * @return Domain
-     */
+	/**
+	 * @param string $domain
+	 * @param int $tokenId
+	 *
+	 * @return Domain
+	 */
     public static function getDomainOrFail(string $domain, int $tokenId)
     {
-    	\Log::warning('DOMAIN: ' . $domain . ' ID: ' . $tokenId);
+    	Log::warning('DOMAIN: ' . $domain . ' ID: ' . $tokenId);
+
         $domain = Domain::where(['domain' => $domain, 'token_id' => $tokenId])->first();
         if ($domain instanceof Domain)
         {
             return $domain;
         }
+        return null;
     }
 
 }
