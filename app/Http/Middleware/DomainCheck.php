@@ -20,6 +20,7 @@ class DomainCheck
         \Log::info('DomainCheck: ' . json_encode($request->json()->all()));
         $headerToken = Token::getTokenByString($request->header('siwecosToken'));
         $domainCheck = Domain::getDomainOrFail($request->json('domain'), $headerToken->id);
+         \Log::info('DomainFound: '. $domainCheck->domain);
         if ($domainCheck instanceof Domain)
         {
             if ((bool)$domainCheck->verified)
