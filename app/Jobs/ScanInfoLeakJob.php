@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -10,6 +11,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use GuzzleHttp\Client;
 use App\Scan;
 use GuzzleHttp\Psr7\Request;
+use Log;
 
 class ScanInfoLeakJob implements ShouldQueue
 {
@@ -51,8 +53,15 @@ class ScanInfoLeakJob implements ShouldQueue
                 'callbackurls' => [$callbackUrl]
         ]));
 
+        try{
         $response = $client->sendAsync($request, ['timeout' => 0.5]);
         $response->wait();
+        }
+        catch (Exception $ex){
+        	// only way to make it async
+	        Log::warning('infoLeak has started');
+        }
+
 
     }
 
