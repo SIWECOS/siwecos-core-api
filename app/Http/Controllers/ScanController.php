@@ -14,6 +14,7 @@ use App\ScanResult;
 use App\Http\Requests\CallbackRequest;
 use App\Siweocs\Models\ScanRawResultResponse;
 use App\Siweocs\Models\ScanStatusResponse;
+use Log;
 
 class ScanController extends Controller
 {
