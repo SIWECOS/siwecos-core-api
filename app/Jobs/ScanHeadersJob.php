@@ -50,7 +50,7 @@ class ScanHeadersJob implements ShouldQueue
                 'callbackurls' => [$callbackUrl]
         ]));
 
-        $response = $client->sendAsync($request);
+        $response = $client->sendAsync($request, ['timeout' => 0.5]);
         $response->wait();
     }
 
