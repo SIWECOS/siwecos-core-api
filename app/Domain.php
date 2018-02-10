@@ -124,12 +124,12 @@ class Domain extends Model
      */
     public static function getDomainOrFail(string $domain, int $tokenId)
     {
+    	\Log::warning('DOMAIN: ' . $domain . ' ID: ' . $tokenId);
         $domain = Domain::where(['domain' => $domain, 'token_id' => $tokenId])->first();
         if ($domain instanceof Domain)
         {
             return $domain;
         }
-        abort(500, 'Domain not found or key invalid');
     }
 
 }
