@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ScanInisJob;
 use App\Scan;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use App\Http\Requests\ScannerStartRequest;
 use App\Jobs\ScanHeadersJob;
@@ -94,9 +95,11 @@ class ScanController extends Controller {
 
 				$client->sendAsync( $request );
 			}
-		} else {
+		}
+
+		if ($scanResult->result === null || !isset($scanResult->result)){
 			$scanResult->update( [
-				'result' => '' // NO RESPONSE
+				'result' => array()
 			] );
 		}
 
