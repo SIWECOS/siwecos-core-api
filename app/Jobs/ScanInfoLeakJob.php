@@ -45,7 +45,7 @@ class ScanInfoLeakJob implements ShouldQueue
         $callbackUrl = route('callback', [ 'scanId' => $scanResult->id ]);
 
         $client = new Client();
-        $request = new Request('POST', env('INFOLEAK_SCANNER_URL') . '', ['connect_timeout' => 0.5], \GuzzleHttp\json_encode([
+        $request = new Request('POST', env('INFOLEAK_SCANNER_URL') . '', ['timeout' => 0.5], \GuzzleHttp\json_encode([
                 'url' => $this->scan->url,
                 'dangerLevel' => '1',
                 'callbackurls' => [$callbackUrl]
