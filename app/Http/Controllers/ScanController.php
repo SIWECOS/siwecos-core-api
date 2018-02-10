@@ -43,7 +43,7 @@ class ScanController extends Controller
             // TODO: dispatch TLS-Scanner
 
             // TODO: Send Response
-
+			return response()->json(['success' => true, 'message' => 'scan started']);
         }
     }
 
