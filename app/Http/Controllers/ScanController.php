@@ -100,6 +100,9 @@ class ScanController extends Controller
                 $client->sendAsync($request);
             }
         }
+        $scanResult->update([
+        	'result' => [json_encode(['hasError' =>true, 'errorMessage' => 'NO_RESULTS'])]
+        ]);
 		Log::warning('CALLBACK FOR SCAN: ' . $scanId);
         $this->updateScanStatus(Scan::find($scanResult->scan_id)->first());
     }
