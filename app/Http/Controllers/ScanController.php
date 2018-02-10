@@ -100,7 +100,7 @@ class ScanController extends Controller
                 $client->sendAsync($request);
             }
         }
-
+		Log::warning('CALLBACK FOR SCAN: ' . $scanId);
         $this->updateScanStatus(Scan::find($scanResult->scan_id)->first());
     }
     
