@@ -35,9 +35,9 @@ paths:
           schema: 
             type: object
             required:
-            - url
+            - domain
             properties:
-              url:
+              domain:
                 type: string
               dangerLevel:
                 type: integer
