@@ -79,7 +79,7 @@ class ScanController extends Controller
 
 	    /** @var ScanResult $scanResult */
 	    $scanResult = ScanResult::findOrFail( $scanId );
-		Log::info( $scanId .  ' Callback: ' . json_encode( $request->json()->all() ) );
+		Log::info( $scanId . ' / ' . $scanResult->scan_id .  ' Callback: ' . json_encode( $request->json()->all() ) );
 		if ( ! $request->json( 'hasError' ) ) {
 			$scanResult->update( [
 				'result' => $request->json( 'tests' )
