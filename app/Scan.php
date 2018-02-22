@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\ScanResult;
+use Log;
 
 /**
  * App\Scan
