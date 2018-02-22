@@ -76,9 +76,10 @@ class ScanController extends Controller
     // TODO: Check and Test
     public function callback(Request $request, int $scanId)
     {
-		
-		$scanResult = ScanResult::findOrFail( $scanId );
-		Log::info( 'Callback: ' . json_encode( $request->json()->all() ) );
+
+	    /** @var ScanResult $scanResult */
+	    $scanResult = ScanResult::findOrFail( $scanId );
+		Log::info( $scanId .  ' Callback: ' . json_encode( $request->json()->all() ) );
 		if ( ! $request->json( 'hasError' ) ) {
 			$scanResult->update( [
 				'result' => $request->json( 'tests' )
