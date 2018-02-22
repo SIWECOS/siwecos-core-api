@@ -99,7 +99,6 @@ class ScanController extends Controller
             // TODO: Log error message
         }
 
-		Log::warning( 'CALLBACK FOR SCAN: ' . $scanId );
 		$this->updateScanStatus( Scan::find( $scanResult->scan_id )->first() );
 	}
 
