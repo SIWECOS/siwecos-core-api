@@ -57,8 +57,6 @@ class ScanJob implements ShouldQueue
         ]));
 
         try {
-			Log::info( 'Calling ' . $request->getUri() );
-			Log::info( 'Payload ' . $request->getBody() );
 			$response = $client->sendAsync( $request, [ 'timeout' => 0.5 ] );
 			$response->wait();
 		} catch ( Exception $ex ) {
