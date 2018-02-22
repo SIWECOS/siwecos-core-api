@@ -104,6 +104,7 @@ class ScanController extends Controller
 
     protected function updateScanStatus(Scan $scan)
     {
+    	Log::info('Get Progress from id: ' . $scan->id . ' for ' . $scan->url);
         if ( $scan->getProgress() >= 99) {
             $scan->update([
                 'status' => 3
