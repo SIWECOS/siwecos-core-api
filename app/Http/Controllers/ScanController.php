@@ -100,7 +100,7 @@ class ScanController extends Controller
             // TODO: Log error message
         }
 
-		$this->updateScanStatus( Scan::find( $scanResult->scan_id )->first() );
+		$this->updateScanStatus( Scan::find( $scanResult->scan_id ) );
 	}
 
     protected function updateScanStatus(Scan $scan)
