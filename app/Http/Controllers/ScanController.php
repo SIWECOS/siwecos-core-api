@@ -44,6 +44,11 @@ class ScanController extends Controller
         }
     }
 
+    public function GetResultById(int $id){
+    	$scan =  Scan::find($id);
+    	return response()->json(new ScanRawResultResponse($scan));
+    }
+
 	public function status( Request $request ) {
 		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		$domain = Domain::getDomainOrFail( $request->get( 'url', $token->id ) );
@@ -64,7 +69,7 @@ class ScanController extends Controller
 		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		$domain = Domain::getDomainOrFail( $request->get( 'domain' ), $token->id );
 
-		$latestScan = $token->scans()->whereUrl( $domain->domain )->whereStatus( 2 )->latest()->first();
+		$latestScan = $token->scans()->whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
 
         if ($latestScan instanceof Scan)
             return response()->json(new ScanRawResultResponse($latestScan));
@@ -111,6 +116,10 @@ class ScanController extends Controller
                 'status' => 3
             ]);
             $scan->save();
+
+            // Call broadcasting api from business layer
+	        $client = new Client();
+	        $client->get('https://bla.staging2.siwecos.de/api/v1/freescan/' . $scan->id);
         }
     }
 
