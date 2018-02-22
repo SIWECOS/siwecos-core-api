@@ -25,8 +25,8 @@ Route::prefix('v1')->group(function () {
         Route::get('/domains', 'DomainController@list');
         Route::post('/domain/remove', 'DomainController@remove');
 
-
     });
+
 
 
     Route::post('/token/add', 'TokenController@add')->middleware('mastertokencheck');
