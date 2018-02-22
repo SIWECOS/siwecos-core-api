@@ -15,7 +15,7 @@ class ModifyScanresults extends Migration
     {
         Schema::table('scan_results', function (Blueprint $table) {
         	$table->integer('scan_id')->unsigned()->change();
-            $table->foreign('scan_id')->references('id')->on('scans');
+            $table->foreign('scan_id')->references('id')->on('scans')->onUpdate('cascade');
         }
         );
     }
