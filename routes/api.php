@@ -15,9 +15,11 @@
 Route::prefix('v1')->group(function () {
     Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
     Route::get('/scan/result/{id}', 'ScanController@GetResultById');
+    Route::get('/scan/status', 'ScanController@status');
+
     Route::middleware(['tokencheck'])->group(function () {
         Route::post('/scan/start', 'ScanController@start')->middleware(['creditcheck', 'domaincheck']);
-        Route::get('/scan/status', 'ScanController@status');
+
         Route::get('/scan/result', 'ScanController@result')->middleware('domaincheck');;
         Route::get('/scan/result/raw', 'ScanController@resultRaw');
 
