@@ -54,8 +54,11 @@ class ScanController extends Controller
 //		$domain = Domain::getDomainOrFail( $request->get( 'url'), $token->id  );
 		$domain = Domain::whereDomain($request->get('url'))->first();
 		$scan = Scan::whereUrl( $domain->domain )->latest()->first();
-
-		return response()->json( new ScanStatusResponse( $scan ) );
+		if ($scan instanceof Scan)
+		{
+			return response()->json( new ScanStatusResponse( $scan ) );
+		}
+		return response('No results found', 422);
 
 	}
 
