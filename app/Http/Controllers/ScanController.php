@@ -50,7 +50,7 @@ class ScanController extends Controller
     }
 
 	public function status( Request $request ) {
-		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
+//		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 //		$domain = Domain::getDomainOrFail( $request->get( 'url'), $token->id  );
 		$domain = Domain::whereDomain($request->get('url'))->first();
 		$scan = Scan::whereDomain( $domain->domain )->latest()->first();
