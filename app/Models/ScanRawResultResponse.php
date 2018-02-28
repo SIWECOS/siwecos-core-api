@@ -12,12 +12,13 @@ class ScanRawResultResponse extends SiwecosBaseReponse
     public $scanners;
     public $domain;
 
+
     public function __construct(Scan $scan)
     {
         parent::__construct("current state of requested token");
         $this->domain = $scan->url;
-        $this->scanStarted = $scan->createdAt;
-        $this->scanFinished = $scan->updatedAt;
+        $this->scanStarted = $scan->created_at;
+        $this->scanFinished = $scan->updated_at;
         $this->scanners = $scan->results;
     }
 
