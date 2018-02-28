@@ -72,7 +72,7 @@ class ScanController extends Controller
 		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		$domain = Domain::getDomainOrFail( $request->get( 'domain' ), $token->id );
 
-		$latestScan = $token->scans()->whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
+		$latestScan = $token->scans->whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
 
         if ($latestScan instanceof Scan)
             return response()->json(new ScanRawResultResponse($latestScan));

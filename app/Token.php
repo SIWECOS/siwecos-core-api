@@ -81,7 +81,10 @@ class Token extends Model
         }
     }
 
-    public function scans()
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function scans()
     {
         return $this->hasMany(Scan::class);
     }
