@@ -66,10 +66,19 @@ class ScanController extends Controller {
 	}
 
 
-	public function getLastScanDate(string $format){
+	public function getLastScanDate( string $format, string $domain ) {
 		/** @var Scan $currentLastScan */
-		$currentLastScan = Scan::whereStatus(3)->get()->last();
-		return $currentLastScan->updated_at->format($format);
+		$domainReal      = 'https://' . $domain;
+		$currentLastScan = Scan::whereUrl( $domainReal )->where( 'status', '3' )->get()->last();
+		if ( $currentLastScan instanceof Scan ) {
+			return $currentLastScan->updated_at->format( $format );
+		}
+		$domainReal      = 'http://' . $domain;
+		$currentLastScan = Scan::whereUrl( $domainReal )->where( 'status', '3' )->get()->last();
+		if ( $currentLastScan instanceof Scan ) {
+			return $currentLastScan->updated_at->format( $format );
+		}
+		return response('No finished scan found', 422);
 	}
 
 
