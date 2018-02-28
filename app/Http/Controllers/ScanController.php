@@ -71,13 +71,16 @@ class ScanController extends Controller
 	public function resultRaw( Request $request ) {
 		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		$domain = Domain::getDomainOrFail( $request->get( 'domain' ), $token->id );
-
-		$latestScan = $token->scans()->whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
+		if ($domain instanceof Domain){
+			$latestScan = Scan::whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
 
         if ($latestScan instanceof Scan)
             return response()->json(new ScanRawResultResponse($latestScan));
 
         return response('No finished scan found.', 404);
+		}
+		return response('No domain found', 404);
+
     }
 
 
