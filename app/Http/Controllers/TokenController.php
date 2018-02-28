@@ -44,6 +44,8 @@ class TokenController extends Controller
                 return response()->json(new SiwecosBaseReponse('Token revoked', false));
             } catch (QueryException $queryException) {
                 return response()->json(new ErrorResponse($queryException->getMessage()));
+            } catch ( \Exception $e ) {
+            	return response($e->getMessage(), 500);
             }
         }
         return response('Token not found',404);
