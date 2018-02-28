@@ -10,6 +10,7 @@ class ScanRawResultResponse extends SiwecosBaseReponse
     public $scanStarted;
     public $scanFinished;
     public $scanners;
+    public $domain;
 
     public function __construct(Scan $scan)
     {
