@@ -54,9 +54,17 @@ class DomainController extends Controller
 
     public function remove(DomainAddRequest $request)
     {
+    	$domainFilter = parse_url( $request->json('domain') );
+		$domain = $domainFilter['scheme'] . '://' . $domainFilter['host'];
+
         $token = Token::getTokenByString($request->header('siwecosToken'));
-        $domain = Domain::getDomainOrFail($request->json('domain'), $token->id);
-        $domain->delete();
-        return response()->json(new SiwecosBaseReponse('Domain removed'));
+        $domain = Domain::getDomainOrFail($domain, $token->id);
+	    try {
+		    $domain->delete();
+	    } catch ( \Exception $e ) {
+	    	return response($e->getMessage(), 500);
+	    }
+
+	    return response()->json(new SiwecosBaseReponse('Domain removed'));
     }
 }
