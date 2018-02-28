@@ -15,6 +15,13 @@ class DomainController extends Controller
 {
     public function add(DomainAddRequest $request)
     {
+    	$domainFilter = parse_url( $request->get('domain') );
+		$domain = $domainFilter['scheme'] . '://' . $domainFilter['host'];
+
+		if (Domain::whereDomain($domain)->first() instanceof Domain){
+			return response('Domain already there', 500);
+		}
+
         $newdomain = new Domain(['domain' => $request->json('domain'), 'token' => $request->header('siwecosToken')]);
         try {
             $newdomain->save();
