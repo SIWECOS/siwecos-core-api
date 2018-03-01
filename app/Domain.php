@@ -12,28 +12,6 @@ use Log;
  * @property int $id
  * @property \Carbon\Carbon|null $created_at
  * @property \Carbon\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereCreatedAt( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereId( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereUpdatedAt( $value )
- * @mixin \Eloquent
- * @property string $domain
- * @property int $token_id
- * @property int $verified
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomain( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereTokenId( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified( $value )
- * @property string $domain_token
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomainToken( $value )
- */
-
-const METATAGNAME = 'siwecostoken';
-
-/**
- * App\Domain
- *
- * @property int $id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
  * @property string $domain
  * @property string $domain_token
  * @property int $token_id
@@ -47,7 +25,13 @@ const METATAGNAME = 'siwecostoken';
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified( $value )
  * @mixin \Eloquent
  * @property-read \App\Token $token
+ * @property string description
+ * @property User[] users
  */
+
+const METATAGNAME = 'siwecostoken';
+
+
 class Domain extends Model {
 
 

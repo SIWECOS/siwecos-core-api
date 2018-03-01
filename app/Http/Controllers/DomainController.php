@@ -8,6 +8,7 @@ use App\Siweocs\Models\DomainAddResponse;
 use App\Siweocs\Models\DomainListResponse;
 use App\Siweocs\Models\SiwecosBaseReponse;
 use App\Token;
+use App\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 
@@ -19,13 +20,14 @@ class DomainController extends Controller
 		$domain = $domainFilter['scheme'] . '://' . $domainFilter['host'];
 
 		if (Domain::whereDomain($domain)->first() instanceof Domain){
+
 			return response('Domain already there', 500);
 		}
 
-        $newdomain = new Domain(['domain' => $request->json('domain'), 'token' => $request->header('siwecosToken')]);
+	    $newDomain = new Domain([ 'domain' => $request->json('domain'), 'token' => $request->header('siwecosToken')]);
         try {
-            $newdomain->save();
-            return response()->json(new DomainAddResponse($newdomain));
+            $newDomain->save();
+            return response()->json(new DomainAddResponse($newDomain));
         } catch (QueryException $queryException) {
             return response($queryException->getMessage(), 500);
         }
