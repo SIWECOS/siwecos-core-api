@@ -80,7 +80,7 @@ class ScanController extends Controller {
 		if ($freeScanDomain instanceof Domain){
 			//Domain already taken or another freescan has taken
 			/** @var Scan $lastScan */
-			$lastScan = $freeScanDomain->scans()->get()->last()->first();
+			$lastScan = $freeScanDomain->scans()->get()->last();
 			if ($lastScan instanceof Scan){
 				// return minified Version
 				return response()->json(new ScanStatusResponse($lastScan));
