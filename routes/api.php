@@ -16,8 +16,12 @@ Route::prefix('v1')->group(function () {
     Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
     Route::get('/scan/result/free/{id}', 'ScanController@GetResultById');
     Route::get('/scan/status', 'ScanController@status');
+
+    // Information for Seal of Trust
 	Route::get('/lastscan/{format?}/{domain?}', 'ScanController@getLastScanDate');
 	Route::get('/domainscan', 'ScanController@resultRawFree');
+	Route::post('/getFreeScan', 'ScanController@startFreeScan');
+
     Route::middleware(['tokencheck'])->group(function () {
         Route::post('/scan/start', 'ScanController@start')->middleware(['creditcheck', 'domaincheck']);
 

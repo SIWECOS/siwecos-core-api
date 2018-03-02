@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
 use Log;
 
+
+
+const METATAGNAME = 'siwecostoken';
+
+
 /**
  * App\Domain
  *
@@ -14,8 +19,10 @@ use Log;
  * @property \Carbon\Carbon|null $updated_at
  * @property string $domain
  * @property string $domain_token
- * @property int $token_id
+ * @property int|null $token_id
  * @property int $verified
+ * @property Scan[] scans
+ * @property-read \App\Token|null $token
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereCreatedAt( $value )
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomain( $value )
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomainToken( $value )
@@ -24,14 +31,7 @@ use Log;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereUpdatedAt( $value )
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified( $value )
  * @mixin \Eloquent
- * @property-read \App\Token $token
- * @property string description
- * @property User[] users
  */
-
-const METATAGNAME = 'siwecostoken';
-
-
 class Domain extends Model {
 
 
@@ -40,8 +40,8 @@ class Domain extends Model {
 	public function __construct( array $attributes = [] ) {
 		parent::__construct( $attributes );
 
-		if (array_key_exists('domain', $attributes)){
-			$domainFilter = parse_url( $attributes['domain']);
+		if ( array_key_exists( 'domain', $attributes ) ) {
+			$domainFilter = parse_url( $attributes['domain'] );
 			$this->domain = $domainFilter['scheme'] . '://' . $domainFilter['host'];
 		}
 		if ( array_key_exists( 'token', $attributes ) ) {
@@ -49,6 +49,7 @@ class Domain extends Model {
 			$this->token_id     = $token->id;
 			$this->domain_token = Keygen::alphanum( 64 )->generate();
 		}
+
 
 	}
 
@@ -74,6 +75,13 @@ class Domain extends Model {
 
 	public function token() {
 		return $this->belongsTo( Token::class );
+	}
+
+	/**
+	 * @return \Illuminate\Database\Eloquent\Relations\HasMany
+	 */
+	public function scans() {
+		return $this->hasMany(Scan::class, 'url', 'domain');
 	}
 
 
