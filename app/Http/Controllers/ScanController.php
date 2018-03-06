@@ -18,8 +18,8 @@ use Log;
 class ScanController extends Controller {
 	public function start( ScannerStartRequest $request ) {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
-
-		if ( $token->reduceCredits() ) {
+		Log::info('Token: ' . $token->token);
+		if ($token instanceof Token && $token->reduceCredits() ) {
 
 			// create a new scan order
 			$scan = $token->scans()->create( [
