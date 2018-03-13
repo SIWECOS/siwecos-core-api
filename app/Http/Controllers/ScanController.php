@@ -18,27 +18,32 @@ use Log;
 class ScanController extends Controller {
 	public function start( ScannerStartRequest $request ) {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
-		Log::info('Token: ' . $token->token);
-		if ($token instanceof Token && $token->reduceCredits() ) {
+		Log::info( 'Token: ' . $token->token );
+		if ( $token instanceof Token && $token->reduceCredits() ) {
+			self::startScanJob($token, $request->json('domain'));
+		}
+	}
 
-			// create a new scan order
-			$scan = $token->scans()->create( [
-				'token_id'     => $token->id,
-				'url'          => Domain::getDomainOrFail( $request->get( 'domain' ), $token->id )->domain,
-				'callbackurls' => $request->get( 'callbackurls' ),
-				'dangerLevel'  => $request->get( 'dangerLevel' ),
-			] );
+	public static function startScanJob( Token $token, string $domain ) {
+		// create a new scan order
+		/** @var Domain $currentDomain */
+		$currentDomain = Domain::getDomainOrFail( $domain, $token->id );
+		$scan          = $token->scans()->create( [
+			'token_id'     => $token->id,
+			'url'          => $currentDomain->domain,
+			'callbackurls' => [],
+			'dangerLevel'  => 5,
+		] );
 
-			// dispatch each scanner to the queue
-			foreach ( $_ENV as $key => $value ) {
-				if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
-					continue;
-				}
-				if ( ! preg_match( "/^https?:\/\//", $value ) ) {
-					continue;
-				}
-				ScanJob::dispatch( $scanner_name[1], $value, $scan );
+		// dispatch each scanner to the queue
+		foreach ( $_ENV as $key => $value ) {
+			if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
+				continue;
 			}
+			if ( ! preg_match( "/^https?:\/\//", $value ) ) {
+				continue;
+			}
+			ScanJob::dispatch( $scanner_name[1], $value, $scan );
 		}
 	}
 
@@ -70,49 +75,52 @@ class ScanController extends Controller {
 	 *
 	 * @return Scan
 	 */
-	public function startFreeScan(Request $request){
-		$domainFilter = parse_url( $request->json('domain') );
-		$domain = $domainFilter['scheme'] . '://' . $domainFilter['host'];
+	public function startFreeScan( Request $request ) {
+		$domainFilter = parse_url( $request->json( 'domain' ) );
+		$domain       = $domainFilter['scheme'] . '://' . $domainFilter['host'];
 
 		/** @var Domain $freeScanDomain */
-		$freeScanDomain = Domain::whereDomain($domain)->first();
+		$freeScanDomain = Domain::whereDomain( $domain )->first();
 
-		if ($freeScanDomain instanceof Domain){
+		if ( $freeScanDomain instanceof Domain ) {
 			//Domain already taken or another freescan has taken
 			/** @var Scan $lastScan */
 			$lastScan = $freeScanDomain->scans()->get()->last();
-			if ($lastScan instanceof Scan){
+			if ( $lastScan instanceof Scan ) {
 				// return minified Version
-				return response()->json(new ScanStatusResponse($lastScan));
+				return response()->json( new ScanStatusResponse( $lastScan ) );
 			}
-			return $this->startNewFreeScan($freeScanDomain);
+
+			return $this->startNewFreeScan( $freeScanDomain );
 		}
-		$freeScanDomain = new Domain(['domain' => $domain]);
+		$freeScanDomain = new Domain( [ 'domain' => $domain ] );
 		$freeScanDomain->save();
-		return $this->startNewFreeScan($freeScanDomain);
+
+		return $this->startNewFreeScan( $freeScanDomain );
 
 	}
 
-	protected function startNewFreeScan(Domain $freeScanDomain){
+	protected function startNewFreeScan( Domain $freeScanDomain ) {
 		// start Scan and Broadcast Result afterwards
-			/** @var Scan $scan */
-			$scan = $freeScanDomain->scans()->create( [
-				'url'          => $freeScanDomain,
-				'callbackurls' => [],
-				'dangerLevel'  => 0,
-			] );
+		/** @var Scan $scan */
+		$scan = $freeScanDomain->scans()->create( [
+			'url'          => $freeScanDomain,
+			'callbackurls' => [],
+			'dangerLevel'  => 0,
+		] );
 
-			// dispatch each scanner to the queue
-			foreach ( $_ENV as $key => $value ) {
-				if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
-					continue;
-				}
-				if ( ! preg_match( "/^https?:\/\//", $value ) ) {
-					continue;
-				}
-				ScanJob::dispatch( $scanner_name[1], $value, $scan );
+		// dispatch each scanner to the queue
+		foreach ( $_ENV as $key => $value ) {
+			if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
+				continue;
 			}
-			return response()->json(new ScanStatusResponse($scan));
+			if ( ! preg_match( "/^https?:\/\//", $value ) ) {
+				continue;
+			}
+			ScanJob::dispatch( $scanner_name[1], $value, $scan );
+		}
+
+		return response()->json( new ScanStatusResponse( $scan ) );
 	}
 
 	public function getLastScanDate( string $format, string $domain ) {
@@ -127,7 +135,8 @@ class ScanController extends Controller {
 		if ( $currentLastScan instanceof Scan ) {
 			return $currentLastScan->updated_at->format( $format );
 		}
-		return response('No finished scan found', 422);
+
+		return response( 'No finished scan found', 422 );
 	}
 
 
@@ -149,7 +158,7 @@ class ScanController extends Controller {
 	}
 
 	public function resultRawFree( Request $request ) {
-		$domain = Domain::whereDomain($request->get('domain'))->first();
+		$domain = Domain::whereDomain( $request->get( 'domain' ) )->first();
 		if ( $domain instanceof Domain ) {
 			$latestScan = Scan::whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
 
