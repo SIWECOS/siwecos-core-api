@@ -20,7 +20,7 @@ class ScanController extends Controller {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
-			self::startScanJob($token, $request->json('domain'));
+			return self::startScanJob($token, $request->json('domain'));
 		}
 	}
 
@@ -28,7 +28,8 @@ class ScanController extends Controller {
 		// create a new scan order
 		/** @var Domain $currentDomain */
 		$currentDomain = Domain::getDomainOrFail( $domain, $token->id );
-		$scan          = $token->scans()->create( [
+		/** @var Scan $scan */
+		$scan = $token->scans()->create( [
 			'token_id'     => $token->id,
 			'url'          => $currentDomain->domain,
 			'callbackurls' => [],
@@ -45,6 +46,7 @@ class ScanController extends Controller {
 			}
 			ScanJob::dispatch( $scanner_name[1], $value, $scan );
 		}
+		return response()->json(new ScanStatusResponse($scan));
 	}
 
 	public function GetResultById( int $id ) {
