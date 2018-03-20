@@ -78,21 +78,21 @@ class ScanController extends Controller {
 	public function startFreeScan( Request $request ) {
 		$domainFilter = parse_url( $request->json( 'domain' ) );
 		$domain       = $domainFilter['scheme'] . '://' . $domainFilter['host'];
-
+		Log::info('Start Freescan for:' . $domain);
 		/** @var Domain $freeScanDomain */
 		$freeScanDomain = Domain::whereDomain( $domain )->first();
 
-		if ( $freeScanDomain instanceof Domain ) {
-			//Domain already taken or another freescan has taken
-			/** @var Scan $lastScan */
-			$lastScan = $freeScanDomain->scans()->get()->last();
-			if ( $lastScan instanceof Scan ) {
-				// return minified Version
-				return response()->json( new ScanStatusResponse( $lastScan ) );
-			}
-
-			return $this->startNewFreeScan( $freeScanDomain );
-		}
+//		if ( $freeScanDomain instanceof Domain ) {
+//			//Domain already taken or another freescan has taken
+//			/** @var Scan $lastScan */
+//			$lastScan = $freeScanDomain->scans()->get()->last();
+//			if ( $lastScan instanceof Scan ) {
+//				// return minified Version
+//				return response()->json( new ScanStatusResponse( $lastScan ) );
+//			}
+//
+//			return $this->startNewFreeScan( $freeScanDomain );
+//		}
 		$freeScanDomain = new Domain( [ 'domain' => $domain ] );
 		$freeScanDomain->save();
 

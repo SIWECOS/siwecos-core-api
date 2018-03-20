@@ -21,6 +21,9 @@ class DomainCheck
         $headerToken = Token::getTokenByString($request->header('siwecosToken'));
         \Log::info('TOKEN (middleware): ' . $headerToken->token);
         $domainCheck = Domain::getDomainOrFail($request->json('domain'), $headerToken->id);
+        if (!($domainCheck instanceof Domain)){
+        	return response("Domain not found");
+        }
          \Log::info('DomainFound: '. $domainCheck->domain);
         if ($domainCheck instanceof Domain)
         {
