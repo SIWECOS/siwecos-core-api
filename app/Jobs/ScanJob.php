@@ -13,56 +13,54 @@ use App\Scan;
 use GuzzleHttp\Psr7\Request;
 use Log;
 
-class ScanJob implements ShouldQueue
-{
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+class ScanJob implements ShouldQueue {
+	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $scan;
-    protected $name;
-    protected $scanner_url;
+	protected $scan;
+	protected $name;
+	protected $scanner_url;
 
-    /**
-     * Create a new job instance.
-     *
-     * @return void
-     */
-    public function __construct(string $name, string $scanner_url, Scan $scan)
-    {
-        $this->scan = $scan;
-        $this->name = $name;
-        $this->scanner_url = $scanner_url;
-    }
+	/**
+	 * Create a new job instance.
+	 *
+	 * @return void
+	 */
+	public function __construct( string $name, string $scanner_url, Scan $scan ) {
+		$this->scan        = $scan;
+		$this->name        = $name;
+		$this->scanner_url = $scanner_url;
+	}
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
-    public function handle()
-    {
-        $this->scan->update([
-            'status' => 2
-        ]);
+	/**
+	 * Execute the job.
+	 *
+	 * @return void
+	 */
+	public function handle() {
+		$this->scan->update( [
+			'status' => 2
+		] );
 
-        $scanResult = $this->scan->results()->create([
-            'scanner_type' => $this->name,
-        ]);
+		$scanResult = $this->scan->results()->create( [
+			'scanner_type' => $this->name,
+		] );
 
-        $callbackUrl = route('callback', [ 'scanId' => $scanResult->id ]);
+		$callbackUrl = route( 'callback', [ 'scanId' => $scanResult->id ] );
 
-        $client = new Client();
-        $request = new Request('POST', $this->scanner_url, ['content-type' => 'application/json'], \GuzzleHttp\json_encode([
-                'url' => $this->scan->url,
-                'callbackurls' => [$callbackUrl]
-        ]));
+		$client  = new Client();
+		$request = new Request( 'POST', $this->scanner_url, [ 'content-type' => 'application/json' ], \GuzzleHttp\json_encode( [
+			'url'          => $this->scan->url,
+			'callbackurls' => [ $callbackUrl ],
+			'dangerLevel'  => $this->scan->dangerLevel
+		] ) );
 
-        try {
+		try {
 			$response = $client->sendAsync( $request, [ 'timeout' => 0.5 ] );
 			$response->wait();
 		} catch ( Exception $ex ) {
 			// only way to make it async
 			Log::info( $this->name . ' has started' );
 		}
-    }
+	}
 
 }
