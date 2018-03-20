@@ -15,6 +15,7 @@
 Route::prefix('v1')->group(function () {
     Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
     Route::get('/scan/result/free/{id}', 'ScanController@GetResultById');
+    Route::get('/scan/status/free/{id}', 'ScanController@GetStatusById');
     Route::get('/scan/status', 'ScanController@status');
 
     // Information for Seal of Trust

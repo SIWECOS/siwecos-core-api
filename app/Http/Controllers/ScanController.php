@@ -53,6 +53,12 @@ class ScanController extends Controller {
 		return response()->json( new ScanRawResultResponse( $scan ) );
 	}
 
+	public function GetStatusById( int $id ) {
+		$scan = Scan::find( $id );
+
+		return response()->json( new ScanStatusResponse( $scan ) );
+	}
+
 	public function status( Request $request ) {
 //		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 //		$domain = Domain::getDomainOrFail( $request->get( 'url'), $token->id  );
