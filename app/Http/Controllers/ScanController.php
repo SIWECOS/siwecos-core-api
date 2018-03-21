@@ -190,7 +190,7 @@ class ScanController extends Controller {
 		Log::info( $scanId . ' / ' . $scanResult->scan_id . ' Callback: ' . json_encode( $request->json()->all() ) );
 		if ( ! $request->json( 'hasError' ) ) {
 			$scanResult->update( [
-				'result' => json_encode($request->json()->all())
+				'result' => $request->json( 'tests' )
 			] );
 
 			//   Sends the ScanResult to the given callback urls.
