@@ -20,7 +20,7 @@ class ScanController extends Controller {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
-			return self::startScanJob($token, $request->json('domain'));
+			return self::startScanJob( $token, $request->json( 'domain' ) );
 		}
 	}
 
@@ -46,7 +46,8 @@ class ScanController extends Controller {
 			}
 			ScanJob::dispatch( $scanner_name[1], $value, $scan );
 		}
-		return response()->json(new ScanStatusResponse($scan));
+
+		return response()->json( new ScanStatusResponse( $scan ) );
 	}
 
 	public function GetResultById( int $id ) {
@@ -86,7 +87,7 @@ class ScanController extends Controller {
 	public function startFreeScan( Request $request ) {
 		$domainFilter = parse_url( $request->json( 'domain' ) );
 		$domain       = $domainFilter['scheme'] . '://' . $domainFilter['host'];
-		Log::info('Start Freescan for:' . $domain);
+		Log::info( 'Start Freescan for:' . $domain );
 		/** @var Domain $freeScanDomain */
 		$freeScanDomain = Domain::whereDomain( $domain )->first();
 
@@ -115,6 +116,7 @@ class ScanController extends Controller {
 			'url'          => $freeScanDomain,
 			'callbackurls' => [],
 			'dangerLevel'  => 0,
+			'freescan'     => 1
 		] );
 
 		// dispatch each scanner to the queue
