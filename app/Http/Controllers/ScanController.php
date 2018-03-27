@@ -116,7 +116,7 @@ class ScanController extends Controller {
 			'url'          => $freeScanDomain,
 			'callbackurls' => [],
 			'dangerLevel'  => 0,
-			'freescan'     => 1
+			'freescan'     => true
 		] );
 
 		// dispatch each scanner to the queue
