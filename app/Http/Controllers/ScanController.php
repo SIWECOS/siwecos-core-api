@@ -172,7 +172,7 @@ class ScanController extends Controller {
 	public function resultRawFree( Request $request ) {
 		$domain = Domain::whereDomain( $request->get( 'domain' ) )->first();
 		if ( $domain instanceof Domain ) {
-			$latestScan = Scan::whereUrl( $domain->domain )->whereStatus( 3 )->latest()->first();
+			$latestScan = Scan::whereUrl( $domain->domain )->whereFreescan(0)->whereStatus( 3 )->latest()->first();
 
 			if ( $latestScan instanceof Scan ) {
 				return response()->json( new ScanRawResultResponse( $latestScan ) );
