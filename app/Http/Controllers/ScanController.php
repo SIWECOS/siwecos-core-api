@@ -118,6 +118,8 @@ class ScanController extends Controller {
 			'dangerLevel'  => 0,
 			'freescan'     => true
 		] );
+		$scan->freescan = 1;
+		$scan->save();
 
 		// dispatch each scanner to the queue
 		foreach ( $_ENV as $key => $value ) {
