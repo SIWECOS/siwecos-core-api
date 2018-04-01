@@ -25,6 +25,29 @@ class ScanController extends Controller {
 	}
 
 	public static function startScanJob( Token $token, string $domain ) {
+
+	    /*
+	     *
+	     * SCANNER_HEADER_URL='http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header'
+
+SCANNER_DOMXSS_URL='http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/domxss'
+
+SCANNER_INFOLEAK_URL='http://scanner.staging2.siwecos.de/live-leak/current/'
+
+SCANNER_INI_S_URL='http://scanner.staging2.siwecos.de/ini-s-mwege/current/'
+
+SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
+	     */
+
+	    $scannerUrls = array();
+	    array_push($scannerUrls,['SCANNER_HEADER_URL' => 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header']);
+	    array_push($scannerUrls,['SCANNER_DOMXSS_URL' => 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/domxss']);
+	    array_push($scannerUrls,['SCANNER_INFOLEAK_URL' => 'http://scanner.staging2.siwecos.de/live-leak/current/']);
+	    array_push($scannerUrls,['SCANNER_INI_S_URL' => 'http://scanner.staging2.siwecos.de/ini-s-mwege/current/']);
+	    array_push($scannerUrls,['SCANNER_WS_TLS_URL' => 'http://scanner.staging2.siwecos.de:8080/start']);
+
+
+
 		// create a new scan order
 		/** @var Domain $currentDomain */
 		$currentDomain = Domain::getDomainOrFail( $domain, $token->id );
@@ -37,7 +60,7 @@ class ScanController extends Controller {
 		] );
 
 		// dispatch each scanner to the queue
-		foreach ( $_ENV as $key => $value ) {
+		foreach ( $scannerUrls as $key => $value ) {
 			if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
 				continue;
 			}
