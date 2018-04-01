@@ -39,7 +39,7 @@ class ScannerTimeout extends Command
      */
     public function handle()
     {
-        $notFinishedScans = Scan::where('created_at', '<', Carbon::now()->addMinutes(-5))->get();
+        $notFinishedScans = Scan::whereStatus('2')->where('created_at', '<', Carbon::now()->addMinutes(-5))->get();
         $this->info(Carbon::now()->addMinutes(-5));
         /** @var Scan $pendingScan */
         foreach ($notFinishedScans as $pendingScan){
