@@ -28,7 +28,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-	    $schedule->command(DailyScan::class)->everyFiveMinutes();
+	    //$schedule->command(DailyScan::class)->everyFiveMinutes();
 	    $schedule->command(ScannerTimeout::class)->everyMinute();
     }
 
