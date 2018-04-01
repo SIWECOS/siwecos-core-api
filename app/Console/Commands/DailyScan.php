@@ -43,9 +43,10 @@ class DailyScan extends Command {
 		$bar = $this->output->createProgressBar(count($domains));
 		foreach ( $domains as $domain ) {
             /** @var Scan $latestScan */
-            $latestScan = $domain->scans()->latest()->get();
-		    if ($domain->scans()->latest()->get() > Carbon::now()->addDays(-1)){
-		        Log::info('domain: ' . $domain->domain . ' / last scan: ' . $latestScan->updated_at);
+            $latestScan = $domain->scans()->latest()->first()->get();
+            Log::info('domain: ' . $domain->domain . ' / last scan: ' . $latestScan->updated_at);
+		    if ($latestScan->updated_at > Carbon::now()->addDays(-1)){
+
 		        continue;
             }
 			ScanController::startScanJob( $domain->token, $domain->domain );
