@@ -61,6 +61,7 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
 
 		// dispatch each scanner to the queue
 		foreach ( $scannerUrls as $key => $value ) {
+		    Log::info($key . ' ' . $value);
 			if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
 				continue;
 			}
