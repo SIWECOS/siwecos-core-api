@@ -59,9 +59,12 @@ class Scan extends Model
 
     public function getProgress() {
         $allResults = $this->results()->count();
-        $doneResults = $this->results()->whereNotNull('result')->count();
-		Log::info('Progress: ' . $allResults . ' ' . $doneResults);
-		Log::info(round(($doneResults / $allResults) * 100));
-        return round(($doneResults / $allResults) * 100);
+        if ($allResults > 0){
+            $doneResults = $this->results()->whereNotNull('result')->count();
+            Log::info('Progress: ' . $allResults . ' ' . $doneResults);
+            Log::info(round(($doneResults / $allResults) * 100));
+            return round(($doneResults / $allResults) * 100);
+        }
+        return 0;
     }
 }
