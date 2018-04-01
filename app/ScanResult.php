@@ -4,6 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Scan;
+use Illuminate\Support\Collection;
 
 /**
  * App\ScanResult
@@ -38,5 +39,10 @@ class ScanResult extends Model
 	public function scan()
     {
         return $this->belongsTo(Scan::class);
+    }
+
+    public function setTimeout(){
+	    $this->result = [];
+	    $this->save();
     }
 }
