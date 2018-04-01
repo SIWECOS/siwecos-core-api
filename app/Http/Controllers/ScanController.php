@@ -40,11 +40,11 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
 	     */
 
 	    $scannerUrls = array();
-	    array_push($scannerUrls,['SCANNER_HEADER_URL' => 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header']);
-	    array_push($scannerUrls,['SCANNER_DOMXSS_URL' => 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/domxss']);
-	    array_push($scannerUrls,['SCANNER_INFOLEAK_URL' => 'http://scanner.staging2.siwecos.de/live-leak/current/']);
-	    array_push($scannerUrls,['SCANNER_INI_S_URL' => 'http://scanner.staging2.siwecos.de/ini-s-mwege/current/']);
-	    array_push($scannerUrls,['SCANNER_WS_TLS_URL' => 'http://scanner.staging2.siwecos.de:8080/start']);
+	    array_push($scannerUrls,'SCANNER_HEADER_URL' => 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header');
+	    array_push($scannerUrls,'SCANNER_DOMXSS_URL' => 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/domxss');
+	    array_push($scannerUrls,'SCANNER_INFOLEAK_URL' => 'http://scanner.staging2.siwecos.de/live-leak/current/');
+	    array_push($scannerUrls,'SCANNER_INI_S_URL' => 'http://scanner.staging2.siwecos.de/ini-s-mwege/current/');
+	    array_push($scannerUrls,'SCANNER_WS_TLS_URL' => 'http://scanner.staging2.siwecos.de:8080/start');
 
 
 
