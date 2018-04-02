@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\DailyScan;
+use App\Console\Commands\RestockCredits;
 use App\Console\Commands\ScannerTimeout;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -30,6 +31,7 @@ class Kernel extends ConsoleKernel
         //          ->hourly();
 	    $schedule->command(DailyScan::class)->everyMinute()->sendOutputTo('scanResult.log', true);
 	    $schedule->command(ScannerTimeout::class)->everyMinute();
+	    $schedule->command(RestockCredits::class)->dailyAt('00:00');
     }
 
     /**
