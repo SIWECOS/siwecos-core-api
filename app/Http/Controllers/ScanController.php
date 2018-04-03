@@ -60,6 +60,9 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
             'recurrentscan' => $isRecurrent
 		] );
 
+		$scan->recurrentscan = $isRecurrent ? 1 : 0;
+		$scan->save();
+
 		// dispatch each scanner to the queue
 		foreach ( $scannerUrls as $key => $value ) {
 		    Log::info($key . ' ' . $value);
