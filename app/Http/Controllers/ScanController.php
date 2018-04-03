@@ -218,6 +218,7 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
 		$scanResult = ScanResult::findOrFail( $scanId );
 		Log::info( $scanId . ' / ' . $scanResult->scan_id . ' Callback: ' . json_encode( $request->json()->all() ) );
 		if ( ! $request->json( 'hasError' ) ) {
+		    Log::info($request->json('score') . ' für ' . $scanResult->scan_id);
 			$scanResult->update( [
 				'result' => $request->json( 'tests' ),
                 'total_score' => $request->json('score')
