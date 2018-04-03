@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UpdateReScanTable extends Migration
+class UpdateTotalscoreRecurrentsccan extends Migration
 {
     /**
      * Run the migrations.
@@ -14,8 +14,12 @@ class UpdateReScanTable extends Migration
     public function up()
     {
         Schema::table( 'scans', function ( Blueprint $table ) {
-			$table->boolean('freescan')->default(false);
-		} );
+            $table->boolean('recurrentscan')->default(false);
+        } );
+
+        Schema::table( 'scan_results', function ( Blueprint $table ) {
+            $table->integer('total_score')->default(0);
+        } );
     }
 
     /**

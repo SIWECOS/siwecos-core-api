@@ -23,6 +23,8 @@ use Illuminate\Support\Collection;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ScanResult whereScannerType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ScanResult whereUpdatedAt($value)
  * @mixin \Eloquent
+ * @property int $total_score
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ScanResult whereTotalScore($value)
  */
 class ScanResult extends Model
 {

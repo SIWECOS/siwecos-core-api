@@ -30,6 +30,8 @@ use Log;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereTokenId($value)
  * @property int $freescan
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereFreescan($value)
+ * @property int $recurrentscan
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereRecurrentscan($value)
  */
 class Scan extends Model
 {

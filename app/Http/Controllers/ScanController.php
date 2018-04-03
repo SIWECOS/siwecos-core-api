@@ -24,7 +24,7 @@ class ScanController extends Controller {
 		}
 	}
 
-	public static function startScanJob( Token $token, string $domain ) {
+	public static function startScanJob( Token $token, string $domain, bool $isRecurrent = false ) {
 
 	    /*
 	     *
@@ -57,6 +57,7 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
 			'url'          => $currentDomain->domain,
 			'callbackurls' => [],
 			'dangerLevel'  => 5,
+            'recurrentscan' => $isRecurrent
 		] );
 
 		// dispatch each scanner to the queue
@@ -218,7 +219,8 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
 		Log::info( $scanId . ' / ' . $scanResult->scan_id . ' Callback: ' . json_encode( $request->json()->all() ) );
 		if ( ! $request->json( 'hasError' ) ) {
 			$scanResult->update( [
-				'result' => $request->json( 'tests' )
+				'result' => $request->json( 'tests' ),
+                'total_score' => $request->json('score')
 			] );
 
 			//   Sends the ScanResult to the given callback urls.

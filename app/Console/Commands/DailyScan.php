@@ -50,7 +50,7 @@ class DailyScan extends Command {
                 Log::info('Skip Domain: ' . $domain->domain);
 		        continue;
             }
-			ScanController::startScanJob( $domain->token, $domain->domain );
+			ScanController::startScanJob( $domain->token, $domain->domain, true );
 			$this->info('Scan started for: ' . $domain->domain);
 			$bar->advance();
 		}
