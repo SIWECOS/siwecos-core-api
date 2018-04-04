@@ -44,7 +44,7 @@ class ScannerTimeout extends Command {
 			/** @var ScanResult $result */
 			foreach ( $pendingScan->results as &$result ) {
 				if ( $result->result == null ) {
-					$result = '[{
+					$result->result = '[{
     "name": "TIMEOUT",
     "hasError": true,
     "dangerlevel": 0,
@@ -57,6 +57,7 @@ class ScannerTimeout extends Command {
     "testDetails": []
 }]';
 				}
+				$result->save();
 			}
 			$this->info( $pendingScan->url );
 			$pendingScan->status = 3;
