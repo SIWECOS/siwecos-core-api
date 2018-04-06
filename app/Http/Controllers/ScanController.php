@@ -26,18 +26,6 @@ class ScanController extends Controller {
 
 	public static function startScanJob( Token $token, string $domain, bool $isRecurrent = false ) {
 
-	    /*
-	     *
-	     * SCANNER_HEADER_URL='http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header'
-
-SCANNER_DOMXSS_URL='http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/domxss'
-
-SCANNER_INFOLEAK_URL='http://scanner.staging2.siwecos.de/live-leak/current/'
-
-SCANNER_INI_S_URL='http://scanner.staging2.siwecos.de/ini-s-mwege/current/'
-
-SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
-	     */
 
 	    $scannerUrls = array();
 	    $scannerUrls['SCANNER_HEADER_URL'] = 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header';
@@ -239,7 +227,11 @@ SCANNER_WS_TLS_URL='http://scanner.staging2.siwecos.de:8080/start'
 				$client->sendAsync( $request );
 			}
 		} else {
-			// TODO: Log error message
+			$scanResult->update( [
+				'result' => $request->json( 'tests' ),
+                'total_score' => $request->json('score')
+			] );
+			$scanResult->save();
 		}
 
 		$this->updateScanStatus( Scan::find( $scanResult->scan_id ) );
