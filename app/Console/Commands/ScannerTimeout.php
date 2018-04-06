@@ -44,18 +44,7 @@ class ScannerTimeout extends Command {
 			/** @var ScanResult $result */
 			foreach ( $pendingScan->results as &$result ) {
 				if ( $result->result == null ) {
-					$result->result = '[{
-    "name": "TIMEOUT",
-    "hasError": true,
-    "dangerlevel": 0,
-    "errorMessage": {
-        "placeholder": "NO_ERRORS",
-        "values": []
-    },
-    "score": 0,
-    "scoreType": "success",
-    "testDetails": []
-}]';
+					$result->result = self::getTimeOutArray($result->scanner_type);
 				}
 				$result->save();
 			}
@@ -63,5 +52,22 @@ class ScannerTimeout extends Command {
 			$pendingScan->status = 3;
 			$pendingScan->save();
 		}
+	}
+
+	public static function getTimeOutArray( string $scanner ) {
+		$timeout                                           = array();
+		$timeout['name']                                   = 'TIMEOUT';
+		$timeout['hasError']                               = true;
+		$timeout['dangerlevel']                            = 0;
+		$timeout['score']                                  = 0;
+		$timeout['scoreType']                              = 'success';
+		$timeout['testDetails']                            = array();
+		$timeout['errorMessage']                           = array();
+		$timeout['errorMessage']['placeholder']            = 'SCANNER_TIMEOUT';
+		$timeout['errorMessage']['values']                 = array();
+		$timeout['errorMessage']['values']['scanner']      = $scanner;
+		$timeout['errorMessage']['values']['timeoutvalue'] = 300;
+		return json_encode($timeout);
+
 	}
 }
