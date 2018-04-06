@@ -229,7 +229,8 @@ class ScanController extends Controller {
 		} else {
 			$scanResult->update( [
 				'result' => $request->json( 'tests' ),
-                'total_score' => $request->json('score')
+                'total_score' => $request->json('score'),
+				'error_message' => $request->json('errorMessage')
 			] );
 			$scanResult->save();
 		}
