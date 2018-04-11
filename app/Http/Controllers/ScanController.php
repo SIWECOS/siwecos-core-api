@@ -44,7 +44,7 @@ class ScanController extends Controller {
 			'token_id'     => $token->id,
 			'url'          => $currentDomain->domain,
 			'callbackurls' => [],
-			'dangerLevel'  => 5,
+			'dangerLevel'  => 10,
             'recurrentscan' => $isRecurrent
 		] );
 

@@ -51,6 +51,7 @@ class ScanJob implements ShouldQueue {
 		$request = new Request( 'POST', $this->scanner_url, [ 'content-type' => 'application/json' ], \GuzzleHttp\json_encode( [
 			'url'          => $this->scan->url,
 			'callbackurls' => [ $callbackUrl ],
+			'dangerLevel'  => $this->scan->dangerLevel,
 		] ) );
 
 		try {
