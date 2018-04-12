@@ -37,14 +37,20 @@ class ScannerTimeout extends Command {
 	 * @return mixed
 	 */
 	public function handle() {
-		$notFinishedScans = Scan::whereStatus( '2' )->where( 'created_at', '<', Carbon::now()->addMinutes( - 5 ) )->get();
+		$timeout = getenv('SCANNER_TIMEOUT');
+		if( $timeout ) {
+			$timeout = intval( $timeout, 10 );
+		} else {
+			$timeout = 300;
+		}
+		$notFinishedScans = Scan::whereStatus( '2' )->where( 'created_at', '<', Carbon::now()->subSeconds( $timeout ) )->get();
 		$this->info( Carbon::now()->addMinutes( - 5 ) );
 		/** @var Scan $pendingScan */
 		foreach ( $notFinishedScans as $pendingScan ) {
 			/** @var ScanResult $result */
 			foreach ( $pendingScan->results as &$result ) {
 				if ( $result->result == null ) {
-					$result->result = self::getTimeOutArray($result->scanner_type);
+					$result->result = self::getTimeOutArray($result->scanner_type, $timeout);
 				}
 				$result->save();
 			}
@@ -54,9 +60,7 @@ class ScannerTimeout extends Command {
 		}
 	}
 
-	public static function getTimeOutArray( string $scanner ) {
-		$to_val = getenv('SCANNER_TIMEOUT');
-		if( ! $to_val ) $to_val = 300;
+	public static function getTimeOutArray( string $scanner, $to_val ) {
 		$timeout                                           = array();
 		$timeout['name']                                   = 'TIMEOUT';
 		$timeout['hasError']                               = true;
