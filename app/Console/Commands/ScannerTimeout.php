@@ -73,7 +73,7 @@ class ScannerTimeout extends Command {
 		$timeout['errorMessage']['values']                 = array();
 		$timeout['errorMessage']['values']['scanner']      = $scanner;
 		$timeout['errorMessage']['values']['timeoutvalue'] = $to_val;
-		return json_encode($timeout);
+		return $timeout;
 
 	}
 }
