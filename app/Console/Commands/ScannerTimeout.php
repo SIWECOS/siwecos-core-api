@@ -52,7 +52,6 @@ class ScannerTimeout extends Command {
 			foreach ( $pendingScan->results as &$result ) {
 				if ( $result->result == null ) {
 					$result->result = self::getTimeOutArray($result->scanner_type, $timeout);
-					$this->info($result);
 				}
 				$result->save();
 			}
@@ -75,7 +74,7 @@ class ScannerTimeout extends Command {
 		$timeout['errorMessage']['values']                 = array();
 		$timeout['errorMessage']['values']['scanner']      = $scanner;
 		$timeout['errorMessage']['values']['timeoutvalue'] = $to_val;
-		return $timeout;
+		return array($timeout);
 
 	}
 }
