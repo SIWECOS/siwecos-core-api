@@ -20,20 +20,11 @@ class ScanController extends Controller {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
-			return self::startScanJob( $token, $request->json( 'domain' ) );
+			return self::startScanJob( $token, $request->json( 'domain' ), false, $request->json('dangerLevel') );
 		}
 	}
 
-	public static function startScanJob( Token $token, string $domain, bool $isRecurrent = false ) {
-
-
-	    $scannerUrls = array();
-	    $scannerUrls['SCANNER_HEADER_URL'] = 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/header';
-	    $scannerUrls['SCANNER_DOMXSS_URL'] = 'http://scanner.staging2.siwecos.de/live-hshs/current/public/api/v1/domxss';
-	    $scannerUrls['SCANNER_INFOLEAK_URL'] = 'http://scanner.staging2.siwecos.de/live-leak/current/';
-	    $scannerUrls['SCANNER_INI_S_URL'] = 'http://scanner.staging2.siwecos.de/ini-s-mwege/current/';
-	    $scannerUrls['SCANNER_WS_TLS_URL'] = 'http://scanner.staging2.siwecos.de:8080/start';
-
+	public static function startScanJob( Token $token, string $domain, bool $isRecurrent = false, int $dangerLevel = 0 ) {
 
 
 		// create a new scan order
@@ -44,7 +35,7 @@ class ScanController extends Controller {
 			'token_id'     => $token->id,
 			'url'          => $currentDomain->domain,
 			'callbackurls' => [],
-			'dangerLevel'  => 10,
+			'dangerLevel'  => $dangerLevel,
             'recurrentscan' => $isRecurrent
 		] );
 
