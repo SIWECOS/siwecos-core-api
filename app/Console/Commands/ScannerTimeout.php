@@ -55,6 +55,8 @@ class ScannerTimeout extends Command {
 	}
 
 	public static function getTimeOutArray( string $scanner ) {
+		$to_val = getenv('SCANNER_TIMEOUT');
+		if( ! $to_val ) $to_val = 300;
 		$timeout                                           = array();
 		$timeout['name']                                   = 'TIMEOUT';
 		$timeout['hasError']                               = true;
@@ -66,7 +68,7 @@ class ScannerTimeout extends Command {
 		$timeout['errorMessage']['placeholder']            = 'SCANNER_TIMEOUT';
 		$timeout['errorMessage']['values']                 = array();
 		$timeout['errorMessage']['values']['scanner']      = $scanner;
-		$timeout['errorMessage']['values']['timeoutvalue'] = 300;
+		$timeout['errorMessage']['values']['timeoutvalue'] = $to_val;
 		return json_encode($timeout);
 
 	}
