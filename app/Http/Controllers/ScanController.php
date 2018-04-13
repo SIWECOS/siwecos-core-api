@@ -43,8 +43,9 @@ class ScanController extends Controller {
 		$scan->recurrentscan = $isRecurrent ? 1 : 0;
 		$scan->save();
 
+
 		// dispatch each scanner to the queue
-		foreach ( getenv() as $key => $value ) {
+		foreach ( $_ENV as $key => $value ) {
 		    Log::info($key . ' ' . $value);
 			if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
 				continue;
