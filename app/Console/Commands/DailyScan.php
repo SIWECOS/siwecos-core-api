@@ -45,9 +45,7 @@ class DailyScan extends Command {
 		foreach ( $domains as $domain ) {
             /** @var Scan $latestScan */
             $latestScan = $domain->scans()->latest()->first();
-            Log::info('domain: ' . $domain->domain . ' / last scan: ' . $latestScan->updated_at);
 		    if ($latestScan->updated_at > Carbon::now()->addDays(-1)){
-                Log::info('Skip Domain: ' . $domain->domain);
 		        continue;
             }
 			ScanController::startScanJob( $domain->token, $domain->domain, true );
