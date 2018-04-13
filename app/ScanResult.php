@@ -25,13 +25,19 @@ use Illuminate\Support\Collection;
  * @mixin \Eloquent
  * @property int $total_score
  * @method static \Illuminate\Database\Eloquent\Builder|\App\ScanResult whereTotalScore($value)
+ * @property string|null $complete_request
+ * @property int $has_error
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ScanResult whereCompleteRequest($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\ScanResult whereHasError($value)
  */
 class ScanResult extends Model
 {
-    protected $fillable = ['result', 'scanner_type'];
+    protected $fillable = ['result', 'scanner_type', 'complete_request', 'has_error'];
 
     protected $casts = [
-        'result' => 'collection'
+        'result' => 'collection',
+	    'complete_request' => 'collection',
+	    'has_error' => 'bool'
     ];
 
 
