@@ -44,7 +44,7 @@ class ScanController extends Controller {
 		$scan->save();
 
 		// dispatch each scanner to the queue
-		foreach ( env() as $key => $value ) {
+		foreach ( getenv() as $key => $value ) {
 		    Log::info($key . ' ' . $value);
 			if ( ! preg_match( "/^SCANNER_(\w+)_URL$/", $key, $scanner_name ) ) {
 				continue;
