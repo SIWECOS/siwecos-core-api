@@ -20,7 +20,7 @@ class ScanController extends Controller {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
-			$dangerlevel = request->json('dangerLevel') ? $request->json('dangerLevel') : 10;
+			$dangerlevel = $request->json('dangerLevel') ?? 10;
 			return self::startScanJob( $token, $request->json( 'domain' ), false,  $dangerlevel);
 		}
 	}
