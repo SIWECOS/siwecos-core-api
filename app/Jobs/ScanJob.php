@@ -12,6 +12,7 @@ use GuzzleHttp\Client;
 use App\Scan;
 use GuzzleHttp\Psr7\Request;
 use Log;
+use Psr\Http\Message\ResponseInterface;
 
 class ScanJob implements ShouldQueue {
 	use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -55,8 +56,12 @@ class ScanJob implements ShouldQueue {
 		] ) );
 
 		try {
-			$response = $client->sendAsync( $request, [ 'timeout' => 0.5 ] );
-			$response->wait();
+			$response = $client->sendAsync( $request );
+
+			$response->then( function ( ResponseInterface $res ) {
+				Log::info($res->getStatusCode());
+			} );
+
 		} catch ( Exception $ex ) {
 			// only way to make it async
 			Log::info( $this->name . ' has started' );
