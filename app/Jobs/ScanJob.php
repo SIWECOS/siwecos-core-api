@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use Exception;
+use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -58,10 +59,9 @@ class ScanJob implements ShouldQueue {
 		try {
 			$response = $client->sendAsync( $request );
 
+			/** @var Response $promise */
 			$promise = $response->wait();
-			$promise->then( function ( ResponseInterface $res ) {
-				Log::info( $res->getStatusCode() );
-			} );
+			Log::info( $promise->getStatusCode() );
 
 		} catch ( Exception $ex ) {
 			// only way to make it async
