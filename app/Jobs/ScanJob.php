@@ -77,7 +77,7 @@ class ScanJob implements ShouldQueue {
 
 	public static function getErrorArray( string $scanner, int $status ) {
 		$timeout                                         = array();
-		$timeout['name']                                 = 'TIMEOUT';
+		$timeout['name']                                 = 'SCANNER_ERROR';
 		$timeout['hasError']                             = true;
 		$timeout['dangerlevel']                          = 0;
 		$timeout['score']                                = 0;
