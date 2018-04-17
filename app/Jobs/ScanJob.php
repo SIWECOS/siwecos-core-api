@@ -61,7 +61,7 @@ class ScanJob implements ShouldQueue {
 
 			/** @var Response $promise */
 			$promise = $response->wait();
-			Log::info( $promise->getStatusCode() );
+			Log::info( "StatusCode: " . $promise->getStatusCode() );
 
 		} catch ( Exception $ex ) {
 			// only way to make it async
