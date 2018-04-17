@@ -58,8 +58,9 @@ class ScanJob implements ShouldQueue {
 		try {
 			$response = $client->sendAsync( $request );
 
-			$response->wait()->then( function ( ResponseInterface $res ) {
-				Log::info($res->getStatusCode());
+			$promise = $response->wait();
+			$promise->then( function ( ResponseInterface $res ) {
+				Log::info( $res->getStatusCode() );
 			} );
 
 		} catch ( Exception $ex ) {
