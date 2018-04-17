@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\ScanResult;
 use Exception;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Bus\Queueable;
@@ -43,6 +44,7 @@ class ScanJob implements ShouldQueue {
 			'status' => 2
 		] );
 
+		/** @var ScanResult $scanResult */
 		$scanResult = $this->scan->results()->create( [
 			'scanner_type' => $this->name,
 		] );
@@ -61,12 +63,34 @@ class ScanJob implements ShouldQueue {
 
 			/** @var Response $promise */
 			$promise = $response->wait();
-			Log::info( "StatusCode: " . $promise->getStatusCode() );
+			$status  = $promise->getStatusCode();
+			Log::info( "StatusCode: " . $status );
+			if ( $status !== 200 ) {
+				$scanResult->result = self::getErrorArray($this->scan, $status);
+			}
 
 		} catch ( Exception $ex ) {
 			// only way to make it async
 			Log::info( $this->name . ' has started' );
 		}
+	}
+
+	public static function getErrorArray( string $scanner, int $status ) {
+		$timeout                                         = array();
+		$timeout['name']                                 = 'TIMEOUT';
+		$timeout['hasError']                             = true;
+		$timeout['dangerlevel']                          = 0;
+		$timeout['score']                                = 0;
+		$timeout['scoreType']                            = 'success';
+		$timeout['testDetails']                          = array();
+		$timeout['errorMessage']                         = array();
+		$timeout['errorMessage']['placeholder']          = 'SCANNER_ERROR';
+		$timeout['errorMessage']['values']               = array();
+		$timeout['errorMessage']['values']['scanner']    = $scanner;
+		$timeout['errorMessage']['values']['statuscode'] = $status;
+
+		return array( $timeout );
+
 	}
 
 }
