@@ -64,7 +64,7 @@ class ScanJob implements ShouldQueue {
 			/** @var Response $promise */
 			$promise = $response->wait();
 			$status  = $promise->getStatusCode();
-			Log::info( "StatusCode: " . $status );
+			Log::info( "StatusCode for ".$this->name." (".$scanResult->scan_id."): " . $status );
 			if ( $status !== 200 ) {
 				$scanResult->result = self::getErrorArray($this->scan, $status);
 			}
