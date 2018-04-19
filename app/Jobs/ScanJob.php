@@ -50,7 +50,7 @@ class ScanJob implements ShouldQueue {
 		] );
 
 		$callbackUrl = route( 'callback', [ 'scanId' => $scanResult->id ] );
-
+		Log::info('Callback Route' . $callbackUrl);
 		$client  = new Client();
 		$request = new Request( 'POST', $this->scanner_url, [ 'content-type' => 'application/json' ], \GuzzleHttp\json_encode( [
 			'url'          => $this->scan->url,
