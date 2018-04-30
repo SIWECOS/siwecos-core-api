@@ -58,6 +58,7 @@ class Domain extends Model {
 	 * @return bool
 	 */
 	public function checkMetatags() {
+		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 		$tags = get_meta_tags( $this->domain );
 		foreach ( $tags as $tagkey => $tagvalue ) {
 			if ( $tagkey == METATAGNAME ) {
