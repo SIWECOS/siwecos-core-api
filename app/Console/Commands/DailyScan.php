@@ -45,10 +45,10 @@ class DailyScan extends Command {
 		foreach ( $domains as $domain ) {
             /** @var Scan $latestScan */
             $latestScan = $domain->scans()->latest()->first();
-		    if ($latestScan->updated_at > Carbon::now()->addDays(-1)){
+		    if ($latestScan && $latestScan instanceof Scan && $latestScan->updated_at > Carbon::now()->addDays(-1)){
 		        continue;
             }
-			ScanController::startScanJob( $domain->token, $domain->domain, true );
+			ScanController::startScanJob( $domain->token, $domain->domain, true, 10 );
 			$this->info('Scan started for: ' . $domain->domain);
 			$bar->advance();
 		}

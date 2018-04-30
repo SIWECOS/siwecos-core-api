@@ -206,9 +206,11 @@ class ScanController extends Controller {
 		    Log::info($request->json('score') . ' für ' . $scanResult->id);
 			$scanResult->update( [
 				'result' => $request->json( 'tests' ),
-                'total_score' => $request->json('score')
+                'total_score' => $request->json('score'),
 			] );
             $scanResult->total_score = $request->json('score');
+            $scanResult->has_error = 0;
+            $scanResult->complete_request = $request->json()->all();
             $scanResult->save();
 			//   Sends the ScanResult to the given callback urls.
 			foreach ( $scanResult->scan->callbackurls as $callback ) {
@@ -226,6 +228,9 @@ class ScanController extends Controller {
                 'total_score' => $request->json('score'),
 				'error_message' => $request->json('errorMessage')
 			] );
+			$scanResult->has_error = 1;
+            $scanResult->complete_request = $request->json()->all();
+            $scanResult->save();
 			$scanResult->save();
 		}
 
