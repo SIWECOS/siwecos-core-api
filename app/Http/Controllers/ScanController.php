@@ -148,12 +148,12 @@ class ScanController extends Controller {
 	public function getLastScanDate( string $format, string $domain ) {
 		/** @var Scan $currentLastScan */
 		$domainReal      = 'https://' . $domain;
-		$currentLastScan = Scan::whereUrl( $domainReal )->where( 'status', '3' )->get()->last();
+		$currentLastScan = Scan::whereUrl( $domainReal )->where( 'status', '3' )->whereFreeScan(0)->get()->last();
 		if ( $currentLastScan instanceof Scan ) {
 			return $currentLastScan->updated_at->format( $format );
 		}
 		$domainReal      = 'http://' . $domain;
-		$currentLastScan = Scan::whereUrl( $domainReal )->where( 'status', '3' )->get()->last();
+		$currentLastScan = Scan::whereUrl( $domainReal )->where( 'status', '3' )->whereFreeScan(0)->get()->last();
 		if ( $currentLastScan instanceof Scan ) {
 			return $currentLastScan->updated_at->format( $format );
 		}
