@@ -31,7 +31,6 @@ const METATAGNAME = 'siwecostoken';
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereUpdatedAt( $value )
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified( $value )
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scans
  */
 class Domain extends Model {
 
@@ -58,6 +57,7 @@ class Domain extends Model {
 	 * @return bool
 	 */
 	public function checkMetatags() {
+		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 		$tags = get_meta_tags( $this->domain );
 		foreach ( $tags as $tagkey => $tagvalue ) {
 			if ( $tagkey == METATAGNAME ) {
