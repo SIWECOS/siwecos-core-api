@@ -91,6 +91,7 @@ class Domain extends Model {
 	 */
 	public function checkHtmlPage() {
 		/*get the content of the page. there should be nothing, except the activationkey*/
+		ini_set('user_agent','Mozilla/4.0 (compatible; MSIE 6.0)');
 		$url = $this->domain . '/' . $this->domain_token . '.html';
 		try {
 			$pageRequest = file_get_contents( $url );
@@ -102,10 +103,11 @@ class Domain extends Model {
 				$this->save();
 
 				return true;
-			} else {
-				return false;
 			}
-		} catch ( \ErrorException $exception ) {
+
+			return false;
+		} catch ( \Exception $exception ) {
+			Log::warning($exception->getMessage());
 			return false;
 		}
 
