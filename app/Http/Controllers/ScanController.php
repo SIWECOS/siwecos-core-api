@@ -243,9 +243,14 @@ class ScanController extends Controller {
 			$scan->update( [
 				'status' => 3
 
-				// SCAN IS FINISHED! INFORM USER
+
 
 			] );
+			// SCAN IS FINISHED! INFORM USER
+			if ($scan->recurrentscan === 1){
+				$client = new Client();
+				$client->get( 'https://api.siwecos.de/bla/current/public/api/v1/generateLowScoreReport/' . $scan->id );
+			}
 			$scan->save();
 
 			// Call broadcasting api from business layer
