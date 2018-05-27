@@ -13,6 +13,7 @@ yarn-error.log
 !/laradock/.env
 /.idea
 *postman_collection*
+/.phpintel
 /.phpintel/*
 vendor/
 
