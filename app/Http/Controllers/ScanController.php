@@ -242,6 +242,9 @@ class ScanController extends Controller {
 		if ( $scan->getProgress() >= 99 ) {
 			$scan->update( [
 				'status' => 3
+
+				// SCAN IS FINISHED! INFORM USER
+
 			] );
 			$scan->save();
 
