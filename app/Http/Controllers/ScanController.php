@@ -247,7 +247,7 @@ class ScanController extends Controller {
 
 			] );
 			// SCAN IS FINISHED! INFORM USER
-			if ($scan->recurrentscan === 1){
+			if ($scan->recurrentscan === 1 && $scan->results->count() === 5){
 				$client = new Client();
 				$client->get( 'https://api.siwecos.de/bla/current/public/api/v1/generateLowScoreReport/' . $scan->id );
 			}
