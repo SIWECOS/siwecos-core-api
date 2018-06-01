@@ -18,6 +18,15 @@ use Log;
 class ScanController extends Controller {
 	public function start( ScannerStartRequest $request ) {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
+
+		// CHECK IF STILL VALIDATED
+		$domain = Domain::whereDomain($request->json( 'domain' ));
+		if (!$domain->checkHtmlPage() && !$domain->checkMetatags()){
+			$domain->verified = 0;
+			$domain->save();
+			return response( 'Not validated', 403 );
+		}
+
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
 			$dangerlevel = $request->json('dangerLevel') ?? 10;
