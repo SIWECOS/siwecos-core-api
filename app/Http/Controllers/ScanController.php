@@ -22,6 +22,9 @@ class ScanController extends Controller {
 		// CHECK IF STILL VALIDATED
 		/** @var Domain $domain */
 		$domain = Domain::whereDomain($request->json( 'domain' ))->first()->get();
+		if (!($domain instanceof Domain)){
+			return response( 'Entitiy not found', 422 );
+		}
 		if (!$domain->checkHtmlPage() && !$domain->checkMetatags()){
 			$domain->verified = 0;
 			$domain->save();
