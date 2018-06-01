@@ -19,30 +19,14 @@ class ScanController extends Controller {
 	public function start( ScannerStartRequest $request ) {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 
-		// CHECK IF STILL VALIDATED
-		/** @var Domain $domain */
-		$domain = Domain::whereDomain($request->json( 'domain' ))->first()->get();
-		if (!($domain instanceof Domain)){
-			return response( 'Entitiy not found', 422 );
-		}
-		if (!$domain->checkHtmlPage() && !$domain->checkMetatags()){
-			$domain->verified = 0;
-			$domain->save();
-			return response( 'Not validated', 403 );
-		}
-
-		// REVALIDATION WAS SUCCESSFUL
-		$domain->verified = 1;
-		$domain->save();
-
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
 			$dangerlevel = $request->json('dangerLevel') ?? 10;
-			return self::startScanJob( $token, $request->json( 'domain' ), false,  $dangerlevel);
+			return self::startScanJob( $token, $request->json( 'domain' ), false,  $dangerlevel, true);
 		}
 	}
 
-	public static function startScanJob( Token $token, string $domain, bool $isRecurrent = false, int $dangerLevel = 0 ) {
+	public static function startScanJob( Token $token, string $domain, bool $isRecurrent = false, int $dangerLevel = 0, bool $isRegistered = false ) {
 
 
 		// create a new scan order
@@ -56,6 +40,18 @@ class ScanController extends Controller {
 			'dangerLevel'  => $dangerLevel,
             'recurrentscan' => $isRecurrent
 		] );
+
+		if ($isRegistered){
+			// VALIDATION CHECK
+			if (!$currentDomain->checkHtmlPage() && !$currentDomain->checkMetatags()){
+				$currentDomain->verified = 0;
+				$currentDomain->save();
+				return response( 'Domain not verified', 422 );
+			}
+			$currentDomain->verified = 1;
+			$currentDomain->save();
+
+		}
 
 		$scan->recurrentscan = $isRecurrent ? 1 : 0;
 		$scan->save();
