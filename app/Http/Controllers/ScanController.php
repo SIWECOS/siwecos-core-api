@@ -20,7 +20,7 @@ class ScanController extends Controller {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 
 		// CHECK IF STILL VALIDATED
-		$domain = Domain::whereDomain($request->json( 'domain' ));
+		$domain = Domain::whereDomain($request->json( 'domain' ))->first()->get();
 		if (!$domain->checkHtmlPage() && !$domain->checkMetatags()){
 			$domain->verified = 0;
 			$domain->save();
