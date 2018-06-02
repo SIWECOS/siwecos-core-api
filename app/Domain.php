@@ -21,7 +21,6 @@ const METATAGNAME = 'siwecostoken';
  * @property string $domain_token
  * @property int|null $token_id
  * @property int $verified
- * @property Scan[] scans
  * @property-read \App\Token|null $token
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereCreatedAt( $value )
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomain( $value )
@@ -31,6 +30,9 @@ const METATAGNAME = 'siwecostoken';
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereUpdatedAt( $value )
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified( $value )
  * @mixin \Eloquent
+ * @property \Carbon\Carbon|null $last_notification
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scans
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereLastNotification($value)
  */
 class Domain extends Model {
 

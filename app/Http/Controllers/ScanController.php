@@ -13,6 +13,7 @@ use App\ScanResult;
 use App\Http\Requests\CallbackRequest;
 use App\Siweocs\Models\ScanRawResultResponse;
 use App\Siweocs\Models\ScanStatusResponse;
+use Illuminate\Support\Carbon;
 use Log;
 
 class ScanController extends Controller {
@@ -261,8 +262,20 @@ class ScanController extends Controller {
 			] );
 			// SCAN IS FINISHED! INFORM USER
 			if ($scan->recurrentscan === 1 && $scan->results->count() === 5){
-				$client = new Client();
-				$client->get( 'https://api.siwecos.de/bla/current/public/api/v1/generateLowScoreReport/' . $scan->id );
+				//CHECK LAST NOTIFICATION
+				// SHOULD FIX #28 IN BLA
+				$domainString = $scan->url;
+				/** @var Domain $domain */
+				$domain = Domain::whereDomain($domainString)->first()->get();
+				if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)))
+				{
+					Log::info("LAST NOTIFICATION FOR " . $domainString . " EARLIER THEN 1 WEEK");
+					$domain->last_notification = Carbon::now();
+					$domain->save();
+					$client = new Client();
+					$client->get( 'https://api.siwecos.de/bla/current/public/api/v1/generateLowScoreReport/' . $scan->id );
+				}
+
 			}
 			$scan->save();
 
