@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "c0cde51dcb4cc02704ca0575529dc229",
+    "content-hash": "872758549c2454d58722002bdb4a0046",
     "packages": [
         {
             "name": "barryvdh/laravel-cors",
@@ -1711,16 +1711,16 @@
         },
         {
             "name": "mpociot/laravel-apidoc-generator",
-            "version": "2.0.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mpociot/laravel-apidoc-generator.git",
-                "reference": "d66f5e81ac40f72063053e1c0a4d5717f4dd6897"
+                "reference": "0925f838047284955f00fab2dd1e8956cba24dfa"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/d66f5e81ac40f72063053e1c0a4d5717f4dd6897",
-                "reference": "d66f5e81ac40f72063053e1c0a4d5717f4dd6897",
+                "url": "https://api.github.com/repos/mpociot/laravel-apidoc-generator/zipball/0925f838047284955f00fab2dd1e8956cba24dfa",
+                "reference": "0925f838047284955f00fab2dd1e8956cba24dfa",
                 "shasum": ""
             },
             "require": {
@@ -1738,6 +1738,13 @@
                 "phpunit/phpunit": "~4.0 || ~5.0"
             },
             "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Mpociot\\ApiDoc\\ApiDocGeneratorServiceProvider"
+                    ]
+                }
+            },
             "autoload": {
                 "psr-0": {
                     "Mpociot\\ApiDoc": "src/"
@@ -1760,7 +1767,7 @@
                 "documentation",
                 "laravel"
             ],
-            "time": "2017-01-29T21:07:34+00:00"
+            "time": "2018-01-03T09:54:19+00:00"
         },
         {
             "name": "mpociot/reflection-docblock",
@@ -5270,7 +5277,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "mpociot/laravel-apidoc-generator": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
