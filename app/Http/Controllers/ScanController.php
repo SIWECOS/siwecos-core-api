@@ -109,8 +109,18 @@ class ScanController extends Controller {
 	 * @return Scan
 	 */
 	public function startFreeScan( Request $request ) {
+
+
 		$domainFilter = parse_url( $request->json( 'domain' ) );
 		$domain       = $domainFilter['scheme'] . '://' . $domainFilter['host'];
+
+		//PING THE GIVEN DOMAIN
+		if (!self::isDomainAlive($domain)){
+			Log::info('Domain not found ' . $domain);
+			return response( 'Domain not alive', 422 );
+		}
+
+
 		Log::info( 'Start Freescan for:' . $domain );
 		/** @var Domain $freeScanDomain */
 		$freeScanDomain = Domain::whereDomain( $domain )->first();
@@ -131,6 +141,21 @@ class ScanController extends Controller {
 
 		return $this->startNewFreeScan( $freeScanDomain );
 
+	}
+
+	/**
+	 * Check if Domain is Alive or redirects (200 / 301)
+	 * @param string $domain
+	 *
+	 * @return bool
+	 */
+	public static function isDomainAlive(string $domain){
+		$client = new Client();
+		$response = $client->get($domain);
+		if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301 ){
+			return true;
+		}
+		return false;
 	}
 
 	protected function startNewFreeScan( Domain $freeScanDomain ) {
