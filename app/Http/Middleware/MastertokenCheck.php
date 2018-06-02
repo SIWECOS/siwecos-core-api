@@ -10,21 +10,21 @@ class MastertokenCheck
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Closure  $next
+     * @param \Illuminate\Http\Request $request
+     * @param \Closure                 $next
+     *
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
         $token = $request->header('masterToken');
-        if (isset($token))
-        {
+        if (isset($token)) {
             $headerToken = Token::getTokenByString($request->header('masterToken'));
-            if ($headerToken instanceof Token && $headerToken->acl_level == 9999)
-            {
+            if ($headerToken instanceof Token && $headerToken->acl_level == 9999) {
                 return $next($request);
             }
         }
+
         return response('Token not allowed', 403);
     }
 }

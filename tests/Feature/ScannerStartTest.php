@@ -3,27 +3,21 @@
 namespace Tests\Feature;
 
 use App\Domain;
-use App\Jobs\ScanJob;
-use Tests\TestCase;
-use App\Jobs\ScanHeadersJob;
-use Illuminate\Support\Facades\Queue;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Scan;
+use App\Token;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
-use App\Scan;
-use App\ScanResult;
-use App\Token;
+use Illuminate\Support\Facades\Queue;
+use Tests\TestCase;
 
-CONST TEST_DOMAIN = 'https://example.com';
+const TEST_DOMAIN = 'https://example.com';
 
 class ScannerStartTest extends TestCase
 {
-    
     use DatabaseMigrations, DatabaseTransactions;
 
-
-    protected $token, $domain;
+    protected $token;
+    protected $domain;
 
     public function setUp()
     {
@@ -43,40 +37,38 @@ class ScannerStartTest extends TestCase
         // changed to 500 due fail operation in domain model
         $this->json('POST', '/api/v1/scan/start', [], ['siwecosToken' => $this->token->token])
             ->assertStatus(500);
-        }
+    }
 
     /** @test */
     public function the_dangerLevel_has_a_valid_range()
     {
-
         Queue::fake();
 
         $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => TEST_DOMAIN,
-            'dangerLevel' => -1
+            'domain'      => TEST_DOMAIN,
+            'dangerLevel' => -1,
         ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(422);
 
         $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => TEST_DOMAIN,
-            'dangerLevel' => 15
-        ], ['siwecosToken' => $this->token->token]);
-
-        $response->assertStatus(422);
-
-
-        $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => TEST_DOMAIN,
-            'dangerLevel' => "five"
+            'domain'      => TEST_DOMAIN,
+            'dangerLevel' => 15,
         ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(422);
 
         $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => TEST_DOMAIN,
+            'domain'      => TEST_DOMAIN,
+            'dangerLevel' => 'five',
+        ], ['siwecosToken' => $this->token->token]);
+
+        $response->assertStatus(422);
+
+        $response = $this->json('POST', '/api/v1/scan/start', [
+            'domain'      => TEST_DOMAIN,
             'dangerLevel' => 4,
-	        'isNotATest' => false
+            'isNotATest'  => false,
         ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(200);
@@ -86,13 +78,12 @@ class ScannerStartTest extends TestCase
     public function a_new_scan_is_saved_to_the_database_if_the_job_is_started()
     {
         Queue::fake();
-        
+
         $this->assertEquals(0, Scan::all()->count());
 
         $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => TEST_DOMAIN
+            'domain' => TEST_DOMAIN,
         ], ['siwecosToken' => $this->token->token]);
         $this->assertEquals(1, Scan::all()->count());
     }
-
 }

@@ -39,11 +39,11 @@ class CreateMasterToken extends Command
     public function handle()
     {
         //
-        $this->info("create Mastertoken");
+        $this->info('create Mastertoken');
         $masterToken = new Token(['credits'=>0]);
         $masterToken->setAclLevel(9999);
         $masterToken->save();
         $this->info('Please save the following token, it is required for any token operation');
-        $this->info('mastertoken: ' . $masterToken->token);
+        $this->info('mastertoken: '.$masterToken->token);
     }
 }

@@ -3,31 +3,26 @@
  * Created by PhpStorm.
  * User: marcelwege
  * Date: 23.11.17
- * Time: 14:03
+ * Time: 14:03.
  */
 
 namespace App\Siweocs\Models;
 
-
-use Illuminate\Database\Eloquent\Model;
-
 class SiwecosBaseReponse
 {
-
     /**
-     * @var boolean
+     * @var bool
      */
-    var $hasFailed;
+    public $hasFailed;
 
     /**
      * @var string
      */
-    var $message;
+    public $message;
 
-    public function __construct(string $message = "", bool $hasFailed = false)
+    public function __construct(string $message = '', bool $hasFailed = false)
     {
         $this->message = $message;
         $this->hasFailed = $hasFailed;
     }
-
 }

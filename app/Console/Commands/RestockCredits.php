@@ -42,9 +42,9 @@ class RestockCredits extends Command
         /** @var Token[] $allCreditsBelow */
         $allCreditsBelow = Token::where('credits', '<', 50)->get();
 
-        foreach ($allCreditsBelow as $token){
-            $this->info('Restock credits for token: ' . $token->token);
-            Log::info('Restock credits for token: ' . $token->token);
+        foreach ($allCreditsBelow as $token) {
+            $this->info('Restock credits for token: '.$token->token);
+            Log::info('Restock credits for token: '.$token->token);
             $token->credits = 50;
             $token->save();
         }

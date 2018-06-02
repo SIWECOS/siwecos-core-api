@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateScansErrorsLength extends Migration
 {
@@ -13,9 +13,9 @@ class UpdateScansErrorsLength extends Migration
      */
     public function up()
     {
-         Schema::table( 'scan_results', function ( Blueprint $table ) {
+        Schema::table('scan_results', function (Blueprint $table) {
             $table->longText('complete_request')->change();
-        } );
+        });
     }
 
     /**
