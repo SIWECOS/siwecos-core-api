@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/SIWECOS/siwecos-core-api.svg?branch=master)](https://travis-ci.org/SIWECOS/siwecos-core-api)
 [![Maintainability](https://api.codeclimate.com/v1/badges/f2e6de4e0e9288717a5a/maintainability)](https://codeclimate.com/github/SIWECOS/siwecos-core-api/maintainability)
+[![StyleCI](https://github.styleci.io/repos/109252354/shield?branch=master)](https://github.styleci.io/repos/109252354)
 ### Vagrant / Valet
 
 For usage with a mac, we recommend the usage of Valet, a leightweight Vagrant wrapper for Laravel
