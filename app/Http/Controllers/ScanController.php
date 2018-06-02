@@ -151,10 +151,17 @@ class ScanController extends Controller {
 	 */
 	public static function isDomainAlive(string $domain){
 		$client = new Client();
-		$response = $client->get($domain);
-		if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301 ){
-			return true;
+		try{
+			$response = $client->get($domain);
+			if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301 ){
+				return true;
+			}
 		}
+		catch(\Exception $ex){
+			Log::info($domain . ' ' . $ex->getMessage());
+			return false;
+		}
+
 		return false;
 	}
 
