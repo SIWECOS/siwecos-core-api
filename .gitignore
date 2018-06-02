@@ -20,6 +20,9 @@ vendor/
 _ide_helper.php
 _ide_helper_models.php
 
+.vscode
+.vscode/
+
 # Created by https://www.gitignore.io/api/linux,macos,windows,laravel,composer,phpstorm,sublimetext
 
 ### Composer ###
