@@ -17,13 +17,14 @@ use Illuminate\Support\Carbon;
 use Log;
 
 class ScanController extends Controller {
-	public function start( ScannerStartRequest $request ) {
+	public function start( ScannerStartRequest $request) {
 		$token = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
 
 		Log::info( 'Token: ' . $token->token );
 		if ( $token instanceof Token && $token->reduceCredits() ) {
+			$isNotTestRunner = $request->json('isNotATest') ?? true;
 			$dangerlevel = $request->json('dangerLevel') ?? 10;
-			return self::startScanJob( $token, $request->json( 'domain' ), false,  $dangerlevel, true);
+			return self::startScanJob( $token, $request->json( 'domain' ), false,  $dangerlevel, $isNotTestRunner);
 		}
 	}
 

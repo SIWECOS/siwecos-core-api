@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Domain;
+use App\Jobs\ScanJob;
 use Tests\TestCase;
 use App\Jobs\ScanHeadersJob;
 use Illuminate\Support\Facades\Queue;
@@ -74,24 +75,11 @@ class ScannerStartTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/scan/start', [
             'domain' => TEST_DOMAIN,
-            'dangerLevel' => 4
+            'dangerLevel' => 4,
+	        'isNotATest' => false
         ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(200);
-    }
-
-    /** @test */
-    public function the_scanner_jobs_are_dispatched()
-    {
-        Queue::fake();
-
-        $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => TEST_DOMAIN
-        ], ['siwecosToken' => $this->token->token]);
-
-        $response->assertStatus(200);
-
-        Queue::assertPushed(ScanHeadersJob::class);
     }
 
     /** @test */
@@ -107,19 +95,4 @@ class ScannerStartTest extends TestCase
         $this->assertEquals(1, Scan::all()->count());
     }
 
-    /** @test */
-    public function a_scan_result_is_saved_after_the_queue_is_processed()
-    {
-        $this->assertEquals(0, ScanResult::all()->count());
-
-        // TODO: Mock this test so no real query is sent
-
-        $response = $this->json('POST', '/api/v1/scan/start', [
-            'domain' => 'https://example.com'
-        ], ['siwecosToken' => $this->token->token]);
-
-        $this->assertEquals(1, ScanResult::all()->count());
-        $this->assertEquals(TEST_DOMAIN, ScanResult::first()->scan->url);
-    }
-    
 }
