@@ -57,7 +57,7 @@ return [
 
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'support@siwecos.de'),
-        'name' => env('MAIL_FROM_NAME', 'SIWECOS'),
+        'name'    => env('MAIL_FROM_NAME', 'SIWECOS'),
     ],
 
     /*

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateDomainsTable extends Migration
 {
@@ -13,8 +13,8 @@ class UpdateDomainsTable extends Migration
      */
     public function up()
     {
-        Schema::table('domains', function (Blueprint $table){
-			$table->dateTime('last_notification')->nullable();
+        Schema::table('domains', function (Blueprint $table) {
+            $table->dateTime('last_notification')->nullable();
         });
     }
 

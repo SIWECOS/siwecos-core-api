@@ -32,7 +32,7 @@ class TokenAddRequest extends FormRequest
     {
         return [
             'aclLevel' => 'integer',
-            'credits' => 'integer|required'
+            'credits'  => 'integer|required',
         ];
     }
 }

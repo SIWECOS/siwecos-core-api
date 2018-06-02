@@ -32,10 +32,10 @@ class ScannerStartRequest extends FormRequest
     public function rules()
     {
         return [
-            'domain' => 'required|url',
-            'dangerLevel' => 'integer|min:0|max:10',
-            'callbackurls' => 'array',
-            'callbackurls.*' => 'url'
+            'domain'         => 'required|url',
+            'dangerLevel'    => 'integer|min:0|max:10',
+            'callbackurls'   => 'array',
+            'callbackurls.*' => 'url',
         ];
     }
 }

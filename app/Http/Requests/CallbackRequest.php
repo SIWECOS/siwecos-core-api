@@ -28,7 +28,7 @@ class CallbackRequest extends FormRequest
         // TODO: Adjust this according to the swagger definition
         return [
             'status' => 'required|string',
-            'result' => 'array'
+            'result' => 'array',
         ];
     }
 }

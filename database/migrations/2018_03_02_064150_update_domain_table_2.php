@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateDomainTable2 extends Migration
 {
@@ -11,11 +11,12 @@ class UpdateDomainTable2 extends Migration
      *
      * @return void
      */
- public function up() {
-		Schema::table( 'domains', function ( Blueprint $table ) {
-			$table->string( 'domain_token' )->nullable()->change();
-		} );
-	}
+    public function up()
+    {
+        Schema::table('domains', function (Blueprint $table) {
+            $table->string('domain_token')->nullable()->change();
+        });
+    }
 
     /**
      * Reverse the migrations.
