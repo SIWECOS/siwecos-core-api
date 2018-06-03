@@ -67,16 +67,13 @@ class Domain extends Model
                         /*Hooray site is activated*/
                         $this->verified = 1;
                         $this->save();
-
                         return true;
                     }
                 }
             }
-
-            return false;
         } catch (\Exception $ex) {
-            return false;
         }
+        return false;
     }
 
     public function token()
@@ -112,13 +109,10 @@ class Domain extends Model
 
                 return true;
             }
-
-            return false;
         } catch (\Exception $exception) {
             Log::warning($exception->getMessage());
-
-            return false;
         }
+        return false;
     }
 
     /**
