@@ -58,21 +58,27 @@ class Domain extends Model
      */
     public function checkMetatags()
     {
-        ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
-        $tags = get_meta_tags($this->domain);
-        foreach ($tags as $tagkey => $tagvalue) {
-            if ($tagkey == METATAGNAME) {
-                if ($tagvalue == $this->domain_token) {
-                    /*Hooray site is activated*/
-                    $this->verified = 1;
-                    $this->save();
+    	try{
+		    ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
+		    $tags = get_meta_tags($this->domain);
+		    foreach ($tags as $tagkey => $tagvalue) {
+			    if ($tagkey == METATAGNAME) {
+				    if ($tagvalue == $this->domain_token) {
+					    /*Hooray site is activated*/
+					    $this->verified = 1;
+					    $this->save();
 
-                    return true;
-                }
-            }
-        }
+					    return true;
+				    }
+			    }
+		    }
 
-        return false;
+		    return false;
+	    }
+	    catch (\Exception $ex){
+    		return false;
+	    }
+
     }
 
     public function token()
