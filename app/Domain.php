@@ -72,7 +72,8 @@ class Domain extends Model
                     }
                 }
             }
-        } catch (\Exception $ex) {
+        } catch (\Exception $exception) {
+            Log::warning($exception->getMessage());
         }
 
         return false;
