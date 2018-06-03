@@ -51,7 +51,7 @@ class DailyScan extends Command
             if ($latestScan && $latestScan instanceof Scan && $latestScan->updated_at > Carbon::now()->addDays(-1)) {
                 continue;
             }
-            if ($latestScan->created_at < Carbon::now()->addHours(-2)) {
+            if ($latestScan->created_at > Carbon::now()->addHours(-2)) {
                 continue;
             }
             // VALIDATION CHECK
