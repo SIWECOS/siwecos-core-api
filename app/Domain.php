@@ -32,7 +32,7 @@ const METATAGNAME = 'siwecostoken';
  * @property \Carbon\Carbon|null $last_notification
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scans
  *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereLastNotification($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereLastNotification( $value )
  */
 class Domain extends Model
 {
@@ -58,18 +58,21 @@ class Domain extends Model
      */
     public function checkMetatags()
     {
-        ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
-        $tags = get_meta_tags($this->domain);
-        foreach ($tags as $tagkey => $tagvalue) {
-            if ($tagkey == METATAGNAME) {
-                if ($tagvalue == $this->domain_token) {
-                    /*Hooray site is activated*/
-                    $this->verified = 1;
-                    $this->save();
+        try {
+            ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
+            $tags = get_meta_tags($this->domain);
+            foreach ($tags as $tagkey => $tagvalue) {
+                if ($tagkey == METATAGNAME) {
+                    if ($tagvalue == $this->domain_token) {
+                        /*Hooray site is activated*/
+                        $this->verified = 1;
+                        $this->save();
 
-                    return true;
+                        return true;
+                    }
                 }
             }
+        } catch (\Exception $ex) {
         }
 
         return false;
@@ -108,13 +111,11 @@ class Domain extends Model
 
                 return true;
             }
-
-            return false;
         } catch (\Exception $exception) {
             Log::warning($exception->getMessage());
-
-            return false;
         }
+
+        return false;
     }
 
     /**
