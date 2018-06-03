@@ -67,12 +67,14 @@ class Domain extends Model
                         /*Hooray site is activated*/
                         $this->verified = 1;
                         $this->save();
+
                         return true;
                     }
                 }
             }
         } catch (\Exception $ex) {
         }
+
         return false;
     }
 
@@ -112,6 +114,7 @@ class Domain extends Model
         } catch (\Exception $exception) {
             Log::warning($exception->getMessage());
         }
+
         return false;
     }
 
