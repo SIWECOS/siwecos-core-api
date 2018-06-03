@@ -41,7 +41,7 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        $domains = Domain::whereVerified('1')->get();
+        $domains = Domain::whereVerified('1')->whereNotNull('domain_token')->get();
         /** @var Domain $domain */
         $bar = $this->output->createProgressBar(\count($domains));
         foreach ($domains as $domain) {
