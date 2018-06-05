@@ -41,7 +41,7 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        $domains = Domain::whereVerified('1')->whereNotNull('domain_token')->get();
+        $domains = Domain::whereVerified('1')->get();
         /** @var Domain $domain */
         $bar = $this->output->createProgressBar(\count($domains));
         foreach ($domains as $domain) {
@@ -52,12 +52,6 @@ class DailyScan extends Command
                 continue;
             }
             if ($latestScan->created_at > Carbon::now()->addHours(-2)) {
-                continue;
-            }
-            // VALIDATION CHECK
-            if (!$domain->checkHtmlPage() && !$domain->checkMetatags()) {
-                $domain->verified = 0;
-                $domain->save();
                 continue;
             }
             ScanController::startScanJob($domain->token, $domain->domain, true, 10);
