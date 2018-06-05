@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateReScanTable extends Migration
 {
@@ -13,9 +13,9 @@ class UpdateReScanTable extends Migration
      */
     public function up()
     {
-        Schema::table( 'scans', function ( Blueprint $table ) {
-			$table->boolean('freescan')->default(false);
-		} );
+        Schema::table('scans', function (Blueprint $table) {
+            $table->boolean('freescan')->default(false);
+        });
     }
 
     /**

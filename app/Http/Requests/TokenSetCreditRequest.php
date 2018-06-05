@@ -32,7 +32,7 @@ class TokenSetCreditRequest extends FormRequest
     {
         return [
             'credits' => 'integer|required',
-            'token' => 'string|required'
+            'token'   => 'string|required',
         ];
     }
 }

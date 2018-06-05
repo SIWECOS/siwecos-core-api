@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class ModifyDomainTable extends Migration
 {
@@ -19,7 +19,6 @@ class ModifyDomainTable extends Migration
             $table->integer('token_id')->unsigned()->nullable(false);
             $table->foreign('token_id')->references('id')->on('tokens')->onDelete('cascade');
             $table->boolean('verified')->default(false);
-
         }
         );
     }

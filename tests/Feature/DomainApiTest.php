@@ -16,10 +16,11 @@ const TEST_DOMAIN3 = 'https://examp.com';
 
 class DomainApiTest extends TestCase
 {
-
     use DatabaseMigrations, DatabaseTransactions;
 
-    protected $token, $domain, $tokenHeaderArray;
+    protected $token;
+    protected $domain;
+    protected $tokenHeaderArray;
 
     public function testListDomainNoToken()
     {
@@ -36,25 +37,25 @@ class DomainApiTest extends TestCase
 
     public function testAddDomainNoToken()
     {
-        $respone = $this->json('POST', BASEURL_DOMAIN . 'add', ['domain' => TEST_DOMAIN2]);
+        $respone = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => TEST_DOMAIN2]);
         $respone->assertStatus(403);
     }
 
     public function testAddDomainInvalidDomain()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'add', ['domain' => 'loremipsum'], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => 'loremipsum'], $this->tokenHeaderArray);
         $response->assertStatus(422);
     }
 
     public function testAddDomainNoDomain()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'add', [], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'add', [], $this->tokenHeaderArray);
         $response->assertStatus(422);
     }
 
     public function testAddDomainValidData()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'add', ['domain' => TEST_DOMAIN2], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => TEST_DOMAIN2], $this->tokenHeaderArray);
         $response->assertStatus(200);
         $response->assertJsonStructure(['message', 'domainToken', 'verificationStatus', 'domainId']);
         $response->assertJson(['hasFailed' => false]);
@@ -62,13 +63,13 @@ class DomainApiTest extends TestCase
 
     public function testRemoveDomainNoToken()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'remove', ['domain' => TEST_DOMAIN1]);
+        $response = $this->json('POST', BASEURL_DOMAIN.'remove', ['domain' => TEST_DOMAIN1]);
         $response->assertStatus(403);
     }
 
     public function testRemoveDomainNoDomainFound()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'remove', ['domain' => TEST_DOMAIN2], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'remove', ['domain' => TEST_DOMAIN2], $this->tokenHeaderArray);
         $response->assertStatus(500);
     }
 
@@ -78,24 +79,23 @@ class DomainApiTest extends TestCase
         $testToken->save();
         $testDomain = new Domain(['token' => $testToken->token, 'domain' => TEST_DOMAIN3]);
         $testDomain->save();
-        $response = $this->json('POST', BASEURL_DOMAIN . 'remove', ['domain' => TEST_DOMAIN3], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'remove', ['domain' => TEST_DOMAIN3], $this->tokenHeaderArray);
         $response->assertStatus(500);
     }
 
     public function testRemoveDomainNoDomain()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'remove', [], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'remove', [], $this->tokenHeaderArray);
         $response->assertStatus(422);
     }
 
     public function testRemoveDomainValidData()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'remove', ['domain' => TEST_DOMAIN1], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'remove', ['domain' => TEST_DOMAIN1], $this->tokenHeaderArray);
         $response->assertStatus(200);
         $response->assertJsonStructure(['hasFailed', 'message']);
         $response->assertJson(['hasFailed' => false]);
     }
-
 
     protected function setUp()
     {
@@ -110,6 +110,4 @@ class DomainApiTest extends TestCase
         $this->domain = new Domain(['token' => $this->token->token, 'domain' => TEST_DOMAIN1]);
         $this->domain->save();
     }
-
-
 }

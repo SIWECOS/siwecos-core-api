@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UpdateDomainTable extends Migration
 {
@@ -13,8 +13,8 @@ class UpdateDomainTable extends Migration
      */
     public function up()
     {
-        Schema::table('domains', function (Blueprint $table){
-        	$table->integer('token_id')->unsigned()->nullable()->change();
+        Schema::table('domains', function (Blueprint $table) {
+            $table->integer('token_id')->unsigned()->nullable()->change();
         });
     }
 
