@@ -45,18 +45,6 @@ class ScanController extends Controller
             'recurrentscan' => $isRecurrent,
         ]);
 
-        if ($isRegistered) {
-            // VALIDATION CHECK
-            if (!$currentDomain->checkHtmlPage() && !$currentDomain->checkMetatags()) {
-                $currentDomain->verified = 0;
-                $currentDomain->save();
-
-                return response('Domain not verified', 422);
-            }
-            $currentDomain->verified = 1;
-            $currentDomain->save();
-        }
-
         $scan->recurrentscan = $isRecurrent ? 1 : 0;
         $scan->save();
 
