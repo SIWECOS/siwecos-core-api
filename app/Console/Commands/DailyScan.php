@@ -46,11 +46,7 @@ class DailyScan extends Command
         $bar = $this->output->createProgressBar(\count($domains));
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
         // per run
-<<<<<<< HEAD
         $max_schedule= array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | 0 );
-=======
-        $max_schedule = getenv('RECURRENT_PER_RUN') | $_ENV['RECURRENT_PER_RUN'] | 0;
->>>>>>> c165331e15033509a9c51f6c1eede06913728d6d
         foreach ($domains as $domain) {
             /** @var Scan $latestScan */
             $latestScan = $domain->scans()->whereRecurrentscan('1')->latest()->first();
