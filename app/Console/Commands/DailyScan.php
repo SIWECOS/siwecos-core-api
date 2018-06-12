@@ -44,6 +44,9 @@ class DailyScan extends Command
         $domains = Domain::whereVerified('1')->get();
         /** @var Domain $domain */
         $bar = $this->output->createProgressBar(\count($domains));
+        // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
+        // per run
+        $max_schedule = getenv('RECURRENT_PER_RUN') | $_ENV['RECURRENT_PER_RUN'] | 0;
         foreach ($domains as $domain) {
             /** @var Scan $latestScan */
             $latestScan = $domain->scans()->whereRecurrentscan('1')->latest()->first();
@@ -54,6 +57,10 @@ class DailyScan extends Command
             ScanController::startScanJob($domain->token, $domain->domain, true, 10);
             $this->info('Scan started for: '.$domain->domain);
             $bar->advance();
+            // no more scans are allowed to be started
+            if (--$max_schedule == 0) {
+                break;
+            }
         }
         $bar->finish();
     }
