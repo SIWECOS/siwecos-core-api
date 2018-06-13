@@ -49,18 +49,17 @@ class DailyScan extends Command
         $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | 0);
         foreach ($domains as $domain) {
             /** @var Scan $latestScan */
-            $latestScan = $domain->scans()->whereRecurrentscan('1')->latest()->first();
+            $latestScan = $domain->scans()->latest()->first();
             // TIME CHECK
-            if ($latestScan && $latestScan instanceof Scan && $latestScan->created_at > Carbon::now()->addDays(-1)) {
+            if ($latestScan && $latestScan instanceof Scan && $latestScan->updated_at > Carbon::now()->addDays(-1)) {
+                continue;
+            }
+            if ($latestScan->created_at > Carbon::now()->addHours(-2)) {
                 continue;
             }
             ScanController::startScanJob($domain->token, $domain->domain, true, 10);
             $this->info('Scan started for: '.$domain->domain);
             $bar->advance();
-            // no more scans are allowed to be started
-            if (--$max_schedule == 0) {
-                break;
-            }
         }
         $bar->finish();
     }
