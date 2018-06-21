@@ -295,7 +295,7 @@ class ScanController extends Controller
                 Log::info('TRY TO GET DOMAIN OBJECT FOR ' . $domainString);
                 /** @var Domain $domain */
                 $domain = Domain::whereDomain($domainString)->first()->get();
-                Log::info('SCAN FINISHED FOR' . $domainString . '//' . $domain->domain_token);
+                Log::info('SCAN FINISHED FOR'.$domainString.'//'.$domain->domain_token);
                 $totalScore = 0;
                 /** @var ScanResult $result */
                 foreach ($scan->results() as $result) {
@@ -303,7 +303,7 @@ class ScanController extends Controller
                 }
 
                 $totalScore /= 5;
-                Log::info('TOTAL SCORE FOR DOMAIN ' . $domain->domain . ' // ' . $totalScore);
+                Log::info('TOTAL SCORE FOR DOMAIN '.$domain->domain.' // '.$totalScore);
 
                 if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)) && $totalScore <= 50) {
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
