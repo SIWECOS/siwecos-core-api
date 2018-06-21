@@ -292,7 +292,7 @@ class ScanController extends Controller
                 //CHECK LAST NOTIFICATION
                 // SHOULD FIX #28 IN BLA
                 $domainString = $scan->url;
-                Log::info('TRY TO GET DOMAIN OBJECT FOR ' . $domainString);
+                Log::info('TRY TO GET DOMAIN OBJECT FOR '.$domainString);
                 /** @var Domain $domain */
                 $domain = Domain::whereDomain($domainString)->first();
                 Log::info('SCAN FINISHED FOR'.$domainString.'//'.$domain->domain_token);
