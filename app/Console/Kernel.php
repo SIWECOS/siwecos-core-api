@@ -30,7 +30,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-        $schedule->command(DailyScan::class)->everyMinute()->sendOutputTo('scanResult.log', true);
+        $schedule->command(DailyScan::class)->withoutOverlapping()->everyMinute()->sendOutputTo('scanResult.log', true);
         $schedule->command(ScannerTimeout::class)->everyMinute();
         $schedule->command(RestockCredits::class)->dailyAt('00:00');
     }
