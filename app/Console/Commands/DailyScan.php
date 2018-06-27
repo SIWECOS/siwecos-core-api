@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use App\Domain;
 use App\Http\Controllers\ScanController;
 use App\Scan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Log;
 
 class DailyScan extends Command
@@ -43,7 +43,7 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        $test = DB::raw(<<<'QUERY'
+        $test = DB::select(DB::raw(<<<'QUERY'
         select domain from domains
         left outer join (
                select url as domain
@@ -61,7 +61,7 @@ class DailyScan extends Command
         )
         order by last_scan asc
 QUERY
-);
+));
         Log::info(var_export($test, true));
         $domains = Domain::whereVerified('1')->get();
         /** @var Domain $domain */
