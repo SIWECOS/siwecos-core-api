@@ -61,9 +61,11 @@ class DailyScan extends Command
         )
         order by last_scan asc
 QUERY
-))->get();
-        Log::info(var_export($test, true));
-
+        ));
+        foreach($result as $r){
+          log::info($r->domain);
+          break;
+        }
         return;
         $domains = Domain::whereVerified('1')->get();
         /** @var Domain $domain */
