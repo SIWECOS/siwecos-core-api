@@ -65,7 +65,7 @@ class DailyScan extends Command
 QUERY
         ));
         $max_schedule = min(env('RECURRENT_PER_RUN'), \count($domains));
-        Log::info($max_schedule);
+        Log::info('Max Schedule: '.$max_schedule);
         /** @var string $domain */
         $bar = $this->output->createProgressBar($max_schedule);
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
