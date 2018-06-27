@@ -43,8 +43,10 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        $test = DB::select(DB::raw(<<<'QUERY'
-        select domain from domains
+      // Get domains which are due to be scanned
+      // Longest waiting first.
+        $domains = DB::select(DB::raw(<<<'QUERY'
+        select domain, token from domains
         left outer join (
                select url as domain
                     , max(created_at) as last_scan
@@ -53,6 +55,8 @@ class DailyScan extends Command
                group by url
         ) LS
         using(domain)
+        join(tokens)
+        on(token_id=tokens.id)
         where verified
         and (
                last_scan is null
@@ -62,25 +66,13 @@ class DailyScan extends Command
         order by last_scan asc
 QUERY
         ));
-        foreach ($test as $r) {
-            log::info($r->domain);
-            break;
-        }
-
-        return;
-        $domains = Domain::whereVerified('1')->get();
+        $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | \count($domains));
+        Log::info(env('RECURRENT_PER_RUN'));
         /** @var Domain $domain */
-        $bar = $this->output->createProgressBar(\count($domains));
+        $bar = $this->output->createProgressBar(\min(\count($domains),$max_schedule));
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
         // per run
-        $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | 0);
         foreach ($domains as $domain) {
-            /** @var Scan $latestScan */
-            $latestScan = $domain->scans()->whereRecurrentscan('1')->latest()->first();
-            // TIME CHECK
-            if ($latestScan && $latestScan instanceof Scan && $latestScan->created_at > Carbon::now()->addDays(-1)) {
-                continue;
-            }
             ScanController::startScanJob($domain->token, $domain->domain, true, 10);
             $this->info('Scan started for: '.$domain->domain);
             $bar->advance();
