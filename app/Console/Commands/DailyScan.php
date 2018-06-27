@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Token;
 use App\Http\Controllers\ScanController;
+use App\Token;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Log;
@@ -66,7 +66,7 @@ QUERY
         ));
         $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | \count($domains));
         Log::info(env('RECURRENT_PER_RUN'));
-        /** @var String $domain */
+        /** @var string $domain */
         $bar = $this->output->createProgressBar(\min(\count($domains), $max_schedule));
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
         // per run
