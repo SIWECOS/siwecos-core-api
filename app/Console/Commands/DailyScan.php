@@ -61,7 +61,7 @@ class DailyScan extends Command
         )
         order by last_scan asc
 QUERY
-));
+))->get();
         Log::info(var_export($test, true));
 
         return;
