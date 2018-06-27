@@ -42,7 +42,7 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        $test = DB::raw( <<<QUERY
+        $test = DB::raw(<<<'QUERY'
         select domain from domains
         left outer join (
                select url as domain
