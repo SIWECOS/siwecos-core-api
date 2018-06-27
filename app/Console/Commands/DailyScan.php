@@ -2,11 +2,11 @@
 
 namespace App\Console\Commands;
 
-use App\Domain;
 use App\Http\Controllers\ScanController;
-use App\Scan;
+use App\Token;
 use Illuminate\Console\Command;
-use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Log;
 
 class DailyScan extends Command
 {
@@ -41,20 +41,37 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        $domains = Domain::whereVerified('1')->get();
-        /** @var Domain $domain */
-        $bar = $this->output->createProgressBar(\count($domains));
+        // Get domains which are due to be scanned
+        // Longest waiting first.
+        $domains = DB::select(DB::raw(<<<'QUERY'
+        select domain, token from domains
+        left outer join (
+               select url as domain
+                    , max(created_at) as last_scan
+               from scans
+               where recurrentscan
+               group by url
+        ) LS
+        using(domain)
+        join(tokens)
+        on(token_id=tokens.id)
+        where verified
+        and (
+               last_scan is null
+               or
+               timestampdiff(DAY, last_scan, utc_timestamp()) > 0
+        )
+        order by last_scan asc
+QUERY
+        ));
+        $max_schedule = min(env('RECURRENT_PER_RUN'), \count($domains));
+        Log::info('Max Schedule: '.$max_schedule);
+        /** @var string $domain */
+        $bar = $this->output->createProgressBar($max_schedule);
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
         // per run
-        $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | 0);
         foreach ($domains as $domain) {
-            /** @var Scan $latestScan */
-            $latestScan = $domain->scans()->whereRecurrentscan('1')->latest()->first();
-            // TIME CHECK
-            if ($latestScan && $latestScan instanceof Scan && $latestScan->created_at > Carbon::now()->addDays(-1)) {
-                continue;
-            }
-            ScanController::startScanJob($domain->token, $domain->domain, true, 10);
+            ScanController::startScanJob(Token::whereToken($domain->token)->first(), $domain->domain, true, 10);
             $this->info('Scan started for: '.$domain->domain);
             $bar->advance();
             // no more scans are allowed to be started
