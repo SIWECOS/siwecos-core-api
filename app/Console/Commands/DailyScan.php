@@ -5,9 +5,9 @@ namespace App\Console\Commands;
 use App\Domain;
 use App\Http\Controllers\ScanController;
 use App\Scan;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class DailyScan extends Command
