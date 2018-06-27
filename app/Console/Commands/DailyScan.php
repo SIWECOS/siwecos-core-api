@@ -6,6 +6,7 @@ use App\Domain;
 use App\Http\Controllers\ScanController;
 use App\Scan;
 use Illuminate\Console\Command;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Log;
 
@@ -42,8 +43,8 @@ class DailyScan extends Command
      */
     public function handle()
     {
-        // Get domains which are due to be scanned
-        // Longest waiting first.
+      // Get domains which are due to be scanned
+      // Longest waiting first.
         $domains = DB::select(DB::raw(<<<'QUERY'
         select domain, token from domains
         left outer join (
@@ -68,11 +69,11 @@ QUERY
         $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | \count($domains));
         Log::info(env('RECURRENT_PER_RUN'));
         /** @var Domain $domain */
-        $bar = $this->output->createProgressBar(\min(\count($domains), $max_schedule));
+        $bar = $this->output->createProgressBar(\min(\count($domains),$max_schedule));
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
         // per run
         foreach ($domains as $domain) {
-            ScanController::startScanJob($domain->token, $domain->domain, true, 10);
+            ScanController::startScanJob(Token::whereToken($domain->token)->first(), $domain->domain, true, 10);
             $this->info('Scan started for: '.$domain->domain);
             $bar->advance();
             // no more scans are allowed to be started
