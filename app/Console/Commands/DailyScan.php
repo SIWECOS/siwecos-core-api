@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Domain;
 use App\Http\Controllers\ScanController;
-use App\Console\Commands\DB;
+use Illuminate\Support\Facades\DB;
 use App\Scan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
