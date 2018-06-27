@@ -7,6 +7,7 @@ use App\Http\Controllers\ScanController;
 use App\Scan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Log;
 
 class DailyScan extends Command
