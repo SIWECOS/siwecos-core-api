@@ -7,6 +7,7 @@ use App\Http\Controllers\ScanController;
 use App\Scan;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
+use Log;
 
 class DailyScan extends Command
 {
@@ -41,6 +42,26 @@ class DailyScan extends Command
      */
     public function handle()
     {
+        $test = DB::raw(<<<'QUERY'
+        select domain from domains
+        left outer join (
+               select url as domain
+                    , max(created_at) as last_scan
+               from scans
+               where recurrentscan
+               group by url
+        ) LS
+        using(domain)
+        where verified
+        and (
+               last_scan is null
+               or
+               timestampdiff(DAY, last_scan, utc_timestamp()) > 0
+        )
+        order by last_scan asc
+QUERY
+);
+        Log::info(var_export($test, true));
         $domains = Domain::whereVerified('1')->get();
         /** @var Domain $domain */
         $bar = $this->output->createProgressBar(\count($domains));
