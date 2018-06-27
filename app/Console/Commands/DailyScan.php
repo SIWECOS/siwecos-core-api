@@ -64,10 +64,10 @@ class DailyScan extends Command
         order by last_scan asc
 QUERY
         ));
-        $max_schedule = array_key_exists('RECURRENT_PER_RUN', $_ENV) ? $_ENV['RECURRENT_PER_RUN'] : (getenv('RECURRENT_PER_RUN') | \count($domains));
-        Log::info(env('RECURRENT_PER_RUN'));
+        $max_schedule = min(env('RECURRENT_PER_RUN'), \count($domains));
+        Log::info($max_schedule);
         /** @var string $domain */
-        $bar = $this->output->createProgressBar(\min(\count($domains), $max_schedule));
+        $bar = $this->output->createProgressBar($max_schedule);
         // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
         // per run
         foreach ($domains as $domain) {
