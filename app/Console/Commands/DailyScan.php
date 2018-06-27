@@ -62,7 +62,7 @@ class DailyScan extends Command
         order by last_scan asc
 QUERY
         ));
-        foreach ($result as $r) {
+        foreach ($test as $r) {
             log::info($r->domain);
             break;
         }
