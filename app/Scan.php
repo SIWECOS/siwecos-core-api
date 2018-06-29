@@ -70,7 +70,7 @@ class Scan extends Model
         if ($allResults > 0) {
             $doneResults = $this->results()
               ->whereNotNull('result')
-              ->orWhereHasError()
+              ->orWhere('has_error')
               ->count();
             Log::info('Progress: '.$allResults.' '.$doneResults);
             Log::info(round(($doneResults / $allResults) * 100));
