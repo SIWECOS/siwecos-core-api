@@ -30,13 +30,12 @@ class PaperTrailServiceProvider extends ServiceProvider
             try{
                 $monolog = Log::getMonolog();
                 $syslogHandler = new SyslogUdpHandler(env('PAPERTRAIL_URL'), env('PAPERTRAIL_PORT'));
-    
+
                 $formatter = new LineFormatter('%channel%.%level_name%: %message% %extra%');
                 $syslogHandler->setFormatter($formatter);
-    
+
                 $monolog->pushHandler($syslogHandler);
-            }
-            catch (Exception $ex){
+            } catch (Exception $ex) {
                 // Check if Monolog is reachable
             }
         }
