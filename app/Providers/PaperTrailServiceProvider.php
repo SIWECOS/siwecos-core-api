@@ -36,7 +36,7 @@ class PaperTrailServiceProvider extends ServiceProvider
     
                 $monolog->pushHandler($syslogHandler);
             }
-            catch (Exception ex){
+            catch (Exception $ex){
                 // Check if Monolog is reachable
             }
         }
