@@ -24,7 +24,7 @@ node ('docker') {
         stage('docker-build') {
             parallel(
                 app: {
-                    sh "docker build -f app.dockerfile -t $dockerTagApp ."
+                    sh "docker build -t $dockerTagApp ."
                 }
             )
         }
