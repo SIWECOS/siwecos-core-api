@@ -30,7 +30,7 @@ node ('docker') {
         }
 
         stage('docker-push'){
-            docker.withRegistry('https://registry.hub.docker.com', 'docker.weegyman') {
+            withDockerRegistry([credentialsId: 'https://registry.hub.docker.com', url: '']) {
                 sh 'docker push ${doockerTagApp}:latest'
             }
         }
