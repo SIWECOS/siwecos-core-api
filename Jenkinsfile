@@ -5,7 +5,7 @@ dockerTagApp = 'siwecos/siwecos-core-api:master'
 def checkoutAndInstall() {
         checkout scm
 
-        sh 'php7.1 $(which composer) install'
+        sh 'composer install'
         sh 'yarn install'
 }
 
