@@ -21,11 +21,6 @@ node ('docker') {
             checkoutAndInstall()
         }
 
-        stage('test') {
-            sh 'php vendor/bin/phpunit -c phpunit.xml'
-            junit allowEmptyResults: true, testResults: 'build/logs/junit.xml'
-        }
-
         stage('docker-build') {
             parallel(
                 app: {
