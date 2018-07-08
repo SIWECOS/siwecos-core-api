@@ -9,7 +9,7 @@ def checkoutAndInstall() {
         sh 'yarn install'
 }
 
-node {
+node (docker) {
     ws {
         stage('prepare') {
             checkoutAndInstall()
