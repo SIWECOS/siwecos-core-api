@@ -9,7 +9,7 @@ def checkoutAndInstall() {
         sh 'yarn install'
 }
 
-node('php7.1&&node8.x') {
+node {
     ws {
         stage('prepare') {
             checkoutAndInstall()
