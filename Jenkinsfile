@@ -30,8 +30,10 @@ node ('docker') {
         }
 
         stage('docker-push'){
-            withDockerRegistry([credentialsId: 'https://registry.hub.docker.com', url: '']) {
-                sh 'docker push ${doockerTagApp}:latest'
+            steps{
+                withDockerRegistry([credentialsId: 'https://registry.hub.docker.com', url: '']) {
+                    sh 'docker push ${doockerTagApp}:latest'
+                }
             }
         }
     }
