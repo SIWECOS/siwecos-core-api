@@ -31,7 +31,7 @@ node ('docker') {
 
         stage('docker-push'){
             steps{
-                withDockerRegistry([credentialsId: 'https://registry.hub.docker.com', url: '']) {
+                withDockerRegistry([credentialsId: 'docker.weegyman', url: '']) {
                     sh 'docker push ${doockerTagApp}:latest'
                 }
             }
