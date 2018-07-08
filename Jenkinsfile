@@ -4,7 +4,16 @@ dockerTagApp = 'siwecos/siwecos-core-api:master'
 
 def checkoutAndInstall() {
         checkout scm
-
+        sh 'sudo apt-get install -y python-software-properties'
+        sh 'sudo add-apt-repository -y ppa:ondrej/php'
+        sh 'sudo apt-get update -y'
+        sh 'sudo apt-get install nodejs'
+        sh 'sudo apt-get install yarn'
+        sh 'sudo apt-get install php7.1 php7.1-json'
+        sh 'sudo apt-get install curl php-cli php-mbstring git unzip'
+        sh 'cd ~'
+        sh 'curl -sS https://getcomposer.org/installer -o composer-setup.php'
+        sh 'sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer'
         sh 'composer install'
         sh 'yarn install'
 }
