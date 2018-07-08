@@ -1,6 +1,6 @@
 #!groovy
 
-dockerTagApp = 'weegyman/siwecos-core-api:master'
+dockerTagApp = 'weegyman/siwecos-core-api'
 
 def checkoutAndInstall() {
         checkout scm
@@ -30,10 +30,9 @@ node ('docker') {
         }
 
         stage('docker-push'){
-        docker.withRegistry('https://registry.hub.docker.com', 'docker.weegyman') {
-            app.push("${env.BUILD_NUMBER}")
-            app.push("latest")
-        }
+            docker.withRegistry('https://registry.hub.docker.com', 'docker.weegyman') {
+                sh 'docker push ${doockerTagApp}:latest'
+            }
         }
     }
 }
