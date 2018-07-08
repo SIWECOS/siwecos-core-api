@@ -22,7 +22,7 @@ node ('docker') {
         }
 
         stage('test') {
-            sh 'php7.1 vendor/bin/phpunit -c phpunit.xml'
+            sh 'php vendor/bin/phpunit -c phpunit.xml'
             junit allowEmptyResults: true, testResults: 'build/logs/junit.xml'
         }
 
