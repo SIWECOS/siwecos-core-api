@@ -26,7 +26,7 @@ class PaperTrailServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (!(env('APP_ENV', '') === 'testing')) {
+        if (!(env('APP_ENV', '') === 'testing') && !(env('APP_ENV', '') === 'docker')) {
             try{
                 $monolog = Log::getMonolog();
                 $syslogHandler = new SyslogUdpHandler(env('PAPERTRAIL_URL'), env('PAPERTRAIL_PORT'));
