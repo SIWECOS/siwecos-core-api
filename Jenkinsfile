@@ -8,14 +8,12 @@ def checkoutAndInstall() {
         sh 'sudo add-apt-repository -y ppa:ondrej/php'
         sh 'sudo apt-get update -y'
         sh 'sudo apt-get install nodejs -y'
-        sh 'sudo apt-get install yarn -y'
         sh 'sudo apt-get install php7.1 php7.1-json -y'
         sh 'sudo apt-get install curl php-cli php-mbstring git unzip -y'
         sh 'cd ~'
         sh 'curl -sS https://getcomposer.org/installer -o composer-setup.php'
         sh 'sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer'
         sh 'composer install'
-        sh 'yarn install'
 }
 
 node ('docker') {
