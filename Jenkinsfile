@@ -1,6 +1,6 @@
 #!groovy
 
-dockerTagApp = 'weegyman/siwecos-core-api'
+dockerTagApp = 'siwecos/siwecos-core-api'
 
 def checkoutAndInstall() {
         checkout scm
