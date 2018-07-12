@@ -68,15 +68,25 @@ class Scan extends Model
     {
         $allResults = $this->results()->count();
         if ($allResults > 0) {
-            $doneResults = $this->results()
+          # TODO use properly formatted query
+          $doneResults = $this->results()
             ->whereNotNull('result')->count();
-            $errResults = $this->results()
-            ->whereNull('result')->where('has_error', '=', 'true')->count();
-            Log::info('Progress: '.$allResults.' '.$doneResults.' '.$errResults);
-            Log::info(round((($doneResults + $errResults) / $allResults) * 100));
+          $errResults = $this->results()
+            ->whereNull('result')->where('has_error','=','true')->count();
+            /*
+            This query unfortunately does not work
+            $doneResults = $this->results()
+             ->where(function($q) {
+               $q->whereNotNull('result')
+               ->orWhere('has_error', '=', 'true');
+             })->count();
+             Error is
+             Parse error: syntax error, unexpected '->' (T_OBJECT_OPERATOR)
+            */
+          Log::info('Progress: '.$allResults.' '.$doneResults.' '.$errResults);
+          Log::info(round((($doneResults + $errResults) / $allResults) * 100));
 
-            return round((($doneResults + $errResults) / $allResults) * 100);
-        }
+          return round((($doneResults + $errResults)  / $allResults) * 100);        }
 
         return 0;
     }
