@@ -68,15 +68,14 @@ class Scan extends Model
     {
         $allResults = $this->results()->count();
         if ($allResults > 0) {
-            $doneResults = $this->results()
-              ->whereNotNull('result')
-              ->orWhere('has_error', '=', 'true')
-              ->count();
-            Log::info('Progress: '.$allResults.' '.$doneResults);
-            Log::info(round(($doneResults / $allResults) * 100));
+          $doneResults = $this->results()
+            ->whereNotNull('result')->count();
+          $errResults = $this->results()
+            ->whereNull('result')->where('has_error','=','true')->count();
+          Log::info('Progress: '.$allResults.' '.$doneResults.' '.$errResults);
+          Log::info(round((($doneResults + $errResults) / $allResults) * 100));
 
-            return round(($doneResults / $allResults) * 100);
-        }
+          return round((($doneResults + $errResults)  / $allResults) * 100);        }
 
         return 0;
     }
