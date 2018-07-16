@@ -1,31 +1,38 @@
 #!groovy
 
-dockerTagApp = 'siwecos/siwecos-core-api:master'
+dockerTagApp = 'siwecos/siwecos-core-api'
 
 def checkoutAndInstall() {
         checkout scm
-
-        sh 'php7.1 $(which composer) install'
-        sh 'yarn install'
+        sh 'sudo apt-get install -y python-software-properties'
+        sh 'sudo add-apt-repository -y ppa:ondrej/php'
+        sh 'sudo apt-get update -y'
+        sh 'sudo apt-get install nodejs -y'
+        sh 'sudo apt-get install curl php-cli php-mbstring php7.2-xml php7.2-dom git unzip -y'
+        sh 'cd ~'
+        sh 'curl -sS https://getcomposer.org/installer -o composer-setup.php'
+        sh 'sudo php composer-setup.php --install-dir=/usr/local/bin --filename=composer'
+        sh 'composer install'
 }
 
-node {
+node ('docker') {
     ws {
         stage('prepare') {
             checkoutAndInstall()
         }
 
-        stage('test') {
-            sh 'php7.1 vendor/bin/phpunit -c phpunit.xml'
-            junit allowEmptyResults: true, testResults: 'build/logs/junit.xml'
-        }
-
         stage('docker-build') {
             parallel(
                 app: {
-                    sh "docker build -f app.dockerfile -t $dockerTagApp ."
+                    sh "docker build -t $dockerTagApp ."
                 }
             )
+        }
+
+        stage('docker-push'){
+                withDockerRegistry([credentialsId: 'docker.weegyman', url: '']) {
+                    sh "docker push $dockerTagApp:latest"
+                }
         }
     }
 }
