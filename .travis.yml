@@ -23,4 +23,14 @@ before_script:
   - php artisan key:generate
 
 script:
-  - vendor/bin/phpunit  
+  - vendor/bin/phpunit
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker build -t siwecos-core-api .
+      - docker images
+      - docker tag siwecos-core-api SIWECOS/siwecos-core-api
+      - docker push SIWECOS/siwecos-core-api
