@@ -287,6 +287,7 @@ class ScanController extends Controller
                 'status' => 3,
 
             ]);
+            Log::info('Ready to update '.$scan->id.' to status 3');
             // SCAN IS FINISHED! INFORM USER
             if ($scan->recurrentscan === 1 && $scan->results->count() === 5) {
                 //CHECK LAST NOTIFICATION
@@ -314,7 +315,7 @@ class ScanController extends Controller
                 }
             }
             $scan->save();
-
+            Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
             $client = new Client();
             $client->get('https://bla.staging2.siwecos.de/api/v1/freescan/'.$scan->id);
