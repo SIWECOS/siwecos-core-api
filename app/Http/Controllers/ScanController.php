@@ -305,7 +305,14 @@ class ScanController extends Controller
 
                 $totalScore /= 5;
                 Log::info('TOTAL SCORE FOR DOMAIN '.$domain->domain.' // '.$totalScore);
-
+                // a test first
+                if ($domain instanceof Domain) {
+                    if ($domain->verified) {
+                        Log::info($domainstring.' is verified');
+                    } else {
+                        Log::info($domainstring.' is not verified');
+                    }
+                }
                 if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)) && $totalScore <= 50) {
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
                     $domain->last_notification = Carbon::now();
