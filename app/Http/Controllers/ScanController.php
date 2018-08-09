@@ -308,9 +308,9 @@ class ScanController extends Controller
                 // a test first
                 if ($domain instanceof Domain) {
                     if ($domain->verified) {
-                        Log::info($domainstring." is verified");
+                        Log::info($domainstring.' is verified');
                     } else {
-                        Log::info($domainstring." is not verified");
+                        Log::info($domainstring.' is not verified');
                     }
                 }
                 if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)) && $totalScore <= 50) {
