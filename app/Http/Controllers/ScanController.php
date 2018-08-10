@@ -310,14 +310,16 @@ class ScanController extends Controller
                     $domain->last_notification = Carbon::now();
                     $domain->save();
                     $client = new Client();
-                    $client->get('https://api.siwecos.de/bla/current/public/api/v1/generateLowScoreReport/'.$scan->id);
+                    $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
+                    Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
                 }
             }
             $scan->save();
             Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
             $client = new Client();
-            $client->get('https://bla.staging2.siwecos.de/api/v1/freescan/'.$scan->id);
+            $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
+            Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));
         }
     }
 }
