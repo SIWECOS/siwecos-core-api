@@ -61,6 +61,8 @@ spec:
             secretKeyRef:
               name: laraveldb
               key: dbpass
+        - name: DB_DATABASE
+          value: core-api
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
