@@ -178,9 +178,6 @@ class ScanController extends Controller
             if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
                 continue;
             }
-            if (!preg_match("/^https?:\/\//", $value)) {
-                continue;
-            }
             ScanJob::dispatch($scanner_name[1], $value, $scan);
         }
 
