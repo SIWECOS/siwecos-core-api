@@ -45,22 +45,22 @@ spec:
         resources: {}
         terminationMessagePath: /dev/termination-log
         terminationMessagePolicy: File
-      env:
-      - name: DB_HOST
-        valueFrom:
-          secretKeyRef:
-            name: laraveldb
-            key: dbhost
-      - name: DB_USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: laraveldb
-            key: dbuser
-      - name: DB_PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: laraveldb
-            key: dbpass
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: laraveldb
+              key: dbhost
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: laraveldb
+              key: dbuser
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: laraveldb
+              key: dbpass
       dnsPolicy: ClusterFirst
       restartPolicy: Always
       schedulerName: default-scheduler
