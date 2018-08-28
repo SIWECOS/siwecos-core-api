@@ -1,5 +1,11 @@
 apiVersion: extensions/v1beta1
 kind: Deployment
+metadata:
+  name: core-api-1
+  namespace: production
+  resourceVersion: "6188118"
+  selfLink: /apis/extensions/v1beta1/namespaces/production/deployments/core-api-1
+  uid: f00f7267-8b64-11e8-bd3b-42010a84002a
 spec:
   replicas: 1
   selector:
