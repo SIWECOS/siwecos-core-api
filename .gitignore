@@ -221,3 +221,5 @@ $RECYCLE.BIN/
 ..env.swp
 .phpstorm.meta.php
 curr*
+
+secret-laraveldb\.yaml
