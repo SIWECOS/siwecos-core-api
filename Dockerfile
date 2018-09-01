@@ -20,10 +20,10 @@ COPY .env.example .env
 
 RUN composer install && php artisan key:generate
 
-RUN supervisord --configuration /etc/supervisor/supervisord.conf
+CMD supervisord --configuration /etc/supervisor/supervisord.conf
 #RUN php artisan migrate
 
 #RUN php artisan create:mastertoken
 
-CMD php artisan serve --host=0.0.0.0 --port=8666
+ENTRYPOINT php artisan serve --host=0.0.0.0 --port=8666
 EXPOSE 8666
