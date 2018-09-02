@@ -1,4 +1,4 @@
-FROM php:7.2-fpm-alpine
+FROM php:7.2-alpine
 RUN apk update && apk add openssl zip unzip git
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN docker-php-ext-install mysqli pdo_mysql pdo mbstring
