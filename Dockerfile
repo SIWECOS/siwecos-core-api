@@ -40,3 +40,5 @@ COPY .env.example .env
 
 CMD supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
 #RUN php artisan migrate
+
+EXPOSE 80
