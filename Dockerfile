@@ -12,6 +12,7 @@ ENV SUPERVISOR_VERSION=3.3.3
 RUN apk update && apk add python py-pip
 RUN pip install supervisor==$SUPERVISOR_VERSION
 
+COPY php.ini /usr/local/etc/php/
 COPY worker.conf /etc/supervisor/supervisord.conf
 
 WORKDIR /app
