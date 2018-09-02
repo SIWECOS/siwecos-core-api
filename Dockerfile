@@ -40,6 +40,3 @@ COPY .env.example .env
 
 CMD supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
 #RUN php artisan migrate
-
-#RUN php artisan create:mastertoken
-EXPOSE 8666
