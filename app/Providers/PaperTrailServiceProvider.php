@@ -26,18 +26,18 @@ class PaperTrailServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        if (!(env('APP_ENV', '') === 'testing') && !(env('APP_ENV', '') === 'docker')) {
-            try {
-                $monolog = Log::getMonolog();
-                $syslogHandler = new SyslogUdpHandler(env('PAPERTRAIL_URL'), env('PAPERTRAIL_PORT'));
+        $monolog = Log::getMonolog();
 
-                $formatter = new LineFormatter('%channel%.%level_name%: %message% %extra%');
-                $syslogHandler->setFormatter($formatter);
+        // Always add the stderr output for errors over WARNING level.
+        $monolog->pushHandler(
+            new \Monolog\Handler\StreamHandler('php://stderr', \Monolog\Logger::WARNING)
+        );
 
-                $monolog->pushHandler($syslogHandler);
-            } catch (Exception $ex) {
-                // Check if Monolog is reachable
-            }
+        // Conditionally add stdout debug.
+        if (config('app.debug')) {
+            $monolog->pushHandler(
+                new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG)
+            );
         }
     }
 }
