@@ -20,7 +20,7 @@ COPY .env.example .env
 
 RUN composer install && php artisan key:generate
 
-ENTRYPOINT supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
+CMD supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
 #RUN php artisan migrate
 
 #RUN php artisan create:mastertoken
