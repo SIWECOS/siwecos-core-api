@@ -28,13 +28,13 @@ class PaperTrailServiceProvider extends ServiceProvider
 
         // Always add the stderr output for errors over WARNING level.
         $monolog->pushHandler(
-            new \Monolog\Handler\StreamHandler('php://stderr', \Monolog\Logger::WARNING)
+            new \Monolog\Handler\StreamHandler('/dev/stderr', \Monolog\Logger::WARNING)
         );
 
         // Conditionally add stdout debug.
         if (config('app.debug')) {
             $monolog->pushHandler(
-                new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG)
+                new \Monolog\Handler\StreamHandler('/dev/stdout', \Monolog\Logger::DEBUG)
             );
         }
     }
