@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Rules;
+
 use App\Domain;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -19,14 +20,16 @@ class AnAvailableUrlExistsForTheDomain implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed  $value
+     *
      * @return bool
      */
     public function passes($attribute, $value)
     {
-        if( (new Domain(['domain' => $value]))->getDomainURL())
+        if ((new Domain(['domain' => $value]))->getDomainURL()) {
             return true;
+        }
 
         return false;
     }

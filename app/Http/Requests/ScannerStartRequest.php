@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
 use App\Rules\AnAvailableUrlExistsForTheDomain;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ScannerStartRequest extends FormRequest
@@ -33,7 +33,7 @@ class ScannerStartRequest extends FormRequest
     public function rules()
     {
         return [
-            'domain'         => ['required', new AnAvailableUrlExistsForTheDomain],
+            'domain'         => ['required', new AnAvailableUrlExistsForTheDomain()],
             'dangerLevel'    => 'integer|min:0|max:10',
             'callbackurls'   => 'array',
             'callbackurls.*' => 'url',
