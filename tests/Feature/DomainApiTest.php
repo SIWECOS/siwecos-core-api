@@ -10,9 +10,9 @@ use Tests\TestCase;
 
 const BASEURL_DOMAIN = '/api/v1/domain/';
 const CREDITS = 50;
-const TEST_DOMAIN1 = 'https://example.com';
-const TEST_DOMAIN2 = 'https://ex.com';
-const TEST_DOMAIN3 = 'https://examp.com';
+const TEST_DOMAIN1 = 'example.com';
+const TEST_DOMAIN2 = 'ex.com';
+const TEST_DOMAIN3 = 'examp.com';
 
 class DomainApiTest extends TestCase
 {

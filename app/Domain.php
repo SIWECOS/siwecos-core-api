@@ -2,9 +2,10 @@
 
 namespace App;
 
-use Illuminate\Database\Eloquent\Model;
-use Keygen\Keygen;
 use Log;
+use Keygen\Keygen;
+use GuzzleHttp\Client;
+use Illuminate\Database\Eloquent\Model;
 
 const METATAGNAME = 'siwecostoken';
 
@@ -43,8 +44,7 @@ class Domain extends Model
         parent::__construct($attributes);
 
         if (array_key_exists('domain', $attributes)) {
-            $domainFilter = parse_url($attributes['domain']);
-            $this->domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+            $this->domain = $attributes['domain'];
         }
         if (array_key_exists('token', $attributes)) {
             $token = Token::getTokenByString($attributes['token']);
@@ -133,5 +133,52 @@ class Domain extends Model
         if ($domain instanceof self) {
             return $domain;
         }
+    }
+
+    /**
+     * Returns a valid URL for the given domain (hostname) that is reachable.
+     * @return string|null A valid URL incl. schema or null if no URL is available.
+     */
+    public function getDomainURL() {
+        // Pings via guzzle
+        $client = new Client();
+
+        // Domain is available via https://
+        try {
+            $testURL = "https://" . $this->domain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200)
+                return $testURL;
+        } catch (\Exception $e) {
+        }
+
+        // Domain is available via http://
+        try {
+            $testURL = "http://" . $this->domain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200)
+                return $testURL;
+        } catch (\Exception $e) {}
+
+        // Domain is available with or without www
+        // if www. is there, than remove it, otherwise add it
+        $testDomain = substr($this->domain, 0, 4) === "www." ? substr($this->domain, 4) : "www." . $this->domain;
+
+        try {
+            $testURL = "https://" . $testDomain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200)
+                return $testURL;
+        } catch (\Exception $e) {}
+
+        try {
+            $testURL = "http://" . $testDomain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200)
+                return $testURL;
+        } catch (\Exception $e) {}
+
+        return null;
+
     }
 }

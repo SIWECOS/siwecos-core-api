@@ -10,7 +10,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
-const TEST_DOMAIN = 'https://example.com';
+const TEST_DOMAIN = 'example.com';
 
 class ScannerStartTest extends TestCase
 {
