@@ -2,10 +2,10 @@
 
 namespace App;
 
-use Log;
-use Keygen\Keygen;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
+use Keygen\Keygen;
+use Log;
 
 const METATAGNAME = 'siwecostoken';
 
@@ -172,8 +172,9 @@ class Domain extends Model
         try {
             $testURL = "https://" . $testDomain;
             $response = $client->request('GET', $testURL, ['verify' => false]);
-            if ($response->getStatusCode() === 200)
+            if ($response->getStatusCode() === 200) {
                 return $testURL;
+            }
         } catch (\Exception $e) {
         }
 
@@ -181,16 +182,18 @@ class Domain extends Model
         try {
             $testURL = "http://" . $testDomain;
             $response = $client->request('GET', $testURL, ['verify' => false]);
-            if ($response->getStatusCode() === 200)
+            if ($response->getStatusCode() === 200) {
                 return $testURL;
-        } catch (\Exception $e) {}
+            }
+        } catch (\Exception $e) {
+        }
 
         // Domain is available with or without www
         // if www. is there, than remove it, otherwise add it
         $testDomain = substr($testDomain, 0, 4) === "www." ? substr($testDomain, 4) : "www." . $testDomain;
 
         try {
-            $testURL = "https://" . $testDomain;
+            $testURL = 'https://'.$testDomain;
             $response = $client->request('GET', $testURL, ['verify' => false]);
             if ($response->getStatusCode() === 200) {
                 return collect([
@@ -201,7 +204,7 @@ class Domain extends Model
         } catch (\Exception $e) {}
 
         try {
-            $testURL = "http://" . $testDomain;
+            $testURL = 'http://'.$testDomain;
             $response = $client->request('GET', $testURL, ['verify' => false]);
             if ($response->getStatusCode() === 200) {
                 return collect([

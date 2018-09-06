@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\AnAvailableUrlExistsForTheDomain;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use App\Rules\AnAvailableUrlExistsForTheDomain;
 
 class DomainAddRequest extends FormRequest
 {
@@ -32,7 +32,7 @@ class DomainAddRequest extends FormRequest
     public function rules()
     {
         return [
-            'domain' => ['required', new AnAvailableUrlExistsForTheDomain],
+            'domain' => ['required', new AnAvailableUrlExistsForTheDomain()],
         ];
     }
 }
