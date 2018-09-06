@@ -39,7 +39,7 @@ class ScanController extends Controller
         /** @var Scan $scan */
         $scan = $token->scans()->create([
             'token_id'      => $token->id,
-            'url'           => $currentDomain->getDomainURL(),
+            'url'           => $currentDomain->domain,
             'callbackurls'  => [],
             'dangerLevel'   => $dangerLevel,
             'recurrentscan' => $isRecurrent,
