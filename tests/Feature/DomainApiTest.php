@@ -2,17 +2,21 @@
 
 namespace Tests\Feature;
 
-use App\Domain;
 use App\Token;
+use App\Domain;
+use Tests\TestCase;
+use GuzzleHttp\Client;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Psr7\Response;
+use GuzzleHttp\Handler\MockHandler;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Tests\TestCase;
 
 const BASEURL_DOMAIN = '/api/v1/domain/';
 const CREDITS = 50;
-const TEST_DOMAIN1 = 'example.com';
-const TEST_DOMAIN2 = 'ex.com';
-const TEST_DOMAIN3 = 'examp.com';
+const TEST_DOMAIN1 = 'https://example.com';
+const TEST_DOMAIN2 = 'http://ex.com';
+const TEST_DOMAIN3 = 'http://siwecos.de';
 
 class DomainApiTest extends TestCase
 {
@@ -109,5 +113,17 @@ class DomainApiTest extends TestCase
         // setup domain
         $this->domain = new Domain(['token' => $this->token->token, 'domain' => TEST_DOMAIN1]);
         $this->domain->save();
+    }
+
+    /**
+     * This method sets and activates the GuzzleHttp Mocking functionality.
+     * @param array $responses
+     * @return Client
+     */
+    protected function getMockedGuzzleClient(array $responses)
+    {
+        $mock = new MockHandler($responses);
+        $handler = HandlerStack::create($mock);
+        return (new Client(["handler" => $handler])) ;
     }
 }
