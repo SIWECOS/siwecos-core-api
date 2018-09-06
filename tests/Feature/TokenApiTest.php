@@ -3,10 +3,10 @@
 namespace Tests\Feature;
 
 use App\Token;
-use Keygen\Keygen;
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
+use Keygen\Keygen;
+use Tests\TestCase;
 
 const BASEURL_TOKEN = '/api/v1/token/';
 const ACLLEVEL = 5;

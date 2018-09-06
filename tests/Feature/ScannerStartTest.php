@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
+use App\Domain;
 use App\Scan;
 use App\Token;
-use App\Domain;
-use Tests\TestCase;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
+use Tests\TestCase;
 
 const TEST_DOMAIN = 'example.com';
 

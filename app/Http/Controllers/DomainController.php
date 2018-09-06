@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Token;
 use App\Domain;
-use Keygen\Keygen;
-use GuzzleHttp\Client;
-use Illuminate\Http\Request;
 use App\Http\Requests\DomainAddRequest;
-use Illuminate\Database\QueryException;
 use App\Siweocs\Models\DomainAddResponse;
 use App\Siweocs\Models\DomainListResponse;
 use App\Siweocs\Models\SiwecosBaseReponse;
+use App\Token;
+use Illuminate\Database\QueryException;
+use Illuminate\Http\Request;
+use Keygen\Keygen;
 
 class DomainController extends Controller
 {
