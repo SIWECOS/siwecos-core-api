@@ -141,16 +141,16 @@ class Domain extends Model
     /**
      * Returns a valid URL for the given domain (hostname) that is reachable.
      *
-     * @param  string $domain   Domain / Hostname to get the URL for.
-     * @param  Client $client   Guzzle Client for PHPUnit testing only.
-     * @return string|null      A valid URL incl. schema or null if no URL is available.
+     * @param  string $domain           Domain / Hostname to get the URL for.
+     * @param  Client $client           Guzzle Client for PHPUnit testing only.
+     * @return string|Collection|null   A valid URL incl. schema if valid. Collection with alternative URL if the given one was not valid or or NULL if no URL is available.
      */
-    public function getDomainURL() {
+    public static function getDomainURL(string $domain, Client $client = null) {
 
-        $testDomain = $this->domain;
+        $testDomain = $domain;
 
         // Pings via guzzle
-        $client = $this->client ? : new Client();
+        $client = $client ? : new Client();
 
         $scheme = parse_url($testDomain, PHP_URL_SCHEME);
 
@@ -164,7 +164,7 @@ class Domain extends Model
             } catch (\Exception $e) {
                 // if not available, remove scheme from domain
                 // scheme = https; + 3 for ://
-                $testDomain = substr($this->domain, strlen($scheme) + 3);
+                $testDomain = substr($domain, strlen($scheme) + 3);
             }
         }
 
@@ -192,15 +192,23 @@ class Domain extends Model
         try {
             $testURL = "https://" . $testDomain;
             $response = $client->request('GET', $testURL, ['verify' => false]);
-            if ($response->getStatusCode() === 200)
-                return $testURL;
+            if ($response->getStatusCode() === 200) {
+                return collect([
+                    'notAvailable' => $domain,
+                    'alternativeAvailable' => $testDomain
+                ]);
+            }
         } catch (\Exception $e) {}
 
         try {
             $testURL = "http://" . $testDomain;
             $response = $client->request('GET', $testURL, ['verify' => false]);
-            if ($response->getStatusCode() === 200)
-                return $testURL;
+            if ($response->getStatusCode() === 200) {
+                return collect([
+                    'notAvailable' => $domain,
+                    'alternativeAvailable' => $testDomain
+                ]);
+            }
         } catch (\Exception $e) {}
 
         return null;

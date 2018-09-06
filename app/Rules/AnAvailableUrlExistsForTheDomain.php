@@ -2,10 +2,14 @@
 
 namespace App\Rules;
 use App\Domain;
+use GuzzleHttp\Client;
 use Illuminate\Contracts\Validation\Rule;
 
 class AnAvailableUrlExistsForTheDomain implements Rule
 {
+
+    protected $errorMessage = null;
+
     /**
      * Create a new rule instance.
      *
@@ -25,9 +29,21 @@ class AnAvailableUrlExistsForTheDomain implements Rule
      */
     public function passes($attribute, $value)
     {
-        if( (new Domain(['domain' => $value]))->getDomainURL())
-            return true;
 
+        // TODO: Inject mocked Guzzle\Client to getDomainURL to test these responses here.
+        $result = Domain::getDomainURL($value);
+        // Domain is available with http:// or https://
+        if( is_string($result) ) {
+            return true;
+        }
+
+        // Domain is only available with or without www.
+        elseif ( isset($result) && $result->isNotEmpty() ) {
+            $this->errorMessage = $result->get('notAvailable') . " is not available. Did you mean " . $result->get('alternativeAvailable') . "?";
+            return false;
+        }
+
+        $this->errorMessage = $value . " is not available.";
         return false;
     }
 
@@ -38,6 +54,6 @@ class AnAvailableUrlExistsForTheDomain implements Rule
      */
     public function message()
     {
-        return 'The domain is not valid.';
+        return $this->errorMessage;
     }
 }

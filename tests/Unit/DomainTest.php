@@ -21,8 +21,8 @@ class DomainTest extends TestCase
             new Response(200),
         ]);
 
-        $domain = new Domain(['domain' => 'example.com'], $client);
-        $this->assertEquals('https://example.com', $domain->getDomainURL());
+        $domain = 'example.com';
+        $this->assertEquals('https://example.com', Domain::getDomainURL($domain, $client));
     }
 
     /** @test */
@@ -32,8 +32,8 @@ class DomainTest extends TestCase
             new Response(200),
         ]);
 
-        $domain = new Domain(['domain' => 'https://example.com'], $client);
-        $this->assertEquals('https://example.com', $domain->getDomainURL());
+        $domain = 'https://example.com';
+        $this->assertEquals('https://example.com', Domain::getDomainURL($domain, $client));
     }
 
     /** @test */
@@ -48,8 +48,8 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'https://example.com'], $client);
-        $this->assertEquals('http://example.com', $domain->getDomainURL());
+        $domain = 'https://example.com';
+        $this->assertEquals('http://example.com', Domain::getDomainURL($domain, $client));
     }
 
     /** @test */
@@ -62,12 +62,12 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'example.com'], $client);
-        $this->assertEquals('http://example.com', $domain->getDomainURL());
+        $domain = 'example.com';
+        $this->assertEquals('http://example.com', Domain::getDomainURL($domain, $client));
     }
 
     /** @test */
-    public function getDomainURL_returns_httpsWww_if_protocol_is_given_but_https_is_unavailable_but_httpsWww_is_available()
+    public function getDomainURL_returns_alternativeAvailable_if_protocol_is_given_but_https_is_unavailable_but_httpsWww_is_available()
     {
         $client = $this->getMockedGuzzleClient([
             // Response for given domain/url
@@ -80,12 +80,15 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'https://example.com'], $client);
-        $this->assertEquals('https://www.example.com', $domain->getDomainURL());
+        $domain = 'https://example.com';
+
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertArrayHasKey('notAvailable', $result);
+        $this->assertEquals('www.example.com', $result['alternativeAvailable']);
     }
 
     /** @test */
-    public function getDomainURL_returns_httpWww_if_protocol_is_given_but_https_is_unavailable_and_only_httpWww_is_available()
+    public function getDomainURL_returns_alternativeAvailable_if_protocol_is_given_but_https_is_unavailable_and_only_httpWww_is_available()
     {
         $client = $this->getMockedGuzzleClient([
             // Response for given domain/url
@@ -100,12 +103,15 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'https://example.com'], $client);
-        $this->assertEquals('http://www.example.com', $domain->getDomainURL());
+        $domain = 'https://example.com';
+
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertArrayHasKey('notAvailable', $result);
+        $this->assertEquals('www.example.com', $result['alternativeAvailable']);
     }
 
     /** @test */
-    public function getDomainURL_returns_httpWww_if_no_protocol_is_given_but_https_is_unavailable_and_only_httpWww_is_available()
+    public function getDomainURL_returns_alternativeAvailable_if_no_protocol_is_given_but_https_is_unavailable_and_only_httpWww_is_available()
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://
@@ -118,8 +124,12 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'example.com'], $client);
-        $this->assertEquals('http://www.example.com', $domain->getDomainURL());
+        $domain = 'example.com';
+
+        $result = Domain::getDomainURL($domain, $client);
+
+        $this->assertArrayHasKey('notAvailable', $result);
+        $this->assertEquals('www.example.com', $result['alternativeAvailable']);
     }
 
     /** @test */
@@ -129,8 +139,8 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'http://www.example.com'], $client);
-        $this->assertEquals('http://www.example.com', $domain->getDomainURL());
+        $domain = 'http://www.example.com';
+        $this->assertEquals('http://www.example.com', Domain::getDomainURL($domain, $client));
     }
 
     /** @test */
@@ -143,12 +153,12 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'www.example.com'], $client);
-        $this->assertEquals('http://www.example.com', $domain->getDomainURL());
+        $domain = 'www.example.com';
+        $this->assertEquals('http://www.example.com', Domain::getDomainURL($domain, $client));
     }
 
     /** @test */
-    public function getDomainURL_returns_https_if_httpsWww_is_given_but_www_is_unavailable_and_https_is_available()
+    public function getDomainURL_returns_alternativeAvailable_if_httpsWww_is_given_but_www_is_unavailable_and_https_is_available()
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://www.
@@ -159,12 +169,15 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'www.example.com'], $client);
-        $this->assertEquals('https://example.com', $domain->getDomainURL());
+        $domain = 'www.example.com';
+
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertArrayHasKey('notAvailable', $result);
+        $this->assertEquals('example.com', $result['alternativeAvailable']);
     }
 
     /** @test */
-    public function getDomainURL_returns_https_if_httpsWww_is_given_but_www_is_unavailable_and_only_http_is_available()
+    public function getDomainURL_returns_alternativeAvailable_if_httpsWww_is_given_but_www_is_unavailable_and_only_http_is_available()
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://www.
@@ -177,8 +190,11 @@ class DomainTest extends TestCase
             new Response(200)
         ]);
 
-        $domain = new Domain(['domain' => 'www.example.com'], $client);
-        $this->assertEquals('http://example.com', $domain->getDomainURL());
+        $domain = 'www.example.com';
+
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertArrayHasKey('notAvailable', $result);
+        $this->assertEquals('example.com', $result['alternativeAvailable']);
     }
 
     /** @test */
@@ -195,8 +211,8 @@ class DomainTest extends TestCase
             new RequestException("Error Communicating with Server", new Request('GET', 'test')),
         ]);
 
-        $domain = new Domain(['domain' => 'lorem'], $client);
-        $this->assertNull($domain->getDomainURL());
+        $domain = 'lorem';
+        $this->assertNull(Domain::getDomainURL($domain, $client));
     }
 
 

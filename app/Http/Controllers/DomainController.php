@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Token;
 use App\Domain;
+use Keygen\Keygen;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
 use App\Http\Requests\DomainAddRequest;
+use Illuminate\Database\QueryException;
 use App\Siweocs\Models\DomainAddResponse;
 use App\Siweocs\Models\DomainListResponse;
 use App\Siweocs\Models\SiwecosBaseReponse;
-use App\Token;
-use Illuminate\Database\QueryException;
-use Illuminate\Http\Request;
-use Keygen\Keygen;
 
 class DomainController extends Controller
 {
@@ -21,10 +22,10 @@ class DomainController extends Controller
      */
     public function add(DomainAddRequest $request)
     {
-        $domain = $request->get('domain');
+        $domainURL = Domain::getDomainURL($request->get('domain'));
 
         /** @var Domain $exisitingDomain */
-        $exisitingDomain = Domain::whereDomain($domain)->first();
+        $exisitingDomain = Domain::whereDomain($domainURL)->first();
         if ($exisitingDomain instanceof Domain) {
             if ($exisitingDomain->verified === 1) {
                 return response('Domain already there', 500);
