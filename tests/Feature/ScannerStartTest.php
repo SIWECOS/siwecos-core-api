@@ -2,19 +2,18 @@
 
 namespace Tests\Feature;
 
-use App\Domain;
 use App\Scan;
 use App\Token;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Support\Facades\Queue;
+use App\Domain;
 use Tests\TestCase;
+use Illuminate\Support\Facades\Queue;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 const TEST_DOMAIN = 'example.com';
 
 class ScannerStartTest extends TestCase
 {
-    use DatabaseMigrations, DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $token;
     protected $domain;
