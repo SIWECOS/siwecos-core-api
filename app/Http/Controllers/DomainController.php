@@ -21,11 +21,10 @@ class DomainController extends Controller
      */
     public function add(DomainAddRequest $request)
     {
-        $domainFilter = parse_url($request->get('domain'));
-        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+        $domainURL = Domain::getDomainURL($request->get('domain'));
 
         /** @var Domain $exisitingDomain */
-        $exisitingDomain = Domain::whereDomain($domain)->first();
+        $exisitingDomain = Domain::whereDomain($domainURL)->first();
         if ($exisitingDomain instanceof Domain) {
             if ($exisitingDomain->verified === 1) {
                 return response('Domain already there', 500);
@@ -81,8 +80,7 @@ class DomainController extends Controller
 
     public function remove(DomainAddRequest $request)
     {
-        $domainFilter = parse_url($request->json('domain'));
-        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+        $domain = $request->json('domain');
 
         $token = Token::getTokenByString($request->header('siwecosToken'));
         $domain = Domain::getDomainOrFail($domain, $token->id);

@@ -2,6 +2,7 @@
 
 namespace App;
 
+use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
 use Log;
@@ -37,20 +38,22 @@ const METATAGNAME = 'siwecostoken';
 class Domain extends Model
 {
     protected $fillable = ['domain', 'token_id', 'verified', 'domain_token'];
+    protected $client = null;
 
-    public function __construct(array $attributes = [])
+    public function __construct(array $attributes = [], Client $client = null)
     {
         parent::__construct($attributes);
 
         if (array_key_exists('domain', $attributes)) {
-            $domainFilter = parse_url($attributes['domain']);
-            $this->domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+            $this->domain = $attributes['domain'];
         }
         if (array_key_exists('token', $attributes)) {
             $token = Token::getTokenByString($attributes['token']);
             $this->token_id = $token->id;
             $this->domain_token = Keygen::alphanum(64)->generate();
         }
+
+        $this->client = $client;
     }
 
     /**
@@ -132,6 +135,87 @@ class Domain extends Model
         $domain = self::where(['domain' => $domain, 'token_id' => $tokenId])->first();
         if ($domain instanceof self) {
             return $domain;
+        }
+    }
+
+    /**
+     * Returns a valid URL for the given domain (hostname) that is reachable.
+     *
+     * @param string $domain Domain / Hostname to get the URL for.
+     * @param Client $client Guzzle Client for PHPUnit testing only.
+     *
+     * @return string|Collection|null A valid URL incl. schema if valid. Collection with alternative URL if the given one was not valid or or NULL if no URL is available.
+     */
+    public static function getDomainURL(string $domain, Client $client = null)
+    {
+        $testDomain = $domain;
+
+        // Pings via guzzle
+        $client = $client ?: new Client();
+
+        $scheme = parse_url($testDomain, PHP_URL_SCHEME);
+
+        // if user entered a URL -> test if available
+        if ($scheme) {
+            try {
+                $testURL = $testDomain;
+                $response = $client->request('GET', $testURL, ['verify' => false]);
+                if ($response->getStatusCode() === 200) {
+                    return $testURL;
+                }
+            } catch (\Exception $e) {
+                // if not available, remove scheme from domain
+                // scheme = https; + 3 for ://
+                $testDomain = substr($domain, strlen($scheme) + 3);
+            }
+        }
+
+        // Domain is available via https://
+        try {
+            $testURL = 'https://'.$testDomain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200) {
+                return $testURL;
+            }
+        } catch (\Exception $e) {
+        }
+
+        // Domain is available via http://
+        try {
+            $testURL = 'http://'.$testDomain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200) {
+                return $testURL;
+            }
+        } catch (\Exception $e) {
+        }
+
+        // Domain is available with or without www
+        // if www. is there, than remove it, otherwise add it
+        $testDomain = substr($testDomain, 0, 4) === 'www.' ? substr($testDomain, 4) : 'www.'.$testDomain;
+
+        try {
+            $testURL = 'https://'.$testDomain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200) {
+                return collect([
+                    'notAvailable'         => $domain,
+                    'alternativeAvailable' => $testDomain,
+                ]);
+            }
+        } catch (\Exception $e) {
+        }
+
+        try {
+            $testURL = 'http://'.$testDomain;
+            $response = $client->request('GET', $testURL, ['verify' => false]);
+            if ($response->getStatusCode() === 200) {
+                return collect([
+                    'notAvailable'         => $domain,
+                    'alternativeAvailable' => $testDomain,
+                ]);
+            }
+        } catch (\Exception $e) {
         }
     }
 }
