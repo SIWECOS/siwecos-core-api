@@ -3,17 +3,16 @@
 namespace Tests\Unit;
 
 use App\Domain;
-use Tests\TestCase;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Handler\MockHandler;
-use GuzzleHttp\Exception\RequestException;
+use Tests\TestCase;
 
 class DomainTest extends TestCase
 {
-
     /** @test */
     public function getDomainURL_returns_https_if_no_protocol_is_given_and_https_is_available()
     {
@@ -41,11 +40,11 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for given domain/url
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for first test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'https://example.com';
@@ -57,9 +56,9 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'example.com';
@@ -71,13 +70,13 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for given domain/url
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for first test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for https://www.
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'https://example.com';
@@ -92,15 +91,15 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for given domain/url
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for first test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for https://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for http://www.
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'https://example.com';
@@ -115,13 +114,13 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for https://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for http://www.
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'example.com';
@@ -136,7 +135,7 @@ class DomainTest extends TestCase
     public function getDomainURL_returns_httpWww_if_protocol_is_given_and_httpWww_is_available()
     {
         $client = $this->getMockedGuzzleClient([
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'http://www.example.com';
@@ -148,9 +147,9 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://www.
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'www.example.com';
@@ -162,11 +161,11 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for first test http://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test https://
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'www.example.com';
@@ -181,13 +180,13 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for first test http://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new Response(200)
+            new Response(200),
         ]);
 
         $domain = 'www.example.com';
@@ -202,29 +201,31 @@ class DomainTest extends TestCase
     {
         $client = $this->getMockedGuzzleClient([
             // Response for first test https://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for first test http://www.
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test https://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
             // Response for test http://
-            new RequestException("Error Communicating with Server", new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
         ]);
 
         $domain = 'lorem';
         $this->assertNull(Domain::getDomainURL($domain, $client));
     }
 
-
     /**
      * This method sets and activates the GuzzleHttp Mocking functionality.
+     *
      * @param array $responses
+     *
      * @return Client
      */
     protected function getMockedGuzzleClient(array $responses)
     {
         $mock = new MockHandler($responses);
         $handler = HandlerStack::create($mock);
-        return (new Client(["handler" => $handler])) ;
+
+        return new Client(['handler' => $handler]);
     }
 }

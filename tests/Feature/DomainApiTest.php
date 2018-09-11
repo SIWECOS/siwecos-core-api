@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
-use App\Token;
 use App\Domain;
-use Tests\TestCase;
+use App\Token;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 const BASEURL_DOMAIN = '/api/v1/domain/';
 const CREDITS = 50;
@@ -46,16 +46,16 @@ class DomainApiTest extends TestCase
         $response->assertStatus(422);
 
         // Error Message from AnAvailableUrlExistsForTheDomain Rule
-        $response->assertJson(["domain" => ["loremipsum is not available."]]);
+        $response->assertJson(['domain' => ['loremipsum is not available.']]);
     }
 
     public function testAddDomainOnlyWwwVersionAvailable()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN . 'add', ['domain' => 'www.staging2.siwecos.de'], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => 'www.staging2.siwecos.de'], $this->tokenHeaderArray);
         $response->assertStatus(422);
 
         // Error Message from AnAvailableUrlExistsForTheDomain Rule
-        $response->assertJson(["domain" => ["www.staging2.siwecos.de is not available. Did you mean staging2.siwecos.de?"]]);
+        $response->assertJson(['domain' => ['www.staging2.siwecos.de is not available. Did you mean staging2.siwecos.de?']]);
     }
 
     public function testAddDomainNoDomain()

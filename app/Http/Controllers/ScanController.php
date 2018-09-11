@@ -105,13 +105,13 @@ class ScanController extends Controller
         $url = Domain::getDomainURL($domain);
 
         // Get the correct URL for the domain
-        if (! is_string($url)) {
-            Log::info('Domain not available: ' . $domain);
+        if (!is_string($url)) {
+            Log::info('Domain not available: '.$domain);
 
             return response('Domain not available', 422);
         }
 
-        Log::info('Start Freescan for: ' . $url);
+        Log::info('Start Freescan for: '.$url);
         /** @var Domain $freeScanDomain */
         $freeScanDomain = Domain::whereDomain($url)->first();
 
