@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain;
 use App\Http\Requests\ScannerStartRequest;
 use App\Jobs\ScanJob;
+use App\Rules\AnAvailableUrlExistsForTheDomain;
 use App\Scan;
 use App\ScanResult;
 use App\Siweocs\Models\ScanRawResultResponse;
@@ -14,7 +15,6 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Log;
-use App\Rules\AnAvailableUrlExistsForTheDomain;
 
 class ScanController extends Controller
 {
@@ -105,7 +105,7 @@ class ScanController extends Controller
         $domain = $request->json('domain');
 
         $request->validate([
-            'domain' => ['required', new AnAvailableUrlExistsForTheDomain]
+            'domain' => ['required', new AnAvailableUrlExistsForTheDomain()],
         ]);
 
         $url = Domain::getDomainURL($domain);
