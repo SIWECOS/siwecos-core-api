@@ -43,10 +43,12 @@ class AnAvailableUrlExistsForTheDomain implements Rule
             Log::info('Domain not available: '.$value);
             Log::info('Alternative domain is available: '.$result['alternativeAvailable']);
 
+
             $this->errorMessage = $result->get('notAvailable').' is not available. Did you mean '.$result->get('alternativeAvailable').'?';
 
             return false;
         }
+
 
         Log::info('Domain not available: '.$value);
 
