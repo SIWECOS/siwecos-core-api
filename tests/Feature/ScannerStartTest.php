@@ -119,5 +119,6 @@ class ScannerStartTest extends TestCase
         ]);
         $this->assertEquals(422, $response->getStatusCode());
         $this->assertEquals(0, Scan::all()->count());
+        $response->assertJsonValidationErrors('domain');
     }
 }

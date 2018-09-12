@@ -14,6 +14,7 @@ use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Log;
+use App\Rules\AnAvailableUrlExistsForTheDomain;
 
 class ScanController extends Controller
 {
@@ -102,14 +103,12 @@ class ScanController extends Controller
     public function startFreeScan(Request $request)
     {
         $domain = $request->json('domain');
+
+        $request->validate([
+            'domain' => ['required', new AnAvailableUrlExistsForTheDomain]
+        ]);
+
         $url = Domain::getDomainURL($domain);
-
-        // Get the correct URL for the domain
-        if (!is_string($url)) {
-            Log::info('Domain not available: '.$domain);
-
-            return response('Domain not available', 422);
-        }
 
         Log::info('Start Freescan for: '.$url);
         /** @var Domain $freeScanDomain */
