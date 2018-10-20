@@ -11,7 +11,7 @@
 |
 */
 
-Route::prefix('v1')->group(function () {
+Route::prefix('v1')->middleware(['cors'])->group(function () {
     Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
     Route::get('/scan/result/free/{id}', 'ScanController@GetResultById');
     Route::get('/scan/status/free/{id}', 'ScanController@GetStatusById');
