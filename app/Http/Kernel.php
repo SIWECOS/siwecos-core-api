@@ -6,6 +6,7 @@ use App\Http\Middleware\CreditCheck;
 use App\Http\Middleware\DomainCheck;
 use App\Http\Middleware\MastertokenCheck;
 use App\Http\Middleware\TokenCheck;
+use App\Http\Middleware\Cors;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
