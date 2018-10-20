@@ -32,16 +32,16 @@ return [
         ],
 
         'allow_headers' => [
-           '*'
+           '*',
         ],
 
         'expose_headers' => [
-            '*'
+            '*',
         ],
 
         'forbidden_response' => [
             'message' => 'Forbidden (cors).',
-            'status' => 403,
+            'status'  => 403,
         ],
 
         /*
