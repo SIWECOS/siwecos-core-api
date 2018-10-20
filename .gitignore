@@ -225,3 +225,4 @@ $RECYCLE.BIN/
 curr*
 
 secret-laraveldb\.yaml
+.env.secret
