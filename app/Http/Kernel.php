@@ -43,6 +43,7 @@ class Kernel extends HttpKernel
         ],
 
         'api' => [
+            \Barryvdh\Cors\HandleCors::class,
         ],
     ];
 
