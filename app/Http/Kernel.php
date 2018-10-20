@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'creditcheck'      => CreditCheck::class,
         'domaincheck'      => DomainCheck::class,
         'mastertokencheck' => MastertokenCheck::class,
+        'cors' => \Barryvdh\Cors\HandleCors::class,
     ];
 }
