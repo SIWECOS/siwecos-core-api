@@ -15,7 +15,7 @@ header('Access-Control-Allow-Origin:  *');
 header('Access-Control-Allow-Methods:  POST, GET, OPTIONS, PUT, DELETE');
 header('Access-Control-Allow-Headers:  Content-Type, X-Auth-Token, Origin, Authorization');
 
-Route::prefix('v1')->middleware(['cors'])->group(function () {
+Route::prefix('v1')->group(function () {
     Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
     Route::get('/scan/result/free/{id}', 'ScanController@GetResultById');
     Route::get('/scan/status/free/{id}', 'ScanController@GetStatusById');
