@@ -15,13 +15,6 @@ $app = new Illuminate\Foundation\Application(
     realpath(__DIR__.'/../')
 );
 
-$app->configureMonologUsing(function ($monolog) {
-    // Always add the stderr output for errors over WARNING level.
-    $monolog->pushHandler(
-        new \Monolog\Handler\StreamHandler('php://stdout', \Monolog\Logger::DEBUG)
-    );
-});
-
 /*
 |--------------------------------------------------------------------------
 | Bind Important Interfaces
