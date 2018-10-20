@@ -226,3 +226,4 @@ curr*
 
 secret-laraveldb\.yaml
 .env.secret
+core_staging_secret.yaml
