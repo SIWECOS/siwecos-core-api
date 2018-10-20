@@ -32,11 +32,19 @@ return [
         ],
 
         'allow_headers' => [
-           '*',
+            'Content-Type',
+            'X-Auth-Token',
+            'Origin',
+            'Authorization',
         ],
 
         'expose_headers' => [
-            '*',
+            'Cache-Control',
+            'Content-Language',
+            'Content-Type',
+            'Expires',
+            'Last-Modified',
+            'Pragma'
         ],
 
         'forbidden_response' => [
