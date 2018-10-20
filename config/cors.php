@@ -44,7 +44,7 @@ return [
             'Content-Type',
             'Expires',
             'Last-Modified',
-            'Pragma'
+            'Pragma',
         ],
 
         'forbidden_response' => [
