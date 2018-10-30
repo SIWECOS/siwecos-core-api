@@ -229,3 +229,6 @@ secret-laraveldb\.yaml
 core_staging_secret.yaml
 secret-corestagingsecrets.yaml
 deploy*.yaml
+
+Debug.dockerfile
+.env.docker
