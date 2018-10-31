@@ -70,7 +70,7 @@ class Scan extends Model
         if ($allResults > 0) {
             // TODO use properly formatted query
             $doneResults = $this->results()
-            ->whereNotNull('result')->count();
+            ->whereNotNull('result')->where('result', '!=', '')->count();
             $errResults = $this->results()
             ->whereNull('result')->where('has_error', '=', 'true')->count();
             /*
