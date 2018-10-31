@@ -66,7 +66,7 @@ class Scan extends Model
 
     public function getProgress()
     {
-        $allResults = $this->results()->count();
+        $allResults = env('SCAN_COUNT', 5); //$this->results()->count();
         if ($allResults > 0) {
             // TODO use properly formatted query
             $doneResults = $this->results()

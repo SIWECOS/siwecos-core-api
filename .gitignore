@@ -232,3 +232,4 @@ deploy*.yaml
 
 Debug.dockerfile
 .env.docker
+*.yaml
