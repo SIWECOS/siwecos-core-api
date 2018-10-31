@@ -1,5 +1,5 @@
 FROM php:7.2-apache
-RUN apt-get update -y && apt-get install openssl zip unzip git -y
+RUN apt-get update -y && apt-get install openssl zip unzip git vim -y
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN docker-php-ext-install mysqli pdo_mysql pdo mbstring
 
