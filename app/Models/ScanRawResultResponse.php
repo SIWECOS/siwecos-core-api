@@ -20,7 +20,7 @@ class ScanRawResultResponse extends SiwecosBaseReponse
         if ($scan->token instanceof Token) {
             $this->token = $scan->token->token;
         } else {
-            $this->token = "NOTAVAILABLE";
+            $this->token = 'NOTAVAILABLE';
         }
         $this->scanStarted = $scan->created_at;
         $this->scanFinished = $scan->updated_at;
