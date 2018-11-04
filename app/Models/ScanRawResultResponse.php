@@ -26,4 +26,4 @@ class ScanRawResultResponse extends SiwecosBaseReponse
         $this->scanFinished = $scan->updated_at;
         $this->scanners = $scan->results;
     }
-}s
+}
