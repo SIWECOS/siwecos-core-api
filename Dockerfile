@@ -1,5 +1,5 @@
 FROM php:7.2-apache
-RUN apt-get update -y && apt-get install openssl zip unzip git vim -y
+RUN apt-get update -y && apt-get install openssl zip unzip cron git vim -y
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN docker-php-ext-install mysqli pdo_mysql pdo mbstring
 
@@ -12,6 +12,9 @@ RUN pip install supervisor==$SUPERVISOR_VERSION
 
 COPY php.ini /usr/local/etc/php/
 COPY worker.conf /etc/supervisor/supervisord.conf
+
+COPY laravel-cron /etc/cron.d/
+RUN chmod 0644 /etc/cron.d/laravel-cron
 
 #set our application folder as an environment variable
 ENV APP_HOME /var/www/html
