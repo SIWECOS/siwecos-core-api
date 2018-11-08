@@ -13,8 +13,9 @@ RUN pip install supervisor==$SUPERVISOR_VERSION
 COPY php.ini /usr/local/etc/php/
 COPY worker.conf /etc/supervisor/supervisord.conf
 
-COPY laravel-cron /etc/cron.d/
-RUN chmod 0644 /etc/cron.d/laravel-cron
+COPY laravel-cron /var/crontab.txt
+RUN crontab /var/crontab.txt
+RUN chmod 600 /etc/crontab
 
 #set our application folder as an environment variable
 ENV APP_HOME /var/www/html
