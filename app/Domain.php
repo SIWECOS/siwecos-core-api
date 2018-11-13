@@ -38,9 +38,8 @@ const METATAGNAME = 'siwecostoken';
 class Domain extends Model
 {
     protected $fillable = ['domain', 'token_id', 'verified', 'domain_token'];
-    protected $client = null;
 
-    public function __construct(array $attributes = [], Client $client = null)
+    public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
@@ -52,8 +51,6 @@ class Domain extends Model
             $this->token_id = $token->id;
             $this->domain_token = Keygen::alphanum(64)->generate();
         }
-
-        $this->client = $client;
     }
 
     /**
@@ -62,7 +59,7 @@ class Domain extends Model
     public function checkMetatags()
     {
         try {
-            ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
+            ini_set('user_agent', env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'));
             $tags = get_meta_tags($this->domain);
             foreach ($tags as $tagkey => $tagvalue) {
                 if ($tagkey == METATAGNAME) {
@@ -101,7 +98,7 @@ class Domain extends Model
     public function checkHtmlPage()
     {
         /*get the content of the page. there should be nothing, except the activationkey*/
-        ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
+        ini_set('user_agent', env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'));
         $url = $this->domain.'/'.$this->domain_token.'.html';
 
         try {
@@ -151,7 +148,13 @@ class Domain extends Model
         $testDomain = $domain;
 
         // Pings via guzzle
-        $client = $client ?: new Client();
+        $client = $client ?: new Client([
+            'defaults' => [
+                'headers' => [
+                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0')
+                ],
+            ]
+        ]);
 
         $scheme = parse_url($testDomain, PHP_URL_SCHEME);
 
