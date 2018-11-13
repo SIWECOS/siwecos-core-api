@@ -144,9 +144,9 @@ class ScanController extends Controller
         $client = new Client([
             'defaults' => [
                 'headers' => [
-                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0')
+                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
                 ],
-            ]
+            ],
         ]);
 
         try {
@@ -259,9 +259,9 @@ class ScanController extends Controller
                 $client = new Client([
                     'defaults' => [
                         'headers' => [
-                            'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0')
+                            'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
                         ],
-                    ]
+                    ],
                 ]);
 
                 $request = new Request('POST', $callback, [
@@ -318,9 +318,9 @@ class ScanController extends Controller
                     $client = new Client([
                         'defaults' => [
                             'headers' => [
-                                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0')
+                                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
                             ],
-                        ]
+                        ],
                     ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
                     Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
@@ -332,9 +332,9 @@ class ScanController extends Controller
             $client = new Client([
                 'defaults' => [
                     'headers' => [
-                        'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0')
+                        'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
                     ],
-                ]
+                ],
             ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
             Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));

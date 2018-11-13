@@ -151,9 +151,9 @@ class Domain extends Model
         $client = $client ?: new Client([
             'defaults' => [
                 'headers' => [
-                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0')
+                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
                 ],
-            ]
+            ],
         ]);
 
         $scheme = parse_url($testDomain, PHP_URL_SCHEME);
