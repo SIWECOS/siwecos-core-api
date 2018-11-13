@@ -141,7 +141,13 @@ class ScanController extends Controller
      */
     public static function isDomainAlive(string $domain)
     {
-        $client = new Client();
+        $client = new Client([
+            'defaults' => [
+                'headers' => [
+                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                ],
+            ],
+        ]);
 
         try {
             $response = $client->get($domain);
@@ -250,7 +256,13 @@ class ScanController extends Controller
             $scanResult->save();
             //   Sends the ScanResult to the given callback urls.
             foreach ($scanResult->scan->callbackurls as $callback) {
-                $client = new Client();
+                $client = new Client([
+                    'defaults' => [
+                        'headers' => [
+                            'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                        ],
+                    ],
+                ]);
 
                 $request = new Request('POST', $callback, [
                     'body' => $scanResult,
@@ -303,7 +315,13 @@ class ScanController extends Controller
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
                     $domain->last_notification = Carbon::now();
                     $domain->save();
-                    $client = new Client();
+                    $client = new Client([
+                        'defaults' => [
+                            'headers' => [
+                                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                            ],
+                        ],
+                    ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
                     Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
                 }
@@ -311,7 +329,13 @@ class ScanController extends Controller
             $scan->save();
             Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
-            $client = new Client();
+            $client = new Client([
+                'defaults' => [
+                    'headers' => [
+                        'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                    ],
+                ],
+            ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
             Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));
         }
