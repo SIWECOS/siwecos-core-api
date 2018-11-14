@@ -143,7 +143,7 @@ class ScanController extends Controller
     {
         $client = new Client([
             'headers' => [
-                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                'User-Agent' => config('app.userAgent'),
             ],
         ]);
 
@@ -256,7 +256,7 @@ class ScanController extends Controller
             foreach ($scanResult->scan->callbackurls as $callback) {
                 $client = new Client([
                     'headers' => [
-                        'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                        'User-Agent' => config('app.userAgent'),
                     ],
                 ]);
 
@@ -313,7 +313,7 @@ class ScanController extends Controller
                     $domain->save();
                     $client = new Client([
                         'headers' => [
-                            'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                            'User-Agent' => config('app.userAgent'),
                         ],
                     ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
@@ -325,7 +325,7 @@ class ScanController extends Controller
             // Call broadcasting api from business layer
             $client = new Client([
                 'headers' => [
-                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                    'User-Agent' => config('app.userAgent'),
                 ],
             ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);

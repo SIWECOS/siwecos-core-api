@@ -59,7 +59,7 @@ class Domain extends Model
     public function checkMetatags()
     {
         try {
-            ini_set('user_agent', env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'));
+            ini_set('user_agent', config('app.userAgent'));
             $tags = get_meta_tags($this->domain);
             foreach ($tags as $tagkey => $tagvalue) {
                 if ($tagkey == METATAGNAME) {
@@ -98,7 +98,7 @@ class Domain extends Model
     public function checkHtmlPage()
     {
         /*get the content of the page. there should be nothing, except the activationkey*/
-        ini_set('user_agent', env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'));
+        ini_set('user_agent', config('app.userAgent'));
         $url = $this->domain.'/'.$this->domain_token.'.html';
 
         try {
@@ -150,7 +150,7 @@ class Domain extends Model
         // Pings via guzzle
         $client = $client ?: new Client([
             'headers' => [
-                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                'User-Agent' => config('app.userAgent'),
             ],
         ]);
 

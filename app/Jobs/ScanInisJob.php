@@ -48,7 +48,7 @@ class ScanInisJob implements ShouldQueue
 
         $client = new Client([
             'headers' => [
-                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                'User-Agent' => config('app.userAgent'),
             ],
         ]);
         $request = new Request('POST', env('INI_S_SCANNER_URL'), ['timeout' => 0.5], \GuzzleHttp\json_encode([

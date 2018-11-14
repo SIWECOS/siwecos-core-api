@@ -55,14 +55,14 @@ class ScanJob implements ShouldQueue
         Log::info('Callback Route'.$callbackUrl);
         $client = new Client([
             'headers' => [
-                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+                'User-Agent' => config('app.userAgent'),
             ],
         ]);
         $request = new Request('POST', $this->scanner_url, ['content-type' => 'application/json'], \GuzzleHttp\json_encode([
             'url'          => $this->scan->url,
             'callbackurls' => [$callbackUrl],
             'dangerLevel'  => $this->scan->dangerLevel,
-            'userAgent'    => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+            'userAgent'    => config('app.userAgent'),
         ]));
         $response = $client->sendAsync($request);
 
