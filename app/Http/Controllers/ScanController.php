@@ -142,10 +142,8 @@ class ScanController extends Controller
     public static function isDomainAlive(string $domain)
     {
         $client = new Client([
-            'defaults' => [
-                'headers' => [
-                    'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
-                ],
+            'headers' => [
+                'User-Agent' => config('app.userAgent'),
             ],
         ]);
 
@@ -257,10 +255,8 @@ class ScanController extends Controller
             //   Sends the ScanResult to the given callback urls.
             foreach ($scanResult->scan->callbackurls as $callback) {
                 $client = new Client([
-                    'defaults' => [
-                        'headers' => [
-                            'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
-                        ],
+                    'headers' => [
+                        'User-Agent' => config('app.userAgent'),
                     ],
                 ]);
 
@@ -316,10 +312,8 @@ class ScanController extends Controller
                     $domain->last_notification = Carbon::now();
                     $domain->save();
                     $client = new Client([
-                        'defaults' => [
-                            'headers' => [
-                                'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
-                            ],
+                        'headers' => [
+                            'User-Agent' => config('app.userAgent'),
                         ],
                     ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
@@ -330,10 +324,8 @@ class ScanController extends Controller
             Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
             $client = new Client([
-                'defaults' => [
-                    'headers' => [
-                        'User-Agent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
-                    ],
+                'headers' => [
+                    'User-Agent' => config('app.userAgent'),
                 ],
             ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
