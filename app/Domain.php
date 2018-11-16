@@ -152,7 +152,7 @@ class Domain extends Model
             'headers' => [
                 'User-Agent' => config('app.userAgent'),
             ],
-            'timeout' => 25
+            'timeout' => 25,
         ]);
 
         $scheme = parse_url($testDomain, PHP_URL_SCHEME);
