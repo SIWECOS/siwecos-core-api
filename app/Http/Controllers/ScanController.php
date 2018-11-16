@@ -145,7 +145,7 @@ class ScanController extends Controller
             'headers' => [
                 'User-Agent' => config('app.userAgent'),
             ],
-            'timeout' => 25
+            'timeout' => 25,
         ]);
 
         try {
@@ -154,7 +154,7 @@ class ScanController extends Controller
                 return true;
             }
         } catch (\Exception $ex) {
-            Log::warning("Domain is not alive: " . $domain);
+            Log::warning('Domain is not alive: '.$domain);
             Log::warning($domain.' '.$ex->getMessage());
 
             return false;
