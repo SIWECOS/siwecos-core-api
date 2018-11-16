@@ -29,10 +29,8 @@ RUN a2enmod rewrite
 COPY . $APP_HOME
 
 # install all PHP dependencies
-RUN composer install --no-interaction
-
-#change ownership of our applications
-RUN chown -R www-data:www-data $APP_HOME
+RUN composer install --no-interaction \
+    && chown -R www-data:www-data $APP_HOME
 
 WORKDIR /var/www/html
 

@@ -32,5 +32,5 @@ jobs:
       - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
       - docker build -t siwecos-core-api .
       - docker images
-      - docker tag siwecos-core-api "$DOCKER_REPO"/siwecos-core-api
-      - docker push "$DOCKER_REPO"/siwecos-core-api
+      - docker tag siwecos-core-api "$DOCKER_REPO"/siwecos-core-api:$TRAVIS_BRANCH
+      - docker push "$DOCKER_REPO"/siwecos-core-api:$TRAVIS_BRANCH
