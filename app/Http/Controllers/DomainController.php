@@ -44,7 +44,7 @@ class DomainController extends Controller
         }
 
         $newDomain = new Domain([
-            'domain' => $request->json('domain'),
+            'domain' => $domainURL,
             'token'  => $request->header('siwecosToken'),
         ]);
 
