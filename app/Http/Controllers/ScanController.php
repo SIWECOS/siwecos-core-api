@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain;
 use App\Http\Requests\ScannerStartRequest;
 use App\Jobs\ScanJob;
+use App\Rules\AnAvailableUrlExistsForTheDomain;
 use App\Scan;
 use App\ScanResult;
 use App\Siweocs\Models\ScanRawResultResponse;
@@ -101,19 +102,17 @@ class ScanController extends Controller
      */
     public function startFreeScan(Request $request)
     {
-        $domainFilter = parse_url($request->json('domain'));
-        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+        $domain = $request->json('domain');
 
-        //PING THE GIVEN DOMAIN
-        if (!self::isDomainAlive($domain)) {
-            Log::info('Domain not found '.$domain);
+        $request->validate([
+            'domain' => ['required', new AnAvailableUrlExistsForTheDomain()],
+        ]);
 
-            return response('Domain not alive', 422);
-        }
+        $url = Domain::getDomainURL($domain);
 
-        Log::info('Start Freescan for:'.$domain);
+        Log::info('Start Freescan for: '.$url);
         /** @var Domain $freeScanDomain */
-        $freeScanDomain = Domain::whereDomain($domain)->first();
+        $freeScanDomain = Domain::whereDomain($url)->first();
 
         if ($freeScanDomain instanceof Domain) {
             //Domain already taken or another freescan has taken
@@ -130,31 +129,6 @@ class ScanController extends Controller
         $freeScanDomain->save();
 
         return $this->startNewFreeScan($freeScanDomain);
-    }
-
-    /**
-     * Check if Domain is Alive or redirects (200 / 301).
-     *
-     * @param string $domain
-     *
-     * @return bool
-     */
-    public static function isDomainAlive(string $domain)
-    {
-        $client = new Client();
-
-        try {
-            $response = $client->get($domain);
-            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301) {
-                return true;
-            }
-        } catch (\Exception $ex) {
-            Log::info($domain.' '.$ex->getMessage());
-
-            return false;
-        }
-
-        return false;
     }
 
     protected function startNewFreeScan(Domain $freeScanDomain)

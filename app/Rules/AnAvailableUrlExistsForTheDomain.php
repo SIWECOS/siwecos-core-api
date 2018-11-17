@@ -4,6 +4,7 @@ namespace App\Rules;
 
 use App\Domain;
 use Illuminate\Contracts\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 
 class AnAvailableUrlExistsForTheDomain implements Rule
 {
@@ -39,10 +40,15 @@ class AnAvailableUrlExistsForTheDomain implements Rule
 
         // Domain is only available with or without www.
         elseif (isset($result) && $result->isNotEmpty()) {
+            Log::info('Domain not available: '.$value);
+            Log::info('Alternative domain is available: '.$result['alternativeAvailable']);
+
             $this->errorMessage = $result->get('notAvailable').' is not available. Did you mean '.$result->get('alternativeAvailable').'?';
 
             return false;
         }
+
+        Log::info('Domain not available: '.$value);
 
         $this->errorMessage = $value.' is not available.';
 
