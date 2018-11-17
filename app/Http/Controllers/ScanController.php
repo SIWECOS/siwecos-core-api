@@ -131,6 +131,37 @@ class ScanController extends Controller
         return $this->startNewFreeScan($freeScanDomain);
     }
 
+    /**
+     * Check if Domain is Alive or redirects (200 / 301).
+     *
+     * @param string $domain
+     *
+     * @return bool
+     */
+    public static function isDomainAlive(string $domain)
+    {
+        $client = new Client([
+            'headers' => [
+                'User-Agent' => config('app.userAgent'),
+            ],
+            'timeout' => 25,
+        ]);
+
+        try {
+            $response = $client->get($domain);
+            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301) {
+                return true;
+            }
+        } catch (\Exception $ex) {
+            Log::warning('Domain is not alive: '.$domain);
+            Log::warning($domain.' '.$ex->getMessage());
+
+            return false;
+        }
+
+        return false;
+    }
+
     protected function startNewFreeScan(Domain $freeScanDomain)
     {
         // start Scan and Broadcast Result afterwards
@@ -224,7 +255,11 @@ class ScanController extends Controller
             $scanResult->save();
             //   Sends the ScanResult to the given callback urls.
             foreach ($scanResult->scan->callbackurls as $callback) {
-                $client = new Client();
+                $client = new Client([
+                    'headers' => [
+                        'User-Agent' => config('app.userAgent'),
+                    ],
+                ]);
 
                 $request = new Request('POST', $callback, [
                     'body' => $scanResult,
@@ -277,7 +312,11 @@ class ScanController extends Controller
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
                     $domain->last_notification = Carbon::now();
                     $domain->save();
-                    $client = new Client();
+                    $client = new Client([
+                        'headers' => [
+                            'User-Agent' => config('app.userAgent'),
+                        ],
+                    ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
                     Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
                 }
@@ -285,7 +324,11 @@ class ScanController extends Controller
             $scan->save();
             Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
-            $client = new Client();
+            $client = new Client([
+                'headers' => [
+                    'User-Agent' => config('app.userAgent'),
+                ],
+            ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
             Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));
         }

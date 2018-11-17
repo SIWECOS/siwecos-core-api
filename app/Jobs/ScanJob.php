@@ -53,11 +53,16 @@ class ScanJob implements ShouldQueue
 
         $callbackUrl = env('APP_CALLBACK_URL', 'https://api.siwecos.de/ca/current/public/api/v1/callback/').$scanResult->id;
         Log::info('Callback Route'.$callbackUrl);
-        $client = new Client();
+        $client = new Client([
+            'headers' => [
+                'User-Agent' => config('app.userAgent'),
+            ],
+        ]);
         $request = new Request('POST', $this->scanner_url, ['content-type' => 'application/json'], \GuzzleHttp\json_encode([
             'url'          => $this->scan->url,
             'callbackurls' => [$callbackUrl],
             'dangerLevel'  => $this->scan->dangerLevel,
+            'userAgent'    => config('app.userAgent'),
         ]));
         $response = $client->sendAsync($request);
 
