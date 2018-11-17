@@ -153,6 +153,7 @@ class Domain extends Model
                 'User-Agent' => config('app.userAgent'),
             ],
             'timeout' => 25,
+            'verify' => false,
         ]);
 
         $scheme = parse_url($testDomain, PHP_URL_SCHEME);
@@ -161,7 +162,7 @@ class Domain extends Model
         if ($scheme) {
             try {
                 $testURL = $testDomain;
-                $response = $client->request('GET', $testURL, ['verify' => false]);
+                $response = $client->request('GET', $testURL);
                 if ($response->getStatusCode() === 200) {
                     return $testURL;
                 }
@@ -175,7 +176,7 @@ class Domain extends Model
         // Domain is available via https://
         try {
             $testURL = 'https://'.$testDomain;
-            $response = $client->request('GET', $testURL, ['verify' => false]);
+            $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return $testURL;
             }
@@ -185,7 +186,7 @@ class Domain extends Model
         // Domain is available via http://
         try {
             $testURL = 'http://'.$testDomain;
-            $response = $client->request('GET', $testURL, ['verify' => false]);
+            $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return $testURL;
             }
@@ -198,7 +199,7 @@ class Domain extends Model
 
         try {
             $testURL = 'https://'.$testDomain;
-            $response = $client->request('GET', $testURL, ['verify' => false]);
+            $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return collect([
                     'notAvailable'         => $domain,
@@ -210,7 +211,7 @@ class Domain extends Model
 
         try {
             $testURL = 'http://'.$testDomain;
-            $response = $client->request('GET', $testURL, ['verify' => false]);
+            $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return collect([
                     'notAvailable'         => $domain,
