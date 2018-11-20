@@ -1,3 +1,4 @@
+supervisord*
 *.swp
 /node_modules
 /public/hot
@@ -233,3 +234,4 @@ deploy*.yaml
 Debug.dockerfile
 .env.docker
 *.yaml
+supervisord.log

@@ -133,6 +133,8 @@ class Domain extends Model
         if ($domain instanceof self) {
             return $domain;
         }
+
+        return response("FAILED to get Domain", 500);
     }
 
     /**

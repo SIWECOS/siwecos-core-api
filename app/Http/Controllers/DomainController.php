@@ -23,20 +23,19 @@ class DomainController extends Controller
     {
         $domainURL = Domain::getDomainURL($request->get('domain'));
 
-        /** @var Domain $exisitingDomain */
         $exisitingDomain = Domain::whereDomain($domainURL)->first();
         if ($exisitingDomain instanceof Domain) {
             if ($exisitingDomain->verified === 1) {
-                return response('Domain already there', 500);
+                return response('Domain already there', 409);
             }
-            /** @var Token $token */
+
+            // Change domain owner to latest token
             $token = Token::whereToken($request->header('siwecosToken'))->first();
             $exisitingDomain->token_id = $token->id;
             $exisitingDomain->domain_token = Keygen::alphanum(64)->generate();
 
             try {
                 $exisitingDomain->save();
-
                 return response()->json(new DomainAddResponse($exisitingDomain));
             } catch (QueryException $queryException) {
                 return response($queryException->getMessage(), 500);
