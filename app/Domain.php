@@ -134,7 +134,7 @@ class Domain extends Model
             return $domain;
         }
 
-        return response("FAILED to get Domain", 500);
+        return response('FAILED to get Domain', 500);
     }
 
     /**

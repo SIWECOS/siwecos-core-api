@@ -36,6 +36,7 @@ class DomainController extends Controller
 
             try {
                 $exisitingDomain->save();
+
                 return response()->json(new DomainAddResponse($exisitingDomain));
             } catch (QueryException $queryException) {
                 return response($queryException->getMessage(), 500);
