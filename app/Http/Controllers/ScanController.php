@@ -149,7 +149,7 @@ class ScanController extends Controller
 
         try {
             $response = $client->get($domain);
-            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301) {
+            if ($response->getStatusCode() === 200 || floor($response->getStatusCode() / 100) === 3 ) {
                 return true;
             }
         } catch (\Exception $ex) {
