@@ -132,15 +132,15 @@ class ScanController extends Controller
     }
 
     /**
-     * Check if Domain is Alive or redirects (200 / 301).
+     * Check if domain is alive or redirects.
      *
      * @param string $domain
      *
      * @return bool
      */
-    public static function isDomainAlive(string $domain)
+    public static function isDomainAlive(string $domain, Client $client = null)
     {
-        $client = new Client([
+        $client = $client ?: new Client([
             'headers' => [
                 'User-Agent' => config('app.userAgent'),
             ],
@@ -149,7 +149,8 @@ class ScanController extends Controller
 
         try {
             $response = $client->get($domain);
-            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301) {
+            $allowedStatusCodes = collect([200, 301, 302, 303, 307, 308]);
+            if ($allowedStatusCodes->contains($response->getStatusCode())) {
                 return true;
             }
         } catch (\Exception $ex) {
