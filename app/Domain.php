@@ -147,8 +147,6 @@ class Domain extends Model
      */
     public static function getDomainURL(string $domain, Client $client = null)
     {
-        $testDomain = $domain;
-
         // Pings via guzzle
         $client = $client ?: new Client([
             'headers' => [
@@ -158,26 +156,29 @@ class Domain extends Model
             'verify'  => false,
         ]);
 
-        $scheme = parse_url($testDomain, PHP_URL_SCHEME);
+        $scheme = parse_url($domain, PHP_URL_SCHEME);
+        $hostname = parse_url($domain, PHP_URL_HOST);
+
+        // Fix for the case: example.com/path (parse_url returns null without scheme)
+        if ($scheme === null) {
+            $hostname = parse_url('http://' . $domain, PHP_URL_HOST);
+        }
 
         // if user entered a URL -> test if available
         if ($scheme) {
             try {
-                $testURL = $testDomain;
+                $testURL = $scheme . "://" . $hostname;
                 $response = $client->request('GET', $testURL);
                 if ($response->getStatusCode() === 200) {
                     return $testURL;
                 }
             } catch (\Exception $e) {
-                // if not available, remove scheme from domain
-                // scheme = https; + 3 for ://
-                $testDomain = substr($domain, strlen($scheme) + 3);
             }
         }
 
         // Domain is available via https://
         try {
-            $testURL = 'https://'.$testDomain;
+            $testURL = 'https://' . $hostname;
             $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return $testURL;
@@ -187,7 +188,7 @@ class Domain extends Model
 
         // Domain is available via http://
         try {
-            $testURL = 'http://'.$testDomain;
+            $testURL = 'http://' . $hostname;
             $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return $testURL;
@@ -197,27 +198,27 @@ class Domain extends Model
 
         // Domain is available with or without www
         // if www. is there, than remove it, otherwise add it
-        $testDomain = substr($testDomain, 0, 4) === 'www.' ? substr($testDomain, 4) : 'www.'.$testDomain;
+        $hostname = substr($hostname, 0, 4) === 'www.' ? substr($hostname, 4) : 'www.'.$hostname;
 
         try {
-            $testURL = 'https://'.$testDomain;
+            $testURL = 'https://'.$hostname;
             $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return collect([
                     'notAvailable'         => $domain,
-                    'alternativeAvailable' => $testDomain,
+                    'alternativeAvailable' => $hostname,
                 ]);
             }
         } catch (\Exception $e) {
         }
 
         try {
-            $testURL = 'http://'.$testDomain;
+            $testURL = 'http://'.$hostname;
             $response = $client->request('GET', $testURL);
             if ($response->getStatusCode() === 200) {
                 return collect([
                     'notAvailable'         => $domain,
-                    'alternativeAvailable' => $testDomain,
+                    'alternativeAvailable' => $hostname,
                 ]);
             }
         } catch (\Exception $e) {
