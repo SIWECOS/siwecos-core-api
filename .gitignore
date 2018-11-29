@@ -225,13 +225,7 @@ $RECYCLE.BIN/
 .phpstorm.meta.php
 curr*
 
-secret-laraveldb\.yaml
 .env.secret
-core_staging_secret.yaml
-secret-corestagingsecrets.yaml
-deploy*.yaml
-
-Debug.dockerfile
 .env.docker
+Debug.dockerfile
 *.yaml
-supervisord.log
