@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain;
 use App\Http\Requests\ScannerStartRequest;
 use App\Jobs\ScanJob;
+use App\Rules\AnAvailableUrlExistsForTheDomain;
 use App\Scan;
 use App\ScanResult;
 use App\Siweocs\Models\ScanRawResultResponse;
@@ -52,11 +53,7 @@ class ScanController extends Controller
 
         // dispatch each scanner to the queue
         foreach ($envVars as $key => $value) {
-            Log::info($key.' '.$value);
             if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                continue;
-            }
-            if (!preg_match("/^https?:\/\//", $value)) {
                 continue;
             }
             ScanJob::dispatch($scanner_name[1], $value, $scan);
@@ -104,19 +101,17 @@ class ScanController extends Controller
      */
     public function startFreeScan(Request $request)
     {
-        $domainFilter = parse_url($request->json('domain'));
-        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+        $domain = $request->json('domain');
 
-        //PING THE GIVEN DOMAIN
-        if (!self::isDomainAlive($domain)) {
-            Log::info('Domain not found '.$domain);
+        $request->validate([
+            'domain' => ['required', new AnAvailableUrlExistsForTheDomain()],
+        ]);
 
-            return response('Domain not alive', 422);
-        }
+        $url = Domain::getDomainURL($domain);
 
-        Log::info('Start Freescan for:'.$domain);
+        Log::info('Start Freescan for: '.$url);
         /** @var Domain $freeScanDomain */
-        $freeScanDomain = Domain::whereDomain($domain)->first();
+        $freeScanDomain = Domain::whereDomain($url)->first();
 
         if ($freeScanDomain instanceof Domain) {
             //Domain already taken or another freescan has taken
@@ -136,23 +131,30 @@ class ScanController extends Controller
     }
 
     /**
-     * Check if Domain is Alive or redirects (200 / 301).
+     * Check if domain is alive or redirects.
      *
      * @param string $domain
      *
      * @return bool
      */
-    public static function isDomainAlive(string $domain)
+    public static function isDomainAlive(string $domain, Client $client = null)
     {
-        $client = new Client();
+        $client = $client ?: new Client([
+            'headers' => [
+                'User-Agent' => config('app.userAgent'),
+            ],
+            'timeout' => 25,
+        ]);
 
         try {
             $response = $client->get($domain);
-            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301) {
+            $allowedStatusCodes = collect([200, 301, 302, 303, 307, 308]);
+            if ($allowedStatusCodes->contains($response->getStatusCode())) {
                 return true;
             }
         } catch (\Exception $ex) {
-            Log::info($domain.' '.$ex->getMessage());
+            Log::warning('Domain is not alive: '.$domain);
+            Log::warning($domain.' '.$ex->getMessage());
 
             return false;
         }
@@ -176,9 +178,6 @@ class ScanController extends Controller
         // dispatch each scanner to the queue
         foreach ($_ENV as $key => $value) {
             if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                continue;
-            }
-            if (!preg_match("/^https?:\/\//", $value)) {
                 continue;
             }
             ScanJob::dispatch($scanner_name[1], $value, $scan);
@@ -256,7 +255,11 @@ class ScanController extends Controller
             $scanResult->save();
             //   Sends the ScanResult to the given callback urls.
             foreach ($scanResult->scan->callbackurls as $callback) {
-                $client = new Client();
+                $client = new Client([
+                    'headers' => [
+                        'User-Agent' => config('app.userAgent'),
+                    ],
+                ]);
 
                 $request = new Request('POST', $callback, [
                     'body' => $scanResult,
@@ -309,7 +312,11 @@ class ScanController extends Controller
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
                     $domain->last_notification = Carbon::now();
                     $domain->save();
-                    $client = new Client();
+                    $client = new Client([
+                        'headers' => [
+                            'User-Agent' => config('app.userAgent'),
+                        ],
+                    ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
                     Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
                 }
@@ -317,7 +324,11 @@ class ScanController extends Controller
             $scan->save();
             Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
-            $client = new Client();
+            $client = new Client([
+                'headers' => [
+                    'User-Agent' => config('app.userAgent'),
+                ],
+            ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
             Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));
         }

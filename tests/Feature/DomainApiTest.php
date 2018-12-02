@@ -4,19 +4,18 @@ namespace Tests\Feature;
 
 use App\Domain;
 use App\Token;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 const BASEURL_DOMAIN = '/api/v1/domain/';
 const CREDITS = 50;
 const TEST_DOMAIN1 = 'https://example.com';
-const TEST_DOMAIN2 = 'https://ex.com';
-const TEST_DOMAIN3 = 'https://examp.com';
+const TEST_DOMAIN2 = 'http://ex.com';
+const TEST_DOMAIN3 = 'http://siwecos.de';
 
 class DomainApiTest extends TestCase
 {
-    use DatabaseMigrations, DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $token;
     protected $domain;
@@ -45,6 +44,18 @@ class DomainApiTest extends TestCase
     {
         $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => 'loremipsum'], $this->tokenHeaderArray);
         $response->assertStatus(422);
+
+        // Error Message from AnAvailableUrlExistsForTheDomain Rule
+        $response->assertJson(['domain' => ['loremipsum is not available.']]);
+    }
+
+    public function testAddDomainOnlyWwwVersionAvailable()
+    {
+        $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => 'www.staging2.siwecos.de'], $this->tokenHeaderArray);
+        $response->assertStatus(422);
+
+        // Error Message from AnAvailableUrlExistsForTheDomain Rule
+        $response->assertJson(['domain' => ['www.staging2.siwecos.de is not available. Did you mean staging2.siwecos.de?']]);
     }
 
     public function testAddDomainNoDomain()

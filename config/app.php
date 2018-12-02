@@ -2,6 +2,8 @@
 
 return [
 
+    'userAgent' => env('USER_AGENT', 'Mozilla/5.0 (X11; Linux x86_64; rv:63.0) Gecko/20100101 Firefox/63.0'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
@@ -121,10 +123,6 @@ return [
     |
     */
 
-    'log' => env('APP_LOG', 'single'),
-
-    'log_level' => env('APP_LOG_LEVEL', 'debug'),
-
     /*
     |--------------------------------------------------------------------------
     | Autoloaded Service Providers
@@ -177,7 +175,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         \Barryvdh\Cors\ServiceProvider::class,
-        \App\Providers\PaperTrailServiceProvider::class,
     ],
 
     /*

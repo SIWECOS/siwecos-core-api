@@ -5,16 +5,15 @@ namespace Tests\Feature;
 use App\Domain;
 use App\Scan;
 use App\Token;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
-const TEST_DOMAIN = 'https://example.com';
+const TEST_DOMAIN = 'example.com';
 
 class ScannerStartTest extends TestCase
 {
-    use DatabaseMigrations, DatabaseTransactions;
+    use RefreshDatabase;
 
     protected $token;
     protected $domain;
@@ -85,5 +84,41 @@ class ScannerStartTest extends TestCase
             'domain' => TEST_DOMAIN,
         ], ['siwecosToken' => $this->token->token]);
         $this->assertEquals(1, Scan::all()->count());
+    }
+
+    /** @test */
+    public function a_free_scan_can_be_started_for_an_existing_url()
+    {
+        Queue::fake();
+
+        $response = $this->json('POST', '/api/v1/getFreeScanStart', [
+            'domain' => 'siwecos.de',
+        ]);
+        $this->assertEquals(1, Scan::all()->count());
+    }
+
+    /** @test */
+    public function a_free_scan_can_not_be_started_for_a_not_existing_url()
+    {
+        Queue::fake();
+
+        $response = $this->json('POST', '/api/v1/getFreeScanStart', [
+            'domain' => 'lorem',
+        ]);
+        $this->assertEquals(422, $response->getStatusCode());
+        $this->assertEquals(0, Scan::all()->count());
+    }
+
+    /** @test */
+    public function a_free_scan_can_does_not_start_for_an_alternative_existing_url()
+    {
+        Queue::fake();
+
+        $response = $this->json('POST', '/api/v1/getFreeScanStart', [
+            'domain' => 'www.staging2.siwecos.de',
+        ]);
+        $this->assertEquals(422, $response->getStatusCode());
+        $this->assertEquals(0, Scan::all()->count());
+        $response->assertJsonValidationErrors('domain');
     }
 }
