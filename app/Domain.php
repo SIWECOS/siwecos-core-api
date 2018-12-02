@@ -2,7 +2,6 @@
 
 namespace App;
 
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
 use Log;
@@ -44,7 +43,8 @@ class Domain extends Model
         parent::__construct($attributes);
 
         if (array_key_exists('domain', $attributes)) {
-            $this->domain = $attributes['domain'];
+            $domainFilter = parse_url($attributes['domain']);
+            $this->domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
         }
         if (array_key_exists('token', $attributes)) {
             $token = Token::getTokenByString($attributes['token']);
@@ -59,7 +59,7 @@ class Domain extends Model
     public function checkMetatags()
     {
         try {
-            ini_set('user_agent', config('app.userAgent'));
+            ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
             $tags = get_meta_tags($this->domain);
             foreach ($tags as $tagkey => $tagvalue) {
                 if ($tagkey == METATAGNAME) {
@@ -98,7 +98,7 @@ class Domain extends Model
     public function checkHtmlPage()
     {
         /*get the content of the page. there should be nothing, except the activationkey*/
-        ini_set('user_agent', config('app.userAgent'));
+        ini_set('user_agent', 'Mozilla/4.0 (compatible; MSIE 6.0)');
         $url = $this->domain.'/'.$this->domain_token.'.html';
 
         try {
@@ -132,96 +132,6 @@ class Domain extends Model
         $domain = self::where(['domain' => $domain, 'token_id' => $tokenId])->first();
         if ($domain instanceof self) {
             return $domain;
-        }
-
-        return response('FAILED to get Domain', 500);
-    }
-
-    /**
-     * Returns a valid URL for the given domain (hostname) that is reachable.
-     *
-     * @param string $domain Domain / Hostname to get the URL for.
-     * @param Client $client Guzzle Client for PHPUnit testing only.
-     *
-     * @return string|Collection|null A valid URL incl. schema if valid. Collection with alternative URL if the given one was not valid or or NULL if no URL is available.
-     */
-    public static function getDomainURL(string $domain, Client $client = null)
-    {
-        // Pings via guzzle
-        $client = $client ?: new Client([
-            'headers' => [
-                'User-Agent' => config('app.userAgent'),
-            ],
-            'timeout' => 25,
-            'verify'  => false,
-        ]);
-
-        $scheme = parse_url($domain, PHP_URL_SCHEME);
-        $hostname = parse_url($domain, PHP_URL_HOST);
-
-        // Fix for the case: example.com/path (parse_url returns null without scheme)
-        if ($scheme === null) {
-            $hostname = parse_url('http://' . $domain, PHP_URL_HOST);
-        }
-
-        // if user entered a URL -> test if available
-        if ($scheme) {
-            try {
-                $testURL = $scheme . "://" . $hostname;
-                $response = $client->request('GET', $testURL);
-                if ($response->getStatusCode() === 200) {
-                    return $testURL;
-                }
-            } catch (\Exception $e) {
-            }
-        }
-
-        // Domain is available via https://
-        try {
-            $testURL = 'https://' . $hostname;
-            $response = $client->request('GET', $testURL);
-            if ($response->getStatusCode() === 200) {
-                return $testURL;
-            }
-        } catch (\Exception $e) {
-        }
-
-        // Domain is available via http://
-        try {
-            $testURL = 'http://' . $hostname;
-            $response = $client->request('GET', $testURL);
-            if ($response->getStatusCode() === 200) {
-                return $testURL;
-            }
-        } catch (\Exception $e) {
-        }
-
-        // Domain is available with or without www
-        // if www. is there, than remove it, otherwise add it
-        $hostname = substr($hostname, 0, 4) === 'www.' ? substr($hostname, 4) : 'www.'.$hostname;
-
-        try {
-            $testURL = 'https://'.$hostname;
-            $response = $client->request('GET', $testURL);
-            if ($response->getStatusCode() === 200) {
-                return collect([
-                    'notAvailable'         => $domain,
-                    'alternativeAvailable' => $hostname,
-                ]);
-            }
-        } catch (\Exception $e) {
-        }
-
-        try {
-            $testURL = 'http://'.$hostname;
-            $response = $client->request('GET', $testURL);
-            if ($response->getStatusCode() === 200) {
-                return collect([
-                    'notAvailable'         => $domain,
-                    'alternativeAvailable' => $hostname,
-                ]);
-            }
-        } catch (\Exception $e) {
         }
     }
 }

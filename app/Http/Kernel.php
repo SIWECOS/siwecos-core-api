@@ -2,7 +2,6 @@
 
 namespace App\Http;
 
-use App\Http\Middleware\Cors;
 use App\Http\Middleware\CreditCheck;
 use App\Http\Middleware\DomainCheck;
 use App\Http\Middleware\MastertokenCheck;
@@ -24,7 +23,7 @@ class Kernel extends HttpKernel
         \App\Http\Middleware\TrimStrings::class,
         \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
         \App\Http\Middleware\TrustProxies::class,
-        Cors::class,
+        \Barryvdh\Cors\HandleCors::class,
     ];
 
     /**
@@ -65,6 +64,5 @@ class Kernel extends HttpKernel
         'creditcheck'      => CreditCheck::class,
         'domaincheck'      => DomainCheck::class,
         'mastertokencheck' => MastertokenCheck::class,
-        'cors'             => Cors::class,
     ];
 }

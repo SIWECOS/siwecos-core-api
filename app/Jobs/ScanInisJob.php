@@ -46,11 +46,7 @@ class ScanInisJob implements ShouldQueue
 
         $callbackUrl = route('callback', ['scanId' => $scanResult->id]);
 
-        $client = new Client([
-            'headers' => [
-                'User-Agent' => config('app.userAgent'),
-            ],
-        ]);
+        $client = new Client();
         $request = new Request('POST', env('INI_S_SCANNER_URL'), ['timeout' => 0.5], \GuzzleHttp\json_encode([
             'url'          => $this->scan->url,
             'callbackurls' => [$callbackUrl],

@@ -21,15 +21,16 @@ class DomainController extends Controller
      */
     public function add(DomainAddRequest $request)
     {
-        $domainURL = Domain::getDomainURL($request->get('domain'));
+        $domainFilter = parse_url($request->get('domain'));
+        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
 
-        $exisitingDomain = Domain::whereDomain($domainURL)->first();
+        /** @var Domain $exisitingDomain */
+        $exisitingDomain = Domain::whereDomain($domain)->first();
         if ($exisitingDomain instanceof Domain) {
             if ($exisitingDomain->verified === 1) {
-                return response('Domain already there', 409);
+                return response('Domain already there', 500);
             }
-
-            // Change domain owner to latest token
+            /** @var Token $token */
             $token = Token::whereToken($request->header('siwecosToken'))->first();
             $exisitingDomain->token_id = $token->id;
             $exisitingDomain->domain_token = Keygen::alphanum(64)->generate();
@@ -44,7 +45,7 @@ class DomainController extends Controller
         }
 
         $newDomain = new Domain([
-            'domain' => $domainURL,
+            'domain' => $request->json('domain'),
             'token'  => $request->header('siwecosToken'),
         ]);
 
@@ -80,7 +81,8 @@ class DomainController extends Controller
 
     public function remove(DomainAddRequest $request)
     {
-        $domain = $request->json('domain');
+        $domainFilter = parse_url($request->json('domain'));
+        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
 
         $token = Token::getTokenByString($request->header('siwecosToken'));
         $domain = Domain::getDomainOrFail($domain, $token->id);

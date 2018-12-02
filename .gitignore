@@ -1,4 +1,3 @@
-supervisord*
 *.swp
 /node_modules
 /public/hot
@@ -18,8 +17,6 @@ yarn-error.log
 /.phpintel
 /.phpintel/*
 vendor/
-
-scanResult.log
 
 _ide_helper.php
 _ide_helper_models.php
@@ -224,8 +221,3 @@ $RECYCLE.BIN/
 ..env.swp
 .phpstorm.meta.php
 curr*
-
-.env.secret
-.env.docker
-Debug.dockerfile
-*.yaml

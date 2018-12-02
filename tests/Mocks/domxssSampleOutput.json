@@ -1,0 +1,6 @@
+{
+    "checks": {
+        "sinks":true,
+        "sources":true
+    }
+}

@@ -5,6 +5,42 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Log;
 
+/**
+ * App\Scan.
+ *
+ * @property int $id
+ * @property \Carbon\Carbon|null $created_at
+ * @property \Carbon\Carbon|null $updated_at
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUpdatedAt($value)
+ * @mixin \Eloquent
+ *
+ * @property-read \Illuminate\Database\Eloquent\Collection|\App\ScanResult[] $results
+ * @property-read \App\Token $token
+ * @property string $url
+ * @property int|null $dangerLevel
+ * @property \Illuminate\Support\Collection $callbackurls
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereCallbackurls($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereDangerLevel($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUrl($value)
+ *
+ * @property int $token_id
+ * @property int $status
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereStatus($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereTokenId($value)
+ *
+ * @property int $freescan
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereFreescan($value)
+ *
+ * @property int $recurrentscan
+ *
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereRecurrentscan($value)
+ */
 class Scan extends Model
 {
     protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status'];
@@ -28,30 +64,31 @@ class Scan extends Model
         return $this->belongsTo(Token::class);
     }
 
-    /**
-     * Returns the scan's progress as a percent integer.
-     */
     public function getProgress()
     {
-        $envString = json_encode(getenv());
-        $amountScans = preg_match_all("/SCANNER_(\w+)_URL/m", $envString);
-
-        if($amountScans) {
+        $allResults = $this->results()->count();
+        if ($allResults > 0) {
+            // TODO use properly formatted query
             $doneResults = $this->results()
-                ->whereNotNull('result')
-                ->where('has_error', '=', '0')
-                ->where('result', '!=', '')->count();
+            ->whereNotNull('result')->count();
             $errResults = $this->results()
-                ->where('result', '=', '[]')
-                ->where('has_error', '=', '1')->count();
+            ->whereNull('result')->where('has_error', '=', 'true')->count();
+            /*
+            This query unfortunately does not work
+            $doneResults = $this->results()
+             ->where(function($q) {
+               $q->whereNotNull('result')
+               ->orWhere('has_error', '=', 'true');
+             })->count();
+             Error is
+             Parse error: syntax error, unexpected '->' (T_OBJECT_OPERATOR)
+            */
+            Log::info('Progress: '.$allResults.' '.$doneResults.' '.$errResults);
+            Log::info(round((($doneResults + $errResults) / $allResults) * 100));
 
-            $progress = round((($doneResults + $errResults) / $amountScans) * 100);
-
-            Log::info('Progress: ' . $progress . ' % : Amount Scans: '.$amountScans.' / Done: '.$doneResults.' / Errors:'.$errResults);
-
-            return $progress;
+            return round((($doneResults + $errResults) / $allResults) * 100);
         }
 
-        throw new \Exception("NO SCANNER URLs ARE SET!");
+        return 0;
     }
 }

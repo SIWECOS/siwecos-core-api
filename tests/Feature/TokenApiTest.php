@@ -3,7 +3,8 @@
 namespace Tests\Feature;
 
 use App\Token;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Keygen\Keygen;
 use Tests\TestCase;
@@ -14,7 +15,7 @@ const CREDITS = 50;
 
 class TokenApiTest extends TestCase
 {
-    use RefreshDatabase, WithoutMiddleware;
+    use DatabaseMigrations, DatabaseTransactions, WithoutMiddleware;
 
     protected $token;
 
