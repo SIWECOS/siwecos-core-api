@@ -33,10 +33,7 @@ class Scan extends Model
      */
     public function getProgress()
     {
-        $envString = json_encode(getenv());
-        // preg_match hit: "SCANNER_IRGENDWAS_URL:":"http://Irgendwas.de"
-        // preg match miss: "SCANNER_IRGENDWAS_URL:":""
-        $amountScans = preg_match_all('/"SCANNER_\w+_URL":"[^"]+"/', $envString);
+        $amountScans = self::getAvailableScanners()->count();
 
         if($amountScans) {
             $doneResults = $this->results()
@@ -55,5 +52,20 @@ class Scan extends Model
         }
 
         throw new \Exception("NO SCANNER URLs ARE SET!");
+    }
+
+    /**
+     * Returns all configured scanners with name and URL.
+     */
+    public static function getAvailableScanners() {
+        $scanners = collect();
+
+        foreach (config('siwecos.available_scanners') as $name => $url) {
+            if($url) {
+                $scanners->push(['name' => $name, 'url' => $url]);
+            }
+        }
+
+        return $scanners;
     }
 }
