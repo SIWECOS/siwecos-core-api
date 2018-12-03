@@ -60,10 +60,12 @@ class Scan extends Model
     public static function getAvailableScanners() {
         $scanners = collect();
 
-        // TODO: Change this
-        foreach (config('siwecos.available_scanners') as $name => $url) {
-            if($url) {
-                $scanners->push(['name' => $name, 'url' => $url]);
+        foreach (getenv() as $key => $value) {
+            if(preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
+                $url = env($scanner_name[0]);
+                if ($url) {
+                    $scanners->push(['name' => $scanner_name[1], 'url' => $url]);
+                }
             }
         }
 
