@@ -34,7 +34,7 @@ class Scan extends Model
     public function getProgress()
     {
         $envString = json_encode(getenv());
-        $amountScans = preg_match_all("/SCANNER_(\w+)_URL/m", $envString);
+        $amountScans = preg_match_all("/^SCANNER_\w+_URL$/m", $envString);
 
         if($amountScans) {
             $doneResults = $this->results()
