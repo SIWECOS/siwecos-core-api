@@ -264,7 +264,7 @@ class ScanController extends Controller
             ]);
             Log::info('Ready to update '.$scan->id.' to status 3');
             // SCAN IS FINISHED! INFORM USER
-            if ($scan->recurrentscan === 1 && $scan->results->count() === 5) {
+            if ($scan->recurrentscan === 1 && $scan->results->count() === Scan::getAvailableScanners()->count()) {
                 //CHECK LAST NOTIFICATION
                 // SHOULD FIX #28 IN BLA
                 $domainString = $scan->url;
@@ -278,7 +278,7 @@ class ScanController extends Controller
                     $totalScore += $result->total_score;
                 }
 
-                $totalScore /= 5;
+                $totalScore /= Scan::getAvailableScanners()->count();
                 Log::info('TOTAL SCORE FOR DOMAIN '.$domain->domain.' // '.$totalScore);
                 if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)) && $totalScore <= 50) {
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
