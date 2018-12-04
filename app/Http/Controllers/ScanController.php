@@ -33,11 +33,8 @@ class ScanController extends Controller
 
     public static function startScanJob(Token $token, string $domain, bool $isRecurrent = false, int $dangerLevel = 0, bool $isRegistered = false)
     {
-
-        // create a new scan order
-        /** @var Domain $currentDomain */
         $currentDomain = Domain::getDomainOrFail($domain, $token->id);
-        /** @var Scan $scan */
+
         $scan = $token->scans()->create([
             'token_id'      => $token->id,
             'url'           => $currentDomain->domain,
@@ -49,14 +46,9 @@ class ScanController extends Controller
         $scan->recurrentscan = $isRecurrent ? 1 : 0;
         $scan->save();
 
-        $envVars = array_key_exists('APP_NAME', $_ENV) ? $_ENV : getenv();
-
         // dispatch each scanner to the queue
-        foreach ($envVars as $key => $value) {
-            if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                continue;
-            }
-            ScanJob::dispatch($scanner_name[1], $value, $scan);
+        foreach (Scan::getAvailableScanners() as $scanner) {
+            ScanJob::dispatch($scanner['name'], $scanner['url'], $scan);
         }
 
         return response()->json(new ScanStatusResponse($scan));
@@ -78,8 +70,6 @@ class ScanController extends Controller
 
     public function status(Request $request)
     {
-        //		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
-        //		$domain = Domain::getDomainOrFail( $request->get( 'url'), $token->id  );
         $domain = Domain::whereDomain($request->get('url'))->first();
         $scan = Scan::whereUrl($domain->domain)->latest()->first();
         if ($scan instanceof Scan) {
@@ -87,11 +77,6 @@ class ScanController extends Controller
         }
 
         return response('No results found', 422);
-    }
-
-    public function result(Request $request)
-    {
-        // to be implemented
     }
 
     /**
@@ -114,14 +99,6 @@ class ScanController extends Controller
         $freeScanDomain = Domain::whereDomain($url)->first();
 
         if ($freeScanDomain instanceof Domain) {
-            //Domain already taken or another freescan has taken
-            /* @var Scan $lastScan */
-            //			$lastScan = $freeScanDomain->scans()->get()->last();
-            //			if ( $lastScan instanceof Scan ) {
-            //				// return minified Version
-            //				return response()->json( new ScanStatusResponse( $lastScan ) );
-            //			}
-
             return $this->startNewFreeScan($freeScanDomain);
         }
         $freeScanDomain = new Domain(['domain' => $domain]);
@@ -176,11 +153,8 @@ class ScanController extends Controller
         $scan->save();
 
         // dispatch each scanner to the queue
-        foreach ($_ENV as $key => $value) {
-            if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                continue;
-            }
-            ScanJob::dispatch($scanner_name[1], $value, $scan);
+        foreach (Scan::getAvailableScanners() as $scanner) {
+            ScanJob::dispatch($scanner['name'], $scanner['url'], $scan);
         }
 
         return response()->json(new ScanStatusResponse($scan));
@@ -236,10 +210,8 @@ class ScanController extends Controller
         return response('No domain found', 404);
     }
 
-    // TODO: Check and Test
     public function callback(Request $request, int $scanId)
     {
-
         /** @var ScanResult $scanResult */
         $scanResult = ScanResult::findOrFail($scanId);
         Log::info($scanId.' / '.$scanResult->scan_id.' Callback: '.json_encode($request->json()->all()));

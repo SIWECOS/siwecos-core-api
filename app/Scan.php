@@ -33,8 +33,7 @@ class Scan extends Model
      */
     public function getProgress()
     {
-        $envString = json_encode(getenv());
-        $amountScans = preg_match_all("/SCANNER_(\w+)_URL/m", $envString);
+        $amountScans = self::getAvailableScanners()->count();
 
         if($amountScans) {
             $doneResults = $this->results()
@@ -53,5 +52,23 @@ class Scan extends Model
         }
 
         throw new \Exception("NO SCANNER URLs ARE SET!");
+    }
+
+    /**
+     * Returns all configured scanners with name and URL.
+     */
+    public static function getAvailableScanners() {
+        $scanners = collect();
+
+        foreach (getenv() as $key => $value) {
+            if(preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
+                $url = env($scanner_name[0]);
+                if ($url) {
+                    $scanners->push(['name' => $scanner_name[1], 'url' => $url]);
+                }
+            }
+        }
+
+        return $scanners;
     }
 }

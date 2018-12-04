@@ -35,6 +35,6 @@ WORKDIR /var/www/html
 
 COPY .env.example .env
 
-CMD supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
+CMD php artisan key:generate && supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
 
 EXPOSE 80
