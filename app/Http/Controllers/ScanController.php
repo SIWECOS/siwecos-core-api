@@ -164,12 +164,12 @@ class ScanController extends Controller
     {
         /** @var Scan $currentLastScan */
         $domainReal = 'https://'.$domain;
-        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(0)->get()->last();
+        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(false)->get()->last();
         if ($currentLastScan instanceof Scan) {
             return $currentLastScan->updated_at->format($format);
         }
         $domainReal = 'http://'.$domain;
-        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(0)->get()->last();
+        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(false)->get()->last();
         if ($currentLastScan instanceof Scan) {
             return $currentLastScan->updated_at->format($format);
         }
@@ -182,7 +182,7 @@ class ScanController extends Controller
         $token = Token::getTokenByString(($request->header('siwecosToken')));
         $domain = Domain::getDomainOrFail($request->get('domain'), $token->id);
         if ($domain instanceof Domain) {
-            $latestScan = Scan::whereUrl($domain->domain)->whereStatus(3)->latest()->first();
+            $latestScan = Scan::whereUrl($domain->domain)->whereStatus(3)->whereFreescan(false)->latest()->first();
 
             if ($latestScan instanceof Scan) {
                 return response()->json(new ScanRawResultResponse($latestScan));
@@ -198,7 +198,7 @@ class ScanController extends Controller
     {
         $domain = Domain::whereDomain($request->get('domain'))->first();
         if ($domain instanceof Domain) {
-            $latestScan = Scan::whereUrl($domain->domain)->whereFreescan(0)->whereStatus(3)->latest()->first();
+            $latestScan = Scan::whereUrl($domain->domain)->whereFreescan(true)->whereStatus(3)->latest()->first();
 
             if ($latestScan instanceof Scan) {
                 return response()->json(new ScanRawResultResponse($latestScan));
