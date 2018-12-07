@@ -43,9 +43,6 @@ class ScanController extends Controller
             'recurrentscan' => $isRecurrent,
         ]);
 
-        $scan->recurrentscan = $isRecurrent ? 1 : 0;
-        $scan->save();
-
         // dispatch each scanner to the queue
         foreach (Scan::getAvailableScanners() as $scanner) {
             ScanJob::dispatch($scanner['name'], $scanner['url'], $scan);
@@ -212,97 +209,87 @@ class ScanController extends Controller
 
     public function callback(Request $request, int $scanId)
     {
-        /** @var ScanResult $scanResult */
         $scanResult = ScanResult::findOrFail($scanId);
-        Log::info($scanId.' / '.$scanResult->scan_id.' Callback: '.json_encode($request->json()->all()));
+
         if (!$request->json('hasError')) {
-            Log::info($request->json('score').' für '.$scanResult->id);
+
             $scanResult->update([
-                'result'      => $request->json('tests'),
-                'total_score' => $request->json('score'),
+                'result'            => $request->json('tests'),
+                'total_score'       => $request->json('score'),
+                'has_error'         => 0,
+                'complete_request'  => $request->json()->all(),
             ]);
-            $scanResult->total_score = $request->json('score');
-            $scanResult->has_error = 0;
-            $scanResult->complete_request = $request->json()->all();
-            $scanResult->save();
+
             //   Sends the ScanResult to the given callback urls.
-            foreach ($scanResult->scan->callbackurls as $callback) {
+            foreach ($scanResult->scan->callbackurls as $callbackURL) {
                 $client = new Client([
                     'headers' => [
                         'User-Agent' => config('app.userAgent'),
                     ],
                 ]);
 
-                $request = new Request('POST', $callback, [
+                $request = new Request('POST', $callbackURL, [
                     'body' => $scanResult,
                 ]);
 
                 $client->sendAsync($request);
             }
+
         } else {
             $scanResult->update([
                 'result'        => $request->json('tests'),
                 'total_score'   => $request->json('score'),
+                'has_error'     => true,
                 'error_message' => $request->json('errorMessage'),
+                'complete_request' => $request->json()->all(),
             ]);
-            $scanResult->has_error = 1;
-            $scanResult->complete_request = $request->json()->all();
-            $scanResult->save();
-            $scanResult->save();
         }
 
-        $this->updateScanStatus(Scan::find($scanResult->scan_id));
+        $this->updateScanStatus($scanResult->scan);
     }
 
     protected function updateScanStatus(Scan $scan)
     {
-        Log::info('Get Progress from id: '.$scan->id.' for '.$scan->url);
+        // if Scan is finished
         if ($scan->getProgress() >= 99) {
-            $scan->update([
-                'status' => 3,
+            $scan->update(['status' => 3]);
 
-            ]);
-            Log::info('Ready to update '.$scan->id.' to status 3');
-            // SCAN IS FINISHED! INFORM USER
-            if ($scan->recurrentscan === 1 && $scan->results->count() === Scan::getAvailableScanners()->count()) {
-                //CHECK LAST NOTIFICATION
-                // SHOULD FIX #28 IN BLA
-                $domainString = $scan->url;
-                Log::info('TRY TO GET DOMAIN OBJECT FOR '.$domainString);
-                /** @var Domain $domain */
-                $domain = Domain::whereDomain($domainString)->first();
-                Log::info('SCAN FINISHED FOR'.$domainString.'//'.$domain->domain_token);
+            if ($scan->recurrentscan === true) {
+                // calculate totalScore
                 $totalScore = 0;
-                /** @var ScanResult $result */
                 foreach ($scan->results() as $result) {
                     $totalScore += $result->total_score;
                 }
-
                 $totalScore /= Scan::getAvailableScanners()->count();
-                Log::info('TOTAL SCORE FOR DOMAIN '.$domain->domain.' // '.$totalScore);
-                if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)) && $totalScore <= 50) {
-                    Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
+
+                $domain = Domain::whereDomain($scan->url)->first();
+                if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1))) {
                     $domain->last_notification = Carbon::now();
                     $domain->save();
+
                     $client = new Client([
                         'headers' => [
                             'User-Agent' => config('app.userAgent'),
                         ],
                     ]);
-                    $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
-                    Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
+
+                    $BLA_NOTIFICATION_URL = env('BLA_URL', 'https://api.siwecos.de/bla/current/public') . '/api/v1/scan/finished/';
+                    $client->post($BLA_NOTIFICATION_URL, [
+                        'scanId' => $scan->id,
+                        'scanUrl' => $scan->url,
+                        'totalScore' => $totalScore,
+                    ], ['masterToken' => Token::whereAclLevel(9999)->first()->token]);
                 }
             }
-            $scan->save();
-            Log::info('Done updating   '.$scan->id.' to status 3');
+
             // Call broadcasting api from business layer
             $client = new Client([
                 'headers' => [
                     'User-Agent' => config('app.userAgent'),
                 ],
             ]);
-            $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
-            Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));
+
+            $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public') . '/api/v1/freescan/' . $scan->id);
         }
     }
 }
