@@ -248,48 +248,52 @@ class ScanController extends Controller
         $this->updateScanStatus($scanResult->scan);
     }
 
+    /**
+     * Updates the status of a given scan if the scan has finished.
+     *
+     * @param Scan $scan
+     * @return boolean scan was updated / scan is finished
+     */
     protected function updateScanStatus(Scan $scan)
     {
-        // if Scan is finished
         if ($scan->getProgress() >= 99) {
             $scan->update(['status' => 3]);
 
-            if ($scan->recurrentscan === true) {
-                // calculate totalScore
-                $totalScore = 0;
-                foreach ($scan->results() as $result) {
-                    $totalScore += $result->total_score;
-                }
-                $totalScore /= Scan::getAvailableScanners()->count();
-
-                $domain = Domain::whereDomain($scan->url)->first();
-                if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1))) {
-                    $domain->last_notification = Carbon::now();
-                    $domain->save();
-
-                    $client = new Client([
-                        'headers' => [
-                            'User-Agent' => config('app.userAgent'),
-                        ],
-                    ]);
-
-                    $BLA_NOTIFICATION_URL = env('BLA_URL', 'https://api.siwecos.de/bla/current/public') . '/api/v1/scan/finished/';
-                    $client->post($BLA_NOTIFICATION_URL, [
-                        'scanId' => $scan->id,
-                        'scanUrl' => $scan->url,
-                        'totalScore' => $totalScore,
-                    ], ['masterToken' => Token::whereAclLevel(9999)->first()->token]);
-                }
-            }
-
-            // Call broadcasting api from business layer
             $client = new Client([
-                'headers' => [
-                    'User-Agent' => config('app.userAgent'),
-                ],
+                'headers' => ['User-Agent' => config('app.userAgent')],
+                'timeout' => 25,
             ]);
 
-            $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public') . '/api/v1/freescan/' . $scan->id);
+            // calculate totalScore
+            $totalScore = 0;
+            foreach ($scan->results() as $result) {
+                $totalScore += $result->total_score;
+            }
+            $totalScore /= Scan::getAvailableScanners()->count();
+
+            /**
+             * TODO: Entfernen
+             * - Die Domain-Notification hat nichts in der CORE-API zu suchen!
+             * - Die Implementierung muss in der BLA erfolgen
+             * Siehe https://github.com/SIWECOS/siwecos-business-layer/issues/83
+             */
+            $domain = Domain::whereDomain($scan->url)->first();
+            if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1))) {
+                $domain->last_notification = Carbon::now();
+                $domain->save();
+            }
+
+            $BLA_NOTIFICATION_URL = env('BLA_URL', 'https://api.siwecos.de/bla/current/public') . '/api/v1/scan/finished/';
+            $client->json('POST', $BLA_NOTIFICATION_URL, [
+                'scanId' => $scan->id,
+                'scanUrl' => $scan->url,
+                'totalScore' => $totalScore,
+                'freescan' => $scan->freescan,
+            ], ['masterToken' => Token::whereAclLevel(9999)->first()->token]);
+
+            return true;
         }
+
+        return false;
     }
 }
