@@ -18,14 +18,13 @@ class DomainCheck
      */
     public function handle($request, Closure $next)
     {
-        \Log::info('DomainCheck: '.json_encode($request->json()->all()));
         $headerToken = Token::getTokenByString($request->header('siwecosToken'));
-        \Log::info('TOKEN (middleware): '.$headerToken->token);
         $domainCheck = Domain::getDomainOrFail($request->json('domain'), $headerToken->id);
+
         if (!($domainCheck instanceof Domain)) {
             return response('Domain not found');
         }
-        \Log::info('DomainFound: '.$domainCheck->domain);
+
         if ($domainCheck instanceof Domain) {
             if ((bool) $domainCheck->verified) {
                 return $next($request);

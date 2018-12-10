@@ -16,7 +16,6 @@ class ScannerStartRequest extends FormRequest
      */
     public function authorize()
     {
-        // TODO: Check if thoken is authorized and have enough Credits.
         return true;
     }
 
