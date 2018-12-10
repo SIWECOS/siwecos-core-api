@@ -31,6 +31,22 @@ class Scan extends Model
     }
 
     /**
+     * Returns the total score.
+     *
+     * @return int
+     */
+    public function getTotalScore() {
+        $totalScore = 0;
+        foreach ($this->results as $result) {
+            $totalScore += $result->total_score;
+        }
+
+        $totalScore /= Scan::getAvailableScanners()->count();
+
+        return (int) round($totalScore);
+    }
+
+    /**
      * Returns the scan's progress as a percent integer.
      */
     public function getProgress()
