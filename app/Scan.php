@@ -64,8 +64,6 @@ class Scan extends Model
 
             $progress = round((($doneResults + $errResults) / $amountScans) * 100);
 
-            Log::info('Progress: ' . $progress . ' % : Amount Scans: '.$amountScans.' / Done: '.$doneResults.' / Errors:'.$errResults);
-
             return $progress;
         }
 
