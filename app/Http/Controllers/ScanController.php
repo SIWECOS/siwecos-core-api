@@ -264,13 +264,6 @@ class ScanController extends Controller
                 'timeout' => 25,
             ]);
 
-            // calculate totalScore
-            $totalScore = 0;
-            foreach ($scan->results() as $result) {
-                $totalScore += $result->total_score;
-            }
-            $totalScore /= Scan::getAvailableScanners()->count();
-
             /**
              * TODO: Entfernen
              * - Die Domain-Notification hat nichts in der CORE-API zu suchen!
@@ -283,13 +276,16 @@ class ScanController extends Controller
                 $domain->save();
             }
 
-            $BLA_NOTIFICATION_URL = env('BLA_URL', 'https://api.siwecos.de/bla/current/public') . '/api/v1/scan/finished/';
-            $client->json('POST', $BLA_NOTIFICATION_URL, [
-                'scanId' => $scan->id,
-                'scanUrl' => $scan->url,
-                'totalScore' => $totalScore,
-                'freescan' => $scan->freescan,
-            ], ['masterToken' => Token::whereAclLevel(9999)->first()->token]);
+            foreach($scan->callbackurls as $callbackURL) {
+                $client->json('POST', $callbackURL, [
+                    'scanId' => $scan->id,
+                    'scanUrl' => $scan->url,
+                    'totalScore' => $scan->getTotalScore(),
+                    'freescan' => $scan->freescan,
+                    'recurrentscan' => $scan->recurrentscan,
+                    'results' => $scan->results,
+                ], ['masterToken' => Token::whereAclLevel(9999)->first()->token]);
+            }
 
             return true;
         }
