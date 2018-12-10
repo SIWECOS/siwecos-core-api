@@ -33,7 +33,6 @@ class ScannerStartTest extends TestCase
     /** @test */
     public function a_url_is_required()
     {
-        // changed to 500 due fail operation in domain model
         $this->json('POST', '/api/v1/scan/start', [], ['siwecosToken' => $this->token->token])
             ->assertStatus(500);
     }
@@ -67,7 +66,6 @@ class ScannerStartTest extends TestCase
         $response = $this->json('POST', '/api/v1/scan/start', [
             'domain'      => TEST_DOMAIN,
             'dangerLevel' => 4,
-            'isNotATest'  => false,
         ], ['siwecosToken' => $this->token->token]);
 
         $response->assertStatus(200);
@@ -82,7 +80,10 @@ class ScannerStartTest extends TestCase
 
         $response = $this->json('POST', '/api/v1/scan/start', [
             'domain' => TEST_DOMAIN,
+            'dangerLevel' => 0,
         ], ['siwecosToken' => $this->token->token]);
+
+        $response->assertStatus(200);
         $this->assertEquals(1, Scan::all()->count());
     }
 
@@ -94,6 +95,8 @@ class ScannerStartTest extends TestCase
         $response = $this->json('POST', '/api/v1/getFreeScanStart', [
             'domain' => 'siwecos.de',
         ]);
+
+        $response->assertStatus(200);
         $this->assertEquals(1, Scan::all()->count());
     }
 
@@ -115,10 +118,25 @@ class ScannerStartTest extends TestCase
         Queue::fake();
 
         $response = $this->json('POST', '/api/v1/getFreeScanStart', [
-            'domain' => 'www.staging2.siwecos.de',
+            'domain' => 'www.www.siwecos.de',
         ]);
-        $this->assertEquals(422, $response->getStatusCode());
+
+        $response->assertStatus(422);
         $this->assertEquals(0, Scan::all()->count());
-        $response->assertJsonValidationErrors('domain');
+    }
+
+    /** @test */
+    public function when_the_core_receives_a_callbackurl_for_a_scan_it_will_be_saved() {
+        Queue::fake();
+
+        $response = $this->json('POST', '/api/v1/scan/start', [
+            'domain' => TEST_DOMAIN,
+            'dangerLevel' => 0,
+            'callbackurls' => ['https://callback-url.com'],
+        ], ['siwecosToken' => $this->token->token]);
+
+        $response->assertStatus(200);
+        $this->assertEquals('https://callback-url.com', Scan::first()->callbackurls->first());
+
     }
 }

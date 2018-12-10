@@ -22,23 +22,34 @@ class ScanController extends Controller
     {
         $token = Token::getTokenByString(($request->header('siwecosToken')));
 
-        Log::info('Token: '.$token->token);
         if ($token instanceof Token && $token->reduceCredits()) {
-            $isNotTestRunner = $request->json('isNotATest') ?? true;
-            $dangerlevel = $request->json('dangerLevel') ?? 10;
 
-            return self::startScanJob($token, $request->json('domain'), false, $dangerlevel, $isNotTestRunner);
+            return self::startScanJob($request->json('domain'), false, $request->json('dangerLevel') ?: 0, $request->json('callbackurls') ?: []);
         }
     }
 
-    public static function startScanJob(Token $token, string $domain, bool $isRecurrent = false, int $dangerLevel = 0, bool $isRegistered = false)
+    public function startFreeScan(ScannerStartRequest $request)
     {
-        $currentDomain = Domain::getDomainOrFail($domain, $token->id);
+        $url = Domain::getDomainURL($request->json('domain'));
 
-        $scan = $token->scans()->create([
-            'token_id'      => $token->id,
-            'url'           => $currentDomain->domain,
-            'callbackurls'  => [],
+        Log::info('Start Freescan for: ' . $url);
+
+        $freeScanDomain = Domain::whereDomain($url)->first();
+
+        if (!($freeScanDomain instanceof Domain)) {
+            $freeScanDomain = new Domain(['domain' => $request->json('domain')]);
+            $freeScanDomain->save();
+        }
+
+        return $this->startScanJob($freeScanDomain->domain, false, 0, $request->json('callbackurls') ?: []);
+    }
+
+
+    public static function startScanJob(string $domain, bool $isRecurrent = false, int $dangerLevel = 0, array $callbackurls)
+    {
+        $scan = Scan::create([
+            'url'           => Domain::getDomainURL($domain),
+            'callbackurls'  => $callbackurls,
             'dangerLevel'   => $dangerLevel,
             'recurrentscan' => $isRecurrent,
         ]);
@@ -77,34 +88,6 @@ class ScanController extends Controller
     }
 
     /**
-     * @param Request $request
-     *
-     * @return Scan
-     */
-    public function startFreeScan(Request $request)
-    {
-        $domain = $request->json('domain');
-
-        $request->validate([
-            'domain' => ['required', new AnAvailableUrlExistsForTheDomain()],
-        ]);
-
-        $url = Domain::getDomainURL($domain);
-
-        Log::info('Start Freescan for: '.$url);
-        /** @var Domain $freeScanDomain */
-        $freeScanDomain = Domain::whereDomain($url)->first();
-
-        if ($freeScanDomain instanceof Domain) {
-            return $this->startNewFreeScan($freeScanDomain);
-        }
-        $freeScanDomain = new Domain(['domain' => $domain]);
-        $freeScanDomain->save();
-
-        return $this->startNewFreeScan($freeScanDomain);
-    }
-
-    /**
      * Check if domain is alive or redirects.
      *
      * @param string $domain
@@ -136,26 +119,7 @@ class ScanController extends Controller
         return false;
     }
 
-    protected function startNewFreeScan(Domain $freeScanDomain)
-    {
-        // start Scan and Broadcast Result afterwards
-        /** @var Scan $scan */
-        $scan = $freeScanDomain->scans()->create([
-            'url'          => $freeScanDomain,
-            'callbackurls' => [],
-            'dangerLevel'  => 0,
-            'freescan'     => true,
-        ]);
-        $scan->freescan = 1;
-        $scan->save();
 
-        // dispatch each scanner to the queue
-        foreach (Scan::getAvailableScanners() as $scanner) {
-            ScanJob::dispatch($scanner['name'], $scanner['url'], $scan);
-        }
-
-        return response()->json(new ScanStatusResponse($scan));
-    }
 
     public function getLastScanDate(string $format, string $domain)
     {
