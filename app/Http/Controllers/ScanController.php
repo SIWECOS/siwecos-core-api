@@ -24,7 +24,8 @@ class ScanController extends Controller
 
         if ($token instanceof Token && $token->reduceCredits()) {
 
-            return self::startScanJob($request->json('domain'), false, $request->json('dangerLevel') ?: 0, $request->json('callbackurls') ?: []);
+            $url = Domain::getDomainURL($request->json('domain'));
+            return self::startScanJob($url, false, $request->json('dangerLevel') ?: 0, $request->json('callbackurls') ?: []);
         }
     }
 
@@ -41,14 +42,14 @@ class ScanController extends Controller
             $freeScanDomain->save();
         }
 
-        return $this->startScanJob($freeScanDomain->domain, false, 0, $request->json('callbackurls') ?: []);
+        return $this->startScanJob($freeScanDomain->domain, false, 0, $request->json('callbackurls') ? : []);
     }
 
 
-    public static function startScanJob(string $domain, bool $isRecurrent = false, int $dangerLevel = 0, array $callbackurls)
+    public static function startScanJob(string $url, bool $isRecurrent = false, int $dangerLevel = 0, array $callbackurls)
     {
         $scan = Scan::create([
-            'url'           => Domain::getDomainURL($domain),
+            'url'           => $url,
             'callbackurls'  => $callbackurls,
             'dangerLevel'   => $dangerLevel,
             'recurrentscan' => $isRecurrent,
