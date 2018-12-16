@@ -65,20 +65,22 @@ class DailyScan extends Command
 QUERY
         ));
         $max_schedule = min(env('RECURRENT_PER_RUN'), \count($domains));
-        Log::info('Max Schedule: '.$max_schedule);
+
+        $this->info('Max Schedule : '.$max_schedule);
         /** @var string $domain */
-        $bar = $this->output->createProgressBar($max_schedule);
-        // If RECURRENT_PER_RUN is defined and > 0 this many scans are started
-        // per run
-        foreach ($domains as $domain) {
-            ScanController::startScanJob($domain->domain, true, 10);
-            $this->info('Scan started for: '.$domain->domain);
-            $bar->advance();
-            // no more scans are allowed to be started
-            if (--$max_schedule == 0) {
-                break;
+        if($max_schedule) {
+            $bar = $this->output->createProgressBar($max_schedule);
+            // If RECURRENT_PER_RUN is defined and > 0 this many scans are started per run
+            foreach ($domains as $domain) {
+                ScanController::startScanJob($domain->domain, true, 10);
+                $this->info('Scan started for: '.$domain->domain);
+                $bar->advance();
+                // no more scans are allowed to be started
+                if (--$max_schedule == 0) {
+                    break;
+                }
             }
+            $bar->finish();
         }
-        $bar->finish();
     }
 }
