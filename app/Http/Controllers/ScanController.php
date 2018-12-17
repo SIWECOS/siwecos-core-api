@@ -174,7 +174,7 @@ class ScanController extends Controller
 
     public function callback(Request $request, int $scanId)
     {
-        $scanResult = ScanResult::findOrFail($scanId);
+        $scanResult = ScanResult::whereId($scanId)->first();
 
         if (!$request->json('hasError')) {
 
@@ -193,11 +193,10 @@ class ScanController extends Controller
                     ],
                 ]);
 
-                $request = new Request('POST', $callbackURL, [
-                    'body' => $scanResult,
+                // TODO: make this async and functional
+                $client->post($callbackURL, [
+                    'json' => $scanResult
                 ]);
-
-                $client->sendAsync($request);
             }
 
         } else {
@@ -226,7 +225,7 @@ class ScanController extends Controller
 
             $client = new Client([
                 'headers' => ['User-Agent' => config('app.userAgent')],
-                'timeout' => 25,
+                'timeout' => 5,
             ]);
 
             /**
@@ -242,14 +241,17 @@ class ScanController extends Controller
             }
 
             foreach($scan->callbackurls as $callbackURL) {
-                $client->json('POST', $callbackURL, [
-                    'scanId' => $scan->id,
-                    'scanUrl' => $scan->url,
-                    'totalScore' => $scan->getTotalScore(),
-                    'freescan' => $scan->freescan,
-                    'recurrentscan' => $scan->recurrentscan,
-                    'results' => $scan->results,
-                ], ['masterToken' => Token::whereAclLevel(9999)->first()->token]);
+                // TODO: Make this async
+                $client->post($callbackURL, [
+                    'json' => [
+                        'scanId' => $scan->id,
+                        'scanUrl' => $scan->url,
+                        'totalScore' => $scan->getTotalScore(),
+                        'freescan' => $scan->freescan,
+                        'recurrentscan' => $scan->recurrentscan,
+                        'results' => $scan->results,
+                    ]
+                ]);
             }
 
             return true;
