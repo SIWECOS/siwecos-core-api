@@ -28,7 +28,7 @@ script:
 env:
   global:
     - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
-    - PROJECT_NAME_PRD=SiweocsK8sCluster
+    - PROJECT_NAME_PRD=glowing-thunder-215513
     - CLUSTER_NAME_PRD=siwecoscluster
     - CLOUDSDK_COMPUTE_ZONE=europe-west1-b
 
