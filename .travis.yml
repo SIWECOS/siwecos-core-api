@@ -1,0 +1,64 @@
+language: php
+
+php:
+  - "7.1"
+
+services:
+  - mysql
+
+cache:
+  directories:
+    - "$HOME/google-cloud-sdk/"
+
+addons:
+  apt:
+    sources:
+      - mysql-5.7-trusty
+
+dist: trusty
+
+before_script:
+  - composer self-update
+  - composer install --no-interaction
+
+script:
+  - vendor/bin/phpunit
+
+  # Set env vars
+env:
+  global:
+    - GOOGLE_APPLICATION_CREDENTIALS=~/gcloud-service-key.json
+    - PROJECT_NAME_PRD=SiweocsK8sCluster
+    - CLUSTER_NAME_PRD=siwecoscluster
+    - CLOUDSDK_COMPUTE_ZONE=europe-west1-b
+
+
+jobs:
+  include:
+    - stage: build docker image
+      script:
+      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+      - docker build -t siwecos-core-api .
+      - docker images
+      - docker tag siwecos-core-api "$DOCKER_REPO"/siwecos-core-api:"$TRAVIS_BRANCH"
+      - docker push "$DOCKER_REPO"/siwecos-core-api:"$TRAVIS_BRANCH"
+
+before_deploy:
+  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
+  - source /home/travis/google-cloud-sdk/path.bash.inc
+  - gcloud --quiet version
+  - gcloud --quiet components update
+  - gcloud --quiet components beta update
+  - gcloud --quiet components update kubectl
+
+deploy:
+  - provider: script
+    script: ./deploy-staging.sh
+    skip_cleanup: true
+    on:
+      branch: staging
+  - provider: script
+    script: ./deploy-master.sh
+    skip_cleanup: true
+    on:
+      branch: master
