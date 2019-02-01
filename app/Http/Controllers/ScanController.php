@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Domain;
 use App\Http\Requests\ScannerStartRequest;
 use App\Jobs\ScanJob;
+use App\Rules\AnAvailableUrlExistsForTheDomain;
 use App\Scan;
 use App\ScanResult;
 use App\Siweocs\Models\ScanRawResultResponse;
@@ -32,11 +33,8 @@ class ScanController extends Controller
 
     public static function startScanJob(Token $token, string $domain, bool $isRecurrent = false, int $dangerLevel = 0, bool $isRegistered = false)
     {
-
-        // create a new scan order
-        /** @var Domain $currentDomain */
         $currentDomain = Domain::getDomainOrFail($domain, $token->id);
-        /** @var Scan $scan */
+
         $scan = $token->scans()->create([
             'token_id'      => $token->id,
             'url'           => $currentDomain->domain,
@@ -48,15 +46,9 @@ class ScanController extends Controller
         $scan->recurrentscan = $isRecurrent ? 1 : 0;
         $scan->save();
 
-        $envVars = array_key_exists('APP_NAME', $_ENV) ? $_ENV : getenv();
-
         // dispatch each scanner to the queue
-        foreach ($envVars as $key => $value) {
-            Log::info($key.' '.$value);
-            if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                continue;
-            }
-            ScanJob::dispatch($scanner_name[1], $value, $scan);
+        foreach (Scan::getAvailableScanners() as $scanner) {
+            ScanJob::dispatch($scanner['name'], $scanner['url'], $scan);
         }
 
         return response()->json(new ScanStatusResponse($scan));
@@ -78,8 +70,6 @@ class ScanController extends Controller
 
     public function status(Request $request)
     {
-        //		$token  = Token::getTokenByString( ( $request->header( 'siwecosToken' ) ) );
-        //		$domain = Domain::getDomainOrFail( $request->get( 'url'), $token->id  );
         $domain = Domain::whereDomain($request->get('url'))->first();
         $scan = Scan::whereUrl($domain->domain)->latest()->first();
         if ($scan instanceof Scan) {
@@ -89,11 +79,6 @@ class ScanController extends Controller
         return response('No results found', 422);
     }
 
-    public function result(Request $request)
-    {
-        // to be implemented
-    }
-
     /**
      * @param Request $request
      *
@@ -101,29 +86,19 @@ class ScanController extends Controller
      */
     public function startFreeScan(Request $request)
     {
-        $domainFilter = parse_url($request->json('domain'));
-        $domain = $domainFilter['scheme'].'://'.$domainFilter['host'];
+        $domain = $request->json('domain');
 
-        //PING THE GIVEN DOMAIN
-        if (!self::isDomainAlive($domain)) {
-            Log::info('Domain not found '.$domain);
+        $request->validate([
+            'domain' => ['required', new AnAvailableUrlExistsForTheDomain()],
+        ]);
 
-            return response('Domain not alive', 422);
-        }
+        $url = Domain::getDomainURL($domain);
 
-        Log::info('Start Freescan for:'.$domain);
+        Log::info('Start Freescan for: '.$url);
         /** @var Domain $freeScanDomain */
-        $freeScanDomain = Domain::whereDomain($domain)->first();
+        $freeScanDomain = Domain::whereDomain($url)->first();
 
         if ($freeScanDomain instanceof Domain) {
-            //Domain already taken or another freescan has taken
-            /* @var Scan $lastScan */
-            //			$lastScan = $freeScanDomain->scans()->get()->last();
-            //			if ( $lastScan instanceof Scan ) {
-            //				// return minified Version
-            //				return response()->json( new ScanStatusResponse( $lastScan ) );
-            //			}
-
             return $this->startNewFreeScan($freeScanDomain);
         }
         $freeScanDomain = new Domain(['domain' => $domain]);
@@ -133,23 +108,30 @@ class ScanController extends Controller
     }
 
     /**
-     * Check if Domain is Alive or redirects (200 / 301).
+     * Check if domain is alive or redirects.
      *
      * @param string $domain
      *
      * @return bool
      */
-    public static function isDomainAlive(string $domain)
+    public static function isDomainAlive(string $domain, Client $client = null)
     {
-        $client = new Client();
+        $client = $client ?: new Client([
+            'headers' => [
+                'User-Agent' => config('app.userAgent'),
+            ],
+            'timeout' => 25,
+        ]);
 
         try {
             $response = $client->get($domain);
-            if ($response->getStatusCode() === 200 || $response->getStatusCode() === 301) {
+            $allowedStatusCodes = collect([200, 301, 302, 303, 307, 308]);
+            if ($allowedStatusCodes->contains($response->getStatusCode())) {
                 return true;
             }
         } catch (\Exception $ex) {
-            Log::info($domain.' '.$ex->getMessage());
+            Log::warning('Domain is not alive: '.$domain);
+            Log::warning($domain.' '.$ex->getMessage());
 
             return false;
         }
@@ -171,11 +153,8 @@ class ScanController extends Controller
         $scan->save();
 
         // dispatch each scanner to the queue
-        foreach ($_ENV as $key => $value) {
-            if (!preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                continue;
-            }
-            ScanJob::dispatch($scanner_name[1], $value, $scan);
+        foreach (Scan::getAvailableScanners() as $scanner) {
+            ScanJob::dispatch($scanner['name'], $scanner['url'], $scan);
         }
 
         return response()->json(new ScanStatusResponse($scan));
@@ -185,12 +164,12 @@ class ScanController extends Controller
     {
         /** @var Scan $currentLastScan */
         $domainReal = 'https://'.$domain;
-        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(0)->get()->last();
+        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(false)->get()->last();
         if ($currentLastScan instanceof Scan) {
             return $currentLastScan->updated_at->format($format);
         }
         $domainReal = 'http://'.$domain;
-        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(0)->get()->last();
+        $currentLastScan = Scan::whereUrl($domainReal)->where('status', '3')->whereFreescan(false)->get()->last();
         if ($currentLastScan instanceof Scan) {
             return $currentLastScan->updated_at->format($format);
         }
@@ -203,7 +182,7 @@ class ScanController extends Controller
         $token = Token::getTokenByString(($request->header('siwecosToken')));
         $domain = Domain::getDomainOrFail($request->get('domain'), $token->id);
         if ($domain instanceof Domain) {
-            $latestScan = Scan::whereUrl($domain->domain)->whereStatus(3)->latest()->first();
+            $latestScan = Scan::whereUrl($domain->domain)->whereStatus(3)->whereFreescan(false)->latest()->first();
 
             if ($latestScan instanceof Scan) {
                 return response()->json(new ScanRawResultResponse($latestScan));
@@ -219,7 +198,7 @@ class ScanController extends Controller
     {
         $domain = Domain::whereDomain($request->get('domain'))->first();
         if ($domain instanceof Domain) {
-            $latestScan = Scan::whereUrl($domain->domain)->whereFreescan(0)->whereStatus(3)->latest()->first();
+            $latestScan = Scan::whereUrl($domain->domain)->whereFreescan(true)->whereStatus(3)->latest()->first();
 
             if ($latestScan instanceof Scan) {
                 return response()->json(new ScanRawResultResponse($latestScan));
@@ -231,10 +210,8 @@ class ScanController extends Controller
         return response('No domain found', 404);
     }
 
-    // TODO: Check and Test
     public function callback(Request $request, int $scanId)
     {
-
         /** @var ScanResult $scanResult */
         $scanResult = ScanResult::findOrFail($scanId);
         Log::info($scanId.' / '.$scanResult->scan_id.' Callback: '.json_encode($request->json()->all()));
@@ -250,7 +227,11 @@ class ScanController extends Controller
             $scanResult->save();
             //   Sends the ScanResult to the given callback urls.
             foreach ($scanResult->scan->callbackurls as $callback) {
-                $client = new Client();
+                $client = new Client([
+                    'headers' => [
+                        'User-Agent' => config('app.userAgent'),
+                    ],
+                ]);
 
                 $request = new Request('POST', $callback, [
                     'body' => $scanResult,
@@ -283,7 +264,7 @@ class ScanController extends Controller
             ]);
             Log::info('Ready to update '.$scan->id.' to status 3');
             // SCAN IS FINISHED! INFORM USER
-            if ($scan->recurrentscan === 1 && $scan->results->count() === 5) {
+            if ($scan->recurrentscan === 1 && $scan->results->count() === Scan::getAvailableScanners()->count()) {
                 //CHECK LAST NOTIFICATION
                 // SHOULD FIX #28 IN BLA
                 $domainString = $scan->url;
@@ -297,13 +278,17 @@ class ScanController extends Controller
                     $totalScore += $result->total_score;
                 }
 
-                $totalScore /= 5;
+                $totalScore /= Scan::getAvailableScanners()->count();
                 Log::info('TOTAL SCORE FOR DOMAIN '.$domain->domain.' // '.$totalScore);
                 if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1)) && $totalScore <= 50) {
                     Log::info('LAST NOTIFICATION FOR '.$domainString.' EARLIER THEN 1 WEEK');
                     $domain->last_notification = Carbon::now();
                     $domain->save();
-                    $client = new Client();
+                    $client = new Client([
+                        'headers' => [
+                            'User-Agent' => config('app.userAgent'),
+                        ],
+                    ]);
                     $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/generateLowScoreReport/'.$scan->id);
                     Log::info('CONNECT REPORT GEN ON '.env('BLA_URL'));
                 }
@@ -311,7 +296,11 @@ class ScanController extends Controller
             $scan->save();
             Log::info('Done updating   '.$scan->id.' to status 3');
             // Call broadcasting api from business layer
-            $client = new Client();
+            $client = new Client([
+                'headers' => [
+                    'User-Agent' => config('app.userAgent'),
+                ],
+            ]);
             $client->get(env('BLA_URL', 'https://api.siwecos.de/bla/current/public').'/api/v1/freescan/'.$scan->id);
             Log::info('CONNECT FREESCAN ON '.env('BLA_URL'));
         }

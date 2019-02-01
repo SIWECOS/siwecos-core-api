@@ -5,47 +5,13 @@ namespace App;
 use Illuminate\Database\Eloquent\Model;
 use Log;
 
-/**
- * App\Scan.
- *
- * @property int $id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUpdatedAt($value)
- * @mixin \Eloquent
- *
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\ScanResult[] $results
- * @property-read \App\Token $token
- * @property string $url
- * @property int|null $dangerLevel
- * @property \Illuminate\Support\Collection $callbackurls
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereCallbackurls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereDangerLevel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereUrl($value)
- *
- * @property int $token_id
- * @property int $status
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereTokenId($value)
- *
- * @property int $freescan
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereFreescan($value)
- *
- * @property int $recurrentscan
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Scan whereRecurrentscan($value)
- */
 class Scan extends Model
 {
-    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status'];
+    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status', 'freescan'];
     protected $casts = [
         'callbackurls' => 'collection',
+        'recurrentscan' => 'boolean',
+        'freescan' => 'boolean'
     ];
 
     /**
@@ -64,11 +30,14 @@ class Scan extends Model
         return $this->belongsTo(Token::class);
     }
 
+    /**
+     * Returns the scan's progress as a percent integer.
+     */
     public function getProgress()
     {
-        $allResults = env('SCAN_COUNT', 5); //$this->results()->count();
-        if ($allResults > 0) {
-            // TODO use properly formatted query
+        $amountScans = self::getAvailableScanners()->count();
+
+        if($amountScans) {
             $doneResults = $this->results()
                 ->whereNotNull('result')
                 ->where('has_error', '=', '0')
@@ -76,22 +45,32 @@ class Scan extends Model
             $errResults = $this->results()
                 ->where('result', '=', '[]')
                 ->where('has_error', '=', '1')->count();
-            /*
-            This query unfortunately does not work
-            $doneResults = $this->results()
-             ->where(function($q) {
-               $q->whereNotNull('result')
-               ->orWhere('has_error', '=', 'true');
-             })->count();
-             Error is
-             Parse error: syntax error, unexpected '->' (T_OBJECT_OPERATOR)
-            */
-            Log::info('Progress: '.$allResults.' '.$doneResults.' '.$errResults);
-            Log::info(round((($doneResults + $errResults) / $allResults) * 100));
 
-            return round((($doneResults + $errResults) / $allResults) * 100);
+            $progress = round((($doneResults + $errResults) / $amountScans) * 100);
+
+            Log::info('Progress: ' . $progress . ' % : Amount Scans: '.$amountScans.' / Done: '.$doneResults.' / Errors:'.$errResults);
+
+            return $progress;
         }
 
-        return 0;
+        throw new \Exception("NO SCANNER URLs ARE SET!");
+    }
+
+    /**
+     * Returns all configured scanners with name and URL.
+     */
+    public static function getAvailableScanners() {
+        $scanners = collect();
+
+        foreach (getenv() as $key => $value) {
+            if(preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
+                $url = env($scanner_name[0]);
+                if ($url) {
+                    $scanners->push(['name' => $scanner_name[1], 'url' => $url]);
+                }
+            }
+        }
+
+        return $scanners;
     }
 }

@@ -214,6 +214,42 @@ class DomainTest extends TestCase
         $this->assertNull(Domain::getDomainURL($domain, $client));
     }
 
+    /** @test */
+    public function getDomainURL_ignores_paths()
+    {
+        $client = $this->getMockedGuzzleClient([
+            new Response(200),
+        ]);
+
+        $domain = 'https://example.com/pathToBlog';
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertEquals('https://example.com', $result);
+
+        $client = $this->getMockedGuzzleClient([
+            new Response(200),
+        ]);
+        $domain = 'example.com/pathToBlog';
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertEquals('https://example.com', $result);
+
+        $client = $this->getMockedGuzzleClient([
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
+            new Response(200),
+        ]);
+        $domain = 'example.com/pathToBlog';
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertEquals('http://example.com', $result);
+
+        $client = $this->getMockedGuzzleClient([
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
+            new RequestException('Error Communicating with Server', new Request('GET', 'test')),
+            new Response(200),
+        ]);
+        $domain = 'https://example.com/pathToBlog';
+        $result = Domain::getDomainURL($domain, $client);
+        $this->assertEquals('http://example.com', $result);
+    }
+
     /**
      * This method sets and activates the GuzzleHttp Mocking functionality.
      *
