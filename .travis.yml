@@ -56,7 +56,7 @@ deploy:
     script: ./deploy-staging.sh
     skip_cleanup: true
     on:
-      branch: staging
+      branch: develop
   - provider: script
     script: ./deploy-master.sh
     skip_cleanup: true
