@@ -35,6 +35,8 @@ WORKDIR /var/www/html
 
 COPY .env.example .env
 
+RUN ln -sf /proc/1/fd/1 ./scheduleOutputToStdout
+
 CMD php artisan key:generate && supervisord --nodaemon --configuration /etc/supervisor/supervisord.conf
 
 EXPOSE 80
