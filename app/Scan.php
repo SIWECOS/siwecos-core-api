@@ -35,7 +35,8 @@ class Scan extends Model
      *
      * @return int
      */
-    public function getTotalScore() {
+    public function getTotalScore()
+    {
         $totalScore = 0;
         foreach ($this->results as $result) {
             $totalScore += $result->total_score;
@@ -43,7 +44,7 @@ class Scan extends Model
 
         $totalScore /= Scan::getAvailableScanners()->count();
 
-        return (int) round($totalScore);
+        return (int)round($totalScore);
     }
 
     /**
@@ -53,7 +54,7 @@ class Scan extends Model
     {
         $amountScans = self::getAvailableScanners()->count();
 
-        if($amountScans) {
+        if ($amountScans) {
             $doneResults = $this->results()
                 ->whereNotNull('result')
                 ->where('has_error', '=', '0')
@@ -62,7 +63,7 @@ class Scan extends Model
                 ->where('result', '=', '[]')
                 ->where('has_error', '=', '1')->count();
 
-            $progress = round((($doneResults + $errResults) / $amountScans) * 100);
+            $progress = ceil((($doneResults + $errResults) / $amountScans) * 100);
 
             return $progress;
         }
@@ -73,11 +74,12 @@ class Scan extends Model
     /**
      * Returns all configured scanners with name and URL.
      */
-    public static function getAvailableScanners() {
+    public static function getAvailableScanners()
+    {
         $scanners = collect();
 
         foreach (getenv() as $key => $value) {
-            if(preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
+            if (preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
                 $url = env($scanner_name[0]);
                 if ($url) {
                     $scanners->push(['name' => $scanner_name[1], 'url' => $url]);
