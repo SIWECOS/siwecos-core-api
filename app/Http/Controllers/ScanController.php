@@ -172,13 +172,21 @@ class ScanController extends Controller
         return response('No domain found', 404);
     }
 
+
+    /**
+     * Triggered when a SIWECOS-Scanner is finished.
+     *
+     * @param Request $request
+     * @param integer $scanId
+     * @return void
+     */
     public function callback(Request $request, int $scanId)
     {
         $scanResult = ScanResult::whereId($scanId)->first();
 
         if ($scanResult === null) {
-            Log::warning('Scan with ID ' . $scanId . ' not found !');
-            return response('Scan with ID ' . $scanId . ' not found!', 404);
+            Log::warning('ScanResult with ID ' . $scanId . ' not found !');
+            return response('ScanResult with ID ' . $scanId . ' not found!', 404);
         }
 
         $scanResult->update([
@@ -188,32 +196,18 @@ class ScanController extends Controller
             'complete_request' => $request->json()->all(),
         ]);
 
-        // Sends the ScanResult to the given callback urls.
-        foreach ($scanResult->scan->callbackurls as $callbackURL) {
-            $client = new Client([
-                'headers' => [
-                    'User-Agent' => config('app.userAgent'),
-                ],
-            ]);
-
-            // TODO: make this async and functional
-            $client->post($callbackURL, [
-                'json' => $scanResult
-            ]);
-        }
-
         $this->updateScanStatus($scanResult->scan);
     }
 
     /**
-     * Updates the status of a given scan if the scan has finished.
+     * Updates the status of a given scan if a SIWECOS-Scan has finished.
      *
      * @param Scan $scan
      * @return boolean scan was updated / scan is finished
      */
     protected function updateScanStatus(Scan $scan)
     {
-        if ($scan->getProgress() === 100) {
+        if ($scan->getProgress() == 100) {
             $scan->update(['status' => 3]);
 
             $client = new Client([
