@@ -9,10 +9,14 @@
 | routes are loaded by the RouteServiceProvider within a group which
 | is assigned the "api" middleware group. Enjoy building your API!
 |
-*/
+ */
 
 Route::prefix('v1')->group(function () {
+
+    # Triggered by SIWECOS-Scanners
     Route::post('/callback/{scanId}', 'ScanController@callback')->name('callback');
+
+
     Route::get('/scan/result/free/{id}', 'ScanController@GetResultById');
     Route::get('/scan/status/free/{id}', 'ScanController@GetStatusById');
     Route::get('/scan/status', 'ScanController@status');
@@ -25,7 +29,6 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['tokencheck'])->group(function () {
         Route::post('/scan/start', 'ScanController@start')->middleware(['creditcheck', 'domaincheck']);
 
-        Route::get('/scan/result', 'ScanController@result')->middleware('domaincheck');
         Route::get('/scan/result/raw', 'ScanController@resultRaw');
 
         Route::post('/domain/add', 'DomainController@add');

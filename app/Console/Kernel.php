@@ -28,9 +28,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
-        $schedule->command(DailyScan::class)->withoutOverlapping()->everyMinute()->sendOutputTo('scanResult.log', true);
+        $schedule->command(DailyScan::class)->withoutOverlapping()->everyMinute()->appendOutputTo(base_path('scheduleOutputToStdout'));
         $schedule->command(ScannerTimeout::class)->everyMinute();
         $schedule->command(RestockCredits::class)->dailyAt('00:00');
     }

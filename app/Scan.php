@@ -7,9 +7,11 @@ use Log;
 
 class Scan extends Model
 {
-    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status'];
+    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status', 'freescan'];
     protected $casts = [
         'callbackurls' => 'collection',
+        'recurrentscan' => 'boolean',
+        'freescan' => 'boolean'
     ];
 
     /**
@@ -29,14 +31,30 @@ class Scan extends Model
     }
 
     /**
+     * Returns the total score.
+     *
+     * @return int
+     */
+    public function getTotalScore()
+    {
+        $totalScore = 0;
+        foreach ($this->results as $result) {
+            $totalScore += $result->total_score;
+        }
+
+        $totalScore /= Scan::getAvailableScanners()->count();
+
+        return (int)round($totalScore);
+    }
+
+    /**
      * Returns the scan's progress as a percent integer.
      */
     public function getProgress()
     {
-        $envString = json_encode(getenv());
-        $amountScans = preg_match_all("/SCANNER_(\w+)_URL/m", $envString);
+        $amountScans = self::getAvailableScanners()->count();
 
-        if($amountScans) {
+        if ($amountScans) {
             $doneResults = $this->results()
                 ->whereNotNull('result')
                 ->where('has_error', '=', '0')
@@ -45,13 +63,30 @@ class Scan extends Model
                 ->where('result', '=', '[]')
                 ->where('has_error', '=', '1')->count();
 
-            $progress = round((($doneResults + $errResults) / $amountScans) * 100);
-
-            Log::info('Progress: ' . $progress . ' % : Amount Scans: '.$amountScans.' / Done: '.$doneResults.' / Errors:'.$errResults);
+            $progress = ceil((($doneResults + $errResults) / $amountScans) * 100);
 
             return $progress;
         }
 
         throw new \Exception("NO SCANNER URLs ARE SET!");
+    }
+
+    /**
+     * Returns all configured scanners with name and URL.
+     */
+    public static function getAvailableScanners()
+    {
+        $scanners = collect();
+
+        foreach (getenv() as $key => $value) {
+            if (preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
+                $url = env($scanner_name[0]);
+                if ($url) {
+                    $scanners->push(['name' => $scanner_name[1], 'url' => $url]);
+                }
+            }
+        }
+
+        return $scanners;
     }
 }

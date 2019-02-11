@@ -6,30 +6,6 @@ use Doctrine\DBAL\Query\QueryException;
 use Illuminate\Database\Eloquent\Model;
 use Keygen\Keygen;
 
-/**
- * Class Token.
- *
- * @property int $id
- * @property string $token
- * @property int $credits
- * @property bool $active
- * @property int $acl_level
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereAclLevel($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereActive($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereCredits($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereToken($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Token whereUpdatedAt($value)
- * @mixin \Eloquent
- *
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Domain[] $domains
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scan
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scans
- */
 class Token extends Model
 {
     protected $fillable = ['credits', 'token'];
@@ -76,7 +52,6 @@ class Token extends Model
 
             return true;
         } catch (\Illuminate\Database\QueryException $queryException) {
-            // TODO: Log error to Papertrail with Token
             return false;
         }
     }

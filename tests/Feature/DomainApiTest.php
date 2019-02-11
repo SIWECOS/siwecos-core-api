@@ -51,11 +51,11 @@ class DomainApiTest extends TestCase
 
     public function testAddDomainOnlyWwwVersionAvailable()
     {
-        $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => 'www.staging2.siwecos.de'], $this->tokenHeaderArray);
+        $response = $this->json('POST', BASEURL_DOMAIN.'add', ['domain' => 'www.www.siwecos.de'], $this->tokenHeaderArray);
         $response->assertStatus(422);
 
         // Error Message from AnAvailableUrlExistsForTheDomain Rule
-        $response->assertJson(['domain' => ['www.staging2.siwecos.de is not available. Did you mean staging2.siwecos.de?']]);
+        $response->assertJson(['domain' => ['www.www.siwecos.de is not available. Did you mean www.siwecos.de?']]);
     }
 
     public function testAddDomainNoDomain()

@@ -9,32 +9,6 @@ use Log;
 
 const METATAGNAME = 'siwecostoken';
 
-/**
- * App\Domain.
- *
- * @property int $id
- * @property \Carbon\Carbon|null $created_at
- * @property \Carbon\Carbon|null $updated_at
- * @property string $domain
- * @property string $domain_token
- * @property int|null $token_id
- * @property int $verified
- * @property-read \App\Token|null $token
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereCreatedAt( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomain( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereDomainToken( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereId( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereTokenId( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereUpdatedAt( $value )
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereVerified( $value )
- * @mixin \Eloquent
- *
- * @property \Carbon\Carbon|null $last_notification
- * @property-read \Illuminate\Database\Eloquent\Collection|\App\Scan[] $scans
- *
- * @method static \Illuminate\Database\Eloquent\Builder|\App\Domain whereLastNotification( $value )
- */
 class Domain extends Model
 {
     protected $fillable = ['domain', 'token_id', 'verified', 'domain_token'];
@@ -127,8 +101,6 @@ class Domain extends Model
      */
     public static function getDomainOrFail(string $domain, int $tokenId)
     {
-        Log::warning('DOMAIN: '.$domain.' ID: '.$tokenId);
-
         $domain = self::where(['domain' => $domain, 'token_id' => $tokenId])->first();
         if ($domain instanceof self) {
             return $domain;
