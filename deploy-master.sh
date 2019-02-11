@@ -1,5 +1,6 @@
 !#/bin/bash
 set -e
+docker push "$DOCKER_REPO"/$DOCKER_IMAGE:latest
 
 echo $GCLOUD_KEY | base64 --decode -i > ${HOME}/gcloud-service-key.json
 gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
