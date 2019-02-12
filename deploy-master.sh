@@ -1,4 +1,4 @@
-!#/bin/bash
+#!/bin/bash
 set -e
 docker push "$DOCKER_REPO"/$DOCKER_IMAGE:latest
 
