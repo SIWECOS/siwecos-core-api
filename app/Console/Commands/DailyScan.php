@@ -72,7 +72,7 @@ QUERY
             $bar = $this->output->createProgressBar($max_schedule);
             // If RECURRENT_PER_RUN is defined and > 0 this many scans are started per run
             foreach ($domains as $domain) {
-                ScanController::startScanJob($domain->domain, true, 10);
+                ScanController::startScanJob($domain->domain, true, 10, [ env('APP_CALLBACK_URL') ]);
                 $this->info('Scan started for: '.$domain->domain);
                 $bar->advance();
                 // no more scans are allowed to be started
