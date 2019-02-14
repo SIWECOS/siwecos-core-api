@@ -30,7 +30,8 @@ class ScanResultsTest extends TestCase
     }
 
     /** @test */
-    public function the_database_migration_works_fine() {
+    public function the_database_migration_works_fine()
+    {
         Scan::create([
             'token_id' => 1,
             'url' => $this->testdomain,
@@ -43,7 +44,8 @@ class ScanResultsTest extends TestCase
     }
 
     /** @test */
-    public function the_resultRawFree_method_returns_the_latest_freeScan_results() {
+    public function the_resultRawFree_method_returns_the_latest_scan_results()
+    {
         // Generate some Scans with Results
         $freescan = Scan::create([
             'token_id' => 1,
@@ -68,11 +70,12 @@ class ScanResultsTest extends TestCase
 
         // Assert a valid response and non-freescan start time
         $response->assertStatus(200);
-        $this->assertEquals('1984-01-01 00:00:00.000000', $response->json()['scanStarted']['date']);
+        $this->assertEquals('2000-01-01 00:00:00.000000', $response->json()['scanStarted']['date']);
     }
 
     /** @test */
-    public function the_resultRaw_method_returns_the_latest_nonFreeScan_results() {
+    public function the_resultRaw_method_returns_the_latest_nonFreeScan_results()
+    {
         // Generate some Scans with Results
         $nonfreescan = Scan::create([
             'token_id' => 1,
