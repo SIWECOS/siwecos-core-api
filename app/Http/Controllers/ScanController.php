@@ -156,11 +156,19 @@ class ScanController extends Controller
         return response('No domain found', 404);
     }
 
+    /**
+     * Only used for certificate page.
+     * Returns the latest non-free scan result in order to fix the seal's presentation.
+     * Will be moved to the BLA in the near future.
+     *
+     * @param Request $request
+     * @return ScanRawResultResponse|404
+     */
     public function resultRawFree(Request $request)
     {
         $domain = Domain::whereDomain($request->get('domain'))->first();
         if ($domain instanceof Domain) {
-            $latestScan = Scan::whereUrl($domain->domain)->whereFreescan(true)->whereStatus(3)->latest()->first();
+            $latestScan = Scan::whereUrl($domain->domain)->whereFreescan(false)->whereStatus(3)->latest()->first();
 
             if ($latestScan instanceof Scan) {
                 return response()->json(new ScanRawResultResponse($latestScan));
