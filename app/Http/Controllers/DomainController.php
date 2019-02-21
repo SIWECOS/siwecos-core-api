@@ -78,12 +78,10 @@ class DomainController extends Controller
         return response()->json(new DomainListResponse($domains));
     }
 
-    public function remove(DomainAddRequest $request)
+    public function remove(Request $request)
     {
-        $domain = $request->json('domain');
-
         $token = Token::getTokenByString($request->header('siwecosToken'));
-        $domain = Domain::getDomainOrFail($domain, $token->id);
+        $domain = self::where(['domain' => $request->json('domain'), 'token_id' => $token->id])->first();
 
         try {
             $domain->delete();
