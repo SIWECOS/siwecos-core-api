@@ -25,7 +25,7 @@ class ScanController extends Controller
         if ($token instanceof Token && $token->reduceCredits()) {
 
             $url = Domain::getDomainURL($request->json('domain'));
-            return self::startScanJob($url, false, $request->json('dangerLevel') ? : 0, $request->json('callbackurls') ? : []);
+            return self::startScanJob($token, $url, false, $request->json('dangerLevel') ?: 0, $request->json('callbackurls') ?: []);
         }
     }
 
@@ -42,17 +42,19 @@ class ScanController extends Controller
             $freeScanDomain->save();
         }
 
-        return $this->startScanJob($freeScanDomain->domain, false, 0, $request->json('callbackurls') ? : []);
+        return $this->startScanJob(null, $freeScanDomain->domain, false, 0, $request->json('callbackurls') ?: [], true);
     }
 
 
-    public static function startScanJob(string $url, bool $isRecurrent = false, int $dangerLevel = 0, array $callbackurls)
+    public static function startScanJob($token, string $url, bool $isRecurrent = false, int $dangerLevel = 0, array $callbackurls, bool $isFreescan = false)
     {
         $scan = Scan::create([
+            'token_id' => $token ? $token->id : null,
             'url' => $url,
             'callbackurls' => $callbackurls,
             'dangerLevel' => $dangerLevel,
             'recurrentscan' => $isRecurrent,
+            'freescan' => $isFreescan,
         ]);
 
         // dispatch each scanner to the queue
@@ -97,7 +99,7 @@ class ScanController extends Controller
      */
     public static function isDomainAlive(string $domain, Client $client = null)
     {
-        $client = $client ? : new Client([
+        $client = $client ?: new Client([
             'headers' => [
                 'User-Agent' => config('app.userAgent'),
             ],

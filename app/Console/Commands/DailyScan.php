@@ -43,7 +43,8 @@ class DailyScan extends Command
     {
         // Get domains which are due to be scanned
         // Longest waiting first.
-        $domains = DB::select(DB::raw(<<<'QUERY'
+        $domains = DB::select(DB::raw(
+            <<<'QUERY'
         select domain, token from domains
         left outer join (
                select url as domain
@@ -66,14 +67,14 @@ QUERY
         ));
         $max_schedule = min(env('RECURRENT_PER_RUN'), \count($domains));
 
-        $this->info('Max Schedule : '.$max_schedule);
+        $this->info('Max Schedule : ' . $max_schedule);
         /** @var string $domain */
-        if($max_schedule) {
+        if ($max_schedule) {
             $bar = $this->output->createProgressBar($max_schedule);
             // If RECURRENT_PER_RUN is defined and > 0 this many scans are started per run
             foreach ($domains as $domain) {
-                ScanController::startScanJob($domain->domain, true, 10, [ 'https://bla.siwecos.de/api/v1/scan/finished' ]);
-                $this->info('Scan started for: '.$domain->domain);
+                ScanController::startScanJob($domain->token, $domain->domain, true, 10, ['https://bla.siwecos.de/api/v1/scan/finished']);
+                $this->info('Scan started for: ' . $domain->domain);
                 $bar->advance();
                 // no more scans are allowed to be started
                 if (--$max_schedule == 0) {
