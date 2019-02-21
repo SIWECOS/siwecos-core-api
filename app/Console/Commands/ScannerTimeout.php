@@ -55,6 +55,7 @@ class ScannerTimeout extends Command
             foreach ($pendingScan->results as &$result) {
                 if ($result->result == null) {
                     $result->result = self::getTimeOutArray($result->scanner_type, $timeout);
+                    $result->has_error = true;
                 }
                 $result->save();
             }
