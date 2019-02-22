@@ -45,7 +45,7 @@ class DailyScan extends Command
         // Longest waiting first.
         $domains = DB::select(DB::raw(
             <<<'QUERY'
-        select domain, token from domains
+        select domain, token_id from domains
         left outer join (
                select url as domain
                     , max(created_at) as last_scan
@@ -54,8 +54,6 @@ class DailyScan extends Command
                group by url
         ) LS
         using(domain)
-        join(tokens)
-        on(token_id=tokens.id)
         where verified
         and (
                last_scan is null
@@ -69,19 +67,18 @@ QUERY
 
         $this->info('Max Schedule : ' . $max_schedule);
         /** @var string $domain */
-        if ($max_schedule) {
-            $bar = $this->output->createProgressBar($max_schedule);
-            // If RECURRENT_PER_RUN is defined and > 0 this many scans are started per run
-            foreach ($domains as $domain) {
-                ScanController::startScanJob($domain->token, $domain->domain, true, 10, ['https://bla.siwecos.de/api/v1/scan/finished']);
-                $this->info('Scan started for: ' . $domain->domain);
-                $bar->advance();
-                // no more scans are allowed to be started
-                if (--$max_schedule == 0) {
-                    break;
-                }
+
+        $bar = $this->output->createProgressBar($max_schedule);
+        // If RECURRENT_PER_RUN is defined and > 0 this many scans are started per run
+        foreach ($domains as $domain) {
+            ScanController::startScanJob(Token::find($domain->token_id), $domain->domain, true, 10, ['https://bla.siwecos.de/api/v1/scan/finished']);
+            $this->info('Scan started for: ' . $domain->domain);
+            $bar->advance();
+            // no more scans are allowed to be started
+            if (--$max_schedule == 0) {
+                break;
             }
-            $bar->finish();
         }
+        $bar->finish();
     }
 }
