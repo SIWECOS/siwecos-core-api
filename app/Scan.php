@@ -37,14 +37,13 @@ class Scan extends Model
      */
     public function getTotalScore()
     {
-        $totalScore = 0;
+        $score = 0;
+
         foreach ($this->results as $result) {
-            $totalScore += $result->total_score;
+            $score += $result->total_score;
         }
 
-        $totalScore /= Scan::getAvailableScanners()->count();
-
-        return (int)round($totalScore);
+        return (int)round($score / Scan::getAvailableScanners()->count());
     }
 
     /**
