@@ -222,23 +222,9 @@ class ScanController extends Controller
 
             $client = new Client([
                 'headers' => ['User-Agent' => config('app.userAgent')],
-                'timeout' => 5,
             ]);
 
-            /**
-             * TODO: Entfernen
-             * - Die Domain-Notification hat nichts in der CORE-API zu suchen!
-             * - Die Implementierung muss in der BLA erfolgen
-             * Siehe https://github.com/SIWECOS/siwecos-business-layer/issues/83
-             */
-            $domain = Domain::whereDomain($scan->url)->first();
-            if ($domain instanceof Domain && ($domain->last_notification === null || $domain->last_notification < Carbon::now()->addWeeks(-1))) {
-                $domain->last_notification = Carbon::now();
-                $domain->save();
-            }
-
             foreach ($scan->callbackurls as $callbackURL) {
-                // TODO: Make this async
                 $client->post($callbackURL, [
                     'json' => [
                         'scanId' => $scan->id,
