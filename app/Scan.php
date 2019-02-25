@@ -7,7 +7,8 @@ use Log;
 
 class Scan extends Model
 {
-    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status', 'freescan'];
+    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status', 'freescan', 'recurrentscan'];
+
     protected $casts = [
         'callbackurls' => 'collection',
         'recurrentscan' => 'boolean',
