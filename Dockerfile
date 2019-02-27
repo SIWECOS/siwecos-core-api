@@ -14,8 +14,8 @@ RUN apt-get update -y \
     && pip install supervisor==$SUPERVISOR_VERSION
 
 # Copy configuration files
-COPY php.ini /usr/local/etc/php/
-COPY worker.conf /etc/supervisor/supervisord.conf
+COPY ./docker/php.ini /usr/local/etc/php/
+COPY ./docker/supervisord.conf /etc/supervisor/supervisord.conf
 
 # Change uid and gid of apache to docker user uid/gid
 # Change the web_root to laravel /var/www/html/public folder
