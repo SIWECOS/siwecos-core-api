@@ -1,4 +1,3 @@
-supervisord*
 *.swp
 /node_modules
 /public/hot
