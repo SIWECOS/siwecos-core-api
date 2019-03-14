@@ -23,7 +23,9 @@ class DomainController extends Controller
     {
         $domainURL = Domain::getDomainURL($request->get('domain'));
 
-        $exisitingDomain = Domain::whereDomain($domainURL)->first();
+        $domainWithoutPath = parse_url($domainURL, PHP_URL_SCHEME) . "://" . parse_url($domainURL, PHP_URL_HOST);
+
+        $exisitingDomain = Domain::whereDomain($domainWithoutPath)->first();
         if ($exisitingDomain instanceof Domain) {
             if ($exisitingDomain->verified === 1) {
                 return response('Domain already there', 409);
@@ -44,7 +46,7 @@ class DomainController extends Controller
         }
 
         $newDomain = new Domain([
-            'domain' => $domainURL,
+            'domain' => $domainWithoutPath,
             'token'  => $request->header('siwecosToken'),
         ]);
 
