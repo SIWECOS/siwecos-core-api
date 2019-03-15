@@ -35,10 +35,12 @@ class ScanController extends Controller
 
         Log::info('Start Freescan for: ' . $url);
 
-        $freeScanDomain = Domain::whereDomain($url)->first();
+        $domainWithoutPath = parse_url($url, PHP_URL_SCHEME) . "://" . parse_url($url, PHP_URL_HOST);
+
+        $freeScanDomain = Domain::whereDomain($domainWithoutPath)->first();
 
         if (!($freeScanDomain instanceof Domain)) {
-            $freeScanDomain = new Domain(['domain' => $request->json('domain')]);
+            $freeScanDomain = new Domain(['domain' => $domainWithoutPath]);
             $freeScanDomain->save();
         }
 
