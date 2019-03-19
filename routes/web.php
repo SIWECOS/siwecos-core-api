@@ -12,5 +12,5 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return "API Only! Have a look at the <a href='https://github.com/SIWECOS/siwecos-core-api#siwecos-core-api'>README.md</a> for more information.";
 });
