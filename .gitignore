@@ -1,3 +1,4 @@
+/docs/build
 *.swp
 /node_modules
 /public/hot
