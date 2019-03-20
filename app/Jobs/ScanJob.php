@@ -51,7 +51,7 @@ class ScanJob implements ShouldQueue
             'scanner_type' => $this->name,
         ]);
 
-        $callbackUrl = env('APP_CALLBACK_URL', 'https://api.siwecos.de/ca/current/public/api/v1/callback/').$scanResult->id;
+        $callbackUrl = env('APP_CALLBACK_URL', 'https://api.siwecos.de/ca/current/public/api/v1/callback/') . $scanResult->id;
 
         $client = new Client([
             'headers' => [
@@ -72,12 +72,12 @@ class ScanJob implements ShouldQueue
             /** @var Response $promise */
             $promise = $response->wait();
             $status = $promise->getStatusCode();
-            Log::info('StatusCode for '.$this->name.' ('.$scanResult->scan_id.'): '.$status);
+            Log::info('StatusCode for ' . $this->name . ' (' . $scanResult->scan_id . '): ' . $status);
             if ($status !== 200) {
-                $scanResult->result = self::getErrorArray($this->scan, $status);
+                $scanResult->result = self::getErrorArray($this->name, $status);
             }
         } catch (Exception $ex) {
-            $scanResult->result = self::getErrorArray($this->scan, 500, $ex->getMessage());
+            $scanResult->result = self::getErrorArray($this->name, 500, $ex->getMessage());
         }
     }
 
