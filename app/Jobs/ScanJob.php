@@ -67,5 +67,7 @@ class ScanJob implements ShouldQueue
         ]));
 
         $client->sendAsync($request, ['timeout' => 2.0]);
+
+        Log::info('Fire&Forget ScanStart for ' . $this->name . ' (' . $scanResult->scan_id . ')');
     }
 }
