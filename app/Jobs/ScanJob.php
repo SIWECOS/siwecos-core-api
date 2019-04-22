@@ -66,8 +66,37 @@ class ScanJob implements ShouldQueue
             'userAgent'    => config('app.userAgent'),
         ]));
 
-        $client->sendAsync($request, ['timeout' => 2.0]);
+        $response = $client->sendAsync($request);
 
-        Log::info('Fire&Forget ScanStart for ' . $this->name . ' (' . $scanResult->scan_id . ')');
+        try {
+            /** @var Response $promise */
+            $promise = $response->wait();
+            $status = $promise->getStatusCode();
+            Log::info('StatusCode for ' . $this->name . ' (' . $scanResult->scan_id . '): ' . $status);
+            if ($status !== 200) {
+                $scanResult->result = self::getErrorArray($this->name, $status);
+            }
+        } catch (Exception $ex) {
+            $scanResult->result = self::getErrorArray($this->name, 500, $ex->getMessage());
+        }
+    }
+
+    public static function getErrorArray(string $scanner, int $status, string $exception = '')
+    {
+        $timeout = [];
+        $timeout['name'] = 'SCANNER_ERROR';
+        $timeout['hasError'] = true;
+        $timeout['dangerlevel'] = 0;
+        $timeout['score'] = 0;
+        $timeout['scoreType'] = 'success';
+        $timeout['testDetails'] = [];
+        $timeout['errorMessage'] = [];
+        $timeout['errorMessage']['placeholder'] = 'SCANNER_ERROR';
+        $timeout['errorMessage']['values'] = [];
+        $timeout['errorMessage']['values']['scanner'] = $scanner;
+        $timeout['errorMessage']['values']['statuscode'] = $status;
+        $timeout['errorMessage']['values']['exception'] = $status;
+
+        return [$timeout];
     }
 }
