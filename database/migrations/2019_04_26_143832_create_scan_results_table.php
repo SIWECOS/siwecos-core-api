@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateScanResultsTable extends Migration
 {
@@ -14,11 +14,13 @@ class CreateScanResultsTable extends Migration
     public function up()
     {
         Schema::create('scan_results', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('scan_id');
-            $table->string('scanner_type');
-            $table->text('result')->nullable();
+            $table->bigIncrements('id');
+            $table->bigInteger('scan_id');
+            $table->string('scanner_code');
+            $table->json('result');
             $table->timestamps();
+
+            $table->foreign('scan_id')->references('id')->on('scans');
         });
     }
 

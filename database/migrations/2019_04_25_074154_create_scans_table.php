@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateScansTable extends Migration
 {
@@ -14,12 +14,12 @@ class CreateScansTable extends Migration
     public function up()
     {
         Schema::create('scans', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('token_id');
+            $table->bigIncrements('id');
             $table->string('url');
-            $table->integer('dangerLevel')->nullable();
-            $table->string('callbackurls')->nullable();
-            $table->integer('status')->default(1);
+            $table->json('callbackurls');
+            $table->integer('danger_level');
+            $table->dateTime('started_at')->nullable();
+            $table->dateTime('finished_at')->nullable();
             $table->timestamps();
         });
     }
