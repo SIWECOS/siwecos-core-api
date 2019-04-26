@@ -10,6 +10,11 @@ abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
+    /**
+     * Generate and Return a sample Scan with an associated ScanResult
+     *
+     * @return Scan
+     */
     protected function generateScanWithResult()
     {
         $scan = factory(Scan::class)->create();

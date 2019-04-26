@@ -3,6 +3,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Scan extends Model
 {
@@ -14,6 +15,11 @@ class Scan extends Model
         'callbackurls' => 'json'
     ];
 
+    /**
+     * A Scan can have many ScanResults
+     *
+     * @return HasMany
+     */
     public function results()
     {
         return $this->hasMany(ScanResult::class);
