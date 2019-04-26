@@ -19,4 +19,12 @@ class ScanResultTest extends TestCase
 
         $this->assertEquals(Scan::first(), ScanResult::first()->scan);
     }
+
+    /** @test */
+    public function a_scanResult_knows_if_there_was_a_global_error()
+    {
+        $this->generateScanWithResult();
+
+        $this->assertFalse(ScanResult::first()->result->get('hasError'));
+    }
 }
