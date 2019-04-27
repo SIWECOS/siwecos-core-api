@@ -73,9 +73,9 @@ Here is a shortened example output for a correct implemented JSON-Response:
             "testDetails": [
                 {
                     "translationStringId": "DIRECTIVE_SET",
-                    "placeholders" : [
+                    "placeholders" : {
                         "DIRECTIVE": "no-referrer-when-downgrade"
-                    ]
+                    }
                 }
             ]
         },
@@ -84,9 +84,9 @@ Here is a shortened example output for a correct implemented JSON-Response:
             "hasError": true,
             "errorMessage": {
                 "translationStringId": "HEADER_NOT_SET",
-                "placeholders" : [
+                "placeholders" : {
                     "HEADER": "Public-Key-Pins"
-                ]
+                }
             },
             "score": 0,
             "scoreType": "bonus",
@@ -162,9 +162,9 @@ In order to provide translations for `errorMessage`s or `testDetails` there is t
 ```
 {
     "translationStringId": "EXAMPLE_STRING",
-    "placeholders" : [
+    "placeholders" : {
         "PLACEHOLDER_NAME": "VALUE_FOR_PLACEHOLDER"
-    ]
+    }
 }
 ```
 
@@ -180,9 +180,9 @@ The `TranslatableMessage`:
 ```
 {
     "translationStringId": "FAVORITE_NUMBER",
-    "placeholders" : [
+    "placeholders" : {
         "NUMBER": 42
-    ]
+    }
 }
 ```
 
