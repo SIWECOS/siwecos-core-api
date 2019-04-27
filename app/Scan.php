@@ -15,6 +15,21 @@ class Scan extends Model
         'callbackurls' => 'json'
     ];
 
+    protected $appends = [
+        'hasError'
+    ];
+
+    public function getHasErrorAttribute()
+    {
+        foreach ($this->results as $result) {
+            if ($result->hasError) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * A Scan can have many ScanResults
      *

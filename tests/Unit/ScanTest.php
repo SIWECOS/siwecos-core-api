@@ -23,6 +23,18 @@ class ScanTest extends TestCase
         $this->assertCount(1, $scan->results);
     }
 
+    /** @test */
+    public function a_scan_knows_if_some_of_its_results_had_an_error()
+    {
+        $scan = $this->generateScanWithResult();
+
+        $this->assertFalse($scan->hasError);
+
+        $this->addErrorResult($scan);
+        $this->assertTrue($scan->refresh()->hasError);
+    }
+
+
     // /** @test */
     // public function a_scan_knows_its_startedAt_and_finishedAt_times()
     // { }

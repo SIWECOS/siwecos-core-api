@@ -8,11 +8,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ScanResult extends Model
 {
-    protected $guarded = [];
+    protected $fillable = ['scanner_code', 'result'];
 
     protected $casts = [
         'result' => 'json'
     ];
+
+    public function getHasErrorAttribute()
+    {
+        return $this->result->get('hasError');
+    }
 
     /**
      * A ScanResult belongsTo a Scan
