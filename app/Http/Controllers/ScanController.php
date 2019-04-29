@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests\ScanStartRequest;
 use App\Scan;
 use App\Jobs\StartScannerJob;
+use App\ScanResult;
 
 class ScanController extends Controller
 {
@@ -18,5 +19,14 @@ class ScanController extends Controller
         foreach ($availableScanners as $name => $url) {
             $this->dispatch(new StartScannerJob($scan, $name, $url));
         }
+    }
+
+    public function callback(ScanResult $result, Request $request)
+    {
+
+        $result->update([
+            'result' => $request->json()->all(),
+            'has_error' => $request->json('hasError'),
+        ]);
     }
 }

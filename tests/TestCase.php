@@ -18,10 +18,10 @@ abstract class TestCase extends BaseTestCase
      *
      * @return Scan
      */
-    protected function generateScanWithResult()
+    protected function generateScanWithResult(array $resultAttributes = [])
     {
         $scan = factory(Scan::class)->create();
-        $scan->results()->create(factory(ScanResult::class)->make()->toArray());
+        $scan->results()->create(factory(ScanResult::class)->make($resultAttributes)->toArray());
 
         return $scan;
     }

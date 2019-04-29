@@ -15,4 +15,5 @@ use Illuminate\Http\Request;
 
 Route::prefix('v2')->group(function () {
     Route::post('/scan', 'ScanController@start');
+    Route::post('/callback/{result}', 'ScanController@callback');
 });
