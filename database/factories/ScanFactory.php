@@ -18,7 +18,7 @@ use App\Scan;
 $factory->define(Scan::class, function (Faker $faker) {
     return [
         'url' => 'https://example.org',
-        'danger_level' => $faker->numberBetween(0, 10),
+        'dangerLevel' => $faker->numberBetween(0, 10),
         'callbackurls' => [
             'http://127.0.0.1/callback'
         ],

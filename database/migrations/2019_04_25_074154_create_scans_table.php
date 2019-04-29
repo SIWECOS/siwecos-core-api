@@ -17,7 +17,7 @@ class CreateScansTable extends Migration
             $table->bigIncrements('id');
             $table->string('url');
             $table->json('callbackurls');
-            $table->integer('danger_level');
+            $table->integer('dangerLevel');
             $table->dateTime('started_at')->nullable();
             $table->dateTime('finished_at')->nullable();
             $table->timestamps();

@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Scan extends Model
 {
+    protected $fillable = [
+        'url', 'callbackurls', 'dangerLevel'
+    ];
+
     protected $dates = [
         'started_at', 'finished_at'
     ];
