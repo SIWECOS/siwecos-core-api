@@ -21,7 +21,7 @@ class CreateScanResultsTable extends Migration
             $table->boolean('has_error')->default(false);
             $table->timestamps();
 
-            $table->foreign('scan_id')->references('id')->on('scans');
+            $table->foreign('scan_id')->references('id')->on('scans')->onDelete('cascade');
         });
     }
 

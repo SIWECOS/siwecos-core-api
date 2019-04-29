@@ -29,7 +29,7 @@ class StartScannerJob implements ShouldQueue
         $this->scan = $scan;
         $this->scannerCode = $scannerCode;
         $this->scannerUrl = $scannerUrl;
-        $this->client = $client ? $client : new HTTPClient();
+        $this->client = $client ?: new HTTPClient();
     }
 
     /**

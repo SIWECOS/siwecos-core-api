@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\ScanResult;
 
-class ScannerResponseTest extends TestCase
+class ScannerCallbackTest extends TestCase
 {
     use RefreshDatabase;
 

@@ -34,8 +34,16 @@ class ScanTest extends TestCase
         $this->assertTrue($scan->refresh()->hasError);
     }
 
+    /** @test */
+    public function a_scan_know_if_its_finished()
+    {
+        config([
+            'siwecos.scanners.INI_S' => 'http://ini-s-scanner',
+            'siwecos.scanners.HEADER' => 'http://header-scanner/api/v1/header'
+        ]);
 
-    // /** @test */
-    // public function a_scan_knows_its_startedAt_and_finishedAt_times()
-    // { }
+        $scan = $this->generateScanWithResult();
+
+        $this->assertFalse($scan->is_finished);
+    }
 }

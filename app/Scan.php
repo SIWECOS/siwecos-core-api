@@ -23,6 +23,30 @@ class Scan extends Model
         'hasError'
     ];
 
+    /**
+     * Check if the scan is finished (all scan results were retrieved)
+     *
+     * @return boolean
+     */
+    public function getIsFinishedAttribute()
+    {
+        $availableScanners = array_filter(config('siwecos.scanners'));
+        $amountFinishedScanResults = 0;
+
+        foreach ($this->results as $result) {
+            if ($result->has_error || $result->result !== null) {
+                $amountFinishedScanResults++;
+            }
+        }
+
+        return count($availableScanners) === $amountFinishedScanResults;
+    }
+
+    /**
+     * Check if an ScanResult has an error.
+     *
+     * @return boolean
+     */
     public function getHasErrorAttribute()
     {
         foreach ($this->results as $result) {
@@ -42,5 +66,19 @@ class Scan extends Model
     public function results()
     {
         return $this->hasMany(ScanResult::class);
+    }
+
+    /**
+     * Cascade onDelete for ScanResult's
+     *
+     * @return boolean
+     */
+    public function delete()
+    {
+        $this->results->each(function ($result) {
+            $result->delete();
+        });
+
+        return parent::delete();
     }
 }

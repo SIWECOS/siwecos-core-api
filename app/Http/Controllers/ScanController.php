@@ -7,6 +7,7 @@ use App\Http\Requests\ScanStartRequest;
 use App\Scan;
 use App\Jobs\StartScannerJob;
 use App\ScanResult;
+use App\Jobs\NotifyCallbacksJob;
 
 class ScanController extends Controller
 {
@@ -23,10 +24,13 @@ class ScanController extends Controller
 
     public function callback(ScanResult $result, Request $request)
     {
-
         $result->update([
             'result' => $request->json()->all(),
             'has_error' => $request->json('hasError'),
         ]);
+
+        if ($result->scan->is_finished) {
+            $this->dispatch(new NotifyCallbacksJob($result->scan));
+        }
     }
 }
