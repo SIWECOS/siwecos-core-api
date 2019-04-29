@@ -26,7 +26,7 @@ class Scan extends Model
     public function getHasErrorAttribute()
     {
         foreach ($this->results as $result) {
-            if ($result->hasError) {
+            if ($result->has_error) {
                 return true;
             }
         }

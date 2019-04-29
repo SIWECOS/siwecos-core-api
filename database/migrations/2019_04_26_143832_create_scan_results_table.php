@@ -17,7 +17,8 @@ class CreateScanResultsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('scan_id');
             $table->string('scanner_code');
-            $table->json('result');
+            $table->json('result')->nullable();
+            $table->boolean('has_error')->default(false);
             $table->timestamps();
 
             $table->foreign('scan_id')->references('id')->on('scans');

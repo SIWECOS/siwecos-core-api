@@ -5,6 +5,9 @@ namespace Tests;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
 use App\Scan;
 use App\ScanResult;
+use GuzzleHttp\HandlerStack;
+use GuzzleHttp\Handler\MockHandler;
+use App\HTTPClient;
 
 abstract class TestCase extends BaseTestCase
 {
@@ -31,9 +34,7 @@ abstract class TestCase extends BaseTestCase
     protected function generateScanWithErrorResult()
     {
         $scan = factory(Scan::class)->create();
-        $scan->results()->create(factory(ScanResult::class)->make([
-            'result' => json_decode(file_get_contents(base_path('tests/sampleHeaderErrorScanResult.json')))
-        ])->toArray());
+        $this->addErrorResult($scan);
 
         return $scan;
     }
@@ -46,9 +47,23 @@ abstract class TestCase extends BaseTestCase
     protected function addErrorResult(Scan $scan)
     {
         $scan->results()->create(factory(ScanResult::class)->make([
-            'result' => json_decode(file_get_contents(base_path('tests/sampleHeaderErrorScanResult.json')))
+            'result' => json_decode(file_get_contents(base_path('tests/sampleHeaderErrorScanResult.json'))),
+            'has_error' => true
         ])->toArray());
 
         return $scan;
+    }
+
+    /**
+     * Returns a mocked HTTP-Client for testing purposes.
+     *
+     * @param array $mockedResponses
+     * @return HTTPClient HTTP Client
+     */
+    protected function getMockedHttpClient(array $mockedResponses)
+    {
+        $mock = new MockHandler($mockedResponses);
+        $handler = HandlerStack::create($mock);
+        return new HTTPClient(['handler' => $handler, 'http_errors' => false]);
     }
 }
