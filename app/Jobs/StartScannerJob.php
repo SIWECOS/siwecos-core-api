@@ -29,7 +29,7 @@ class StartScannerJob implements ShouldQueue
         $this->scan = $scan;
         $this->scannerCode = $scannerCode;
         $this->scannerUrl = $scannerUrl;
-        $this->client = $client ?: new HTTPClient();
+        $this->client = $client;
     }
 
     /**
@@ -39,7 +39,7 @@ class StartScannerJob implements ShouldQueue
      */
     public function handle()
     {
-
+        $client = $this->client ?: new HTTPClient();
         $logInfo = '\n' . 'Scan ID: ' . $this->scan->id . '\n' . 'Scan URL: ' . $this->scan->url . '\n' . 'Scanner: ' . $this->scannerCode . '\n' . 'Scanner-URL: ' . $this->scannerUrl;
 
         \Log::debug('Preparing ScanResult' . $logInfo);
@@ -48,7 +48,7 @@ class StartScannerJob implements ShouldQueue
         ]);
 
         \Log::debug('Sending scan start request' . $logInfo);
-        $response = $this->client->request('POST', $this->scannerUrl, ['json' => [
+        $response = $client->request('POST', $this->scannerUrl, ['json' => [
             'url' => $this->scan->url,
             'dangerLevel' => $this->scan->dangerLevel,
             'callbackurls' => $this->scan->callbackurls

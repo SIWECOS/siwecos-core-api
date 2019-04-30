@@ -26,7 +26,7 @@ class NotifyCallbacksJob implements ShouldQueue
     public function __construct(Scan $scan, HTTPClient $client = null)
     {
         $this->scan = $scan;
-        $this->client = $client ?: new HTTPClient();
+        $this->client = $client;
     }
 
     /**
@@ -36,12 +36,13 @@ class NotifyCallbacksJob implements ShouldQueue
      */
     public function handle()
     {
+        $client = $this->client ?: new HTTPClient();
         $hasAtLeastOneSuccessfulCallback = false;
 
         foreach ($this->scan->callbackurls as $callbackurl) {
-            $response = $this->client->request('POST', $callbackurl, ['json' => [
-                $this->scan->results
-            ]]);
+            $response = $client->request('POST', $callbackurl, [
+                'json' => $this->scan->results
+            ]);
 
             if ($response->getStatusCode() === 200) {
                 Log::info('Scan results for Scan ID ' . $this->scan->id . ' successfully sent to: ' . $this->scan->callbackurls[0]);
