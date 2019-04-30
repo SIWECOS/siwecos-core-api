@@ -15,7 +15,7 @@ class CreateScanResultsTable extends Migration
     {
         Schema::create('scan_results', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('scan_id');
+            $table->bigInteger('scan_id')->unsigned();
             $table->string('scanner_code');
             $table->json('result')->nullable();
             $table->boolean('has_error')->default(false);
