@@ -10,6 +10,10 @@ class ScanResult extends Model
 {
     protected $fillable = ['scanner_code', 'result', 'has_error'];
 
+    protected $hidden = [
+        'id', 'scan_id'
+    ];
+
     protected $casts = [
         'result' => 'json',
         'has_error' => 'boolean'
