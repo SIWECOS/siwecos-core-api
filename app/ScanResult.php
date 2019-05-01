@@ -19,6 +19,14 @@ class ScanResult extends Model
         'has_error' => 'boolean'
     ];
 
+    public function getIsFinishedAttribute()
+    {
+        if ($this->result->isNotEmpty() || $this->has_error) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * A ScanResult belongsTo a Scan
      *

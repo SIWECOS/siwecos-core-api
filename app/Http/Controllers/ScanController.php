@@ -29,7 +29,7 @@ class ScanController extends Controller
             'has_error' => $request->json('hasError'),
         ]);
 
-        if ($result->scan->is_finished) {
+        if ($result->scan->isFinished() === true) {
             $this->dispatch(new NotifyCallbacksJob($result->scan));
         }
     }

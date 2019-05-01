@@ -44,6 +44,10 @@ class ScanTest extends TestCase
 
         $scan = $this->generateScanWithResult();
 
-        $this->assertFalse($scan->is_finished);
+        $this->assertFalse($scan->isFinished());
+
+        $this->addErrorResult($scan);
+
+        $this->assertTrue($scan->refresh()->isFinished());
     }
 }

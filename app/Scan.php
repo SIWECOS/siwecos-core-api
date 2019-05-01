@@ -16,7 +16,8 @@ class Scan extends Model
     ];
 
     protected $casts = [
-        'callbackurls' => 'json'
+        'callbackurls' => 'json',
+        'result' => 'json',
     ];
 
     protected $appends = [
@@ -28,13 +29,13 @@ class Scan extends Model
      *
      * @return boolean
      */
-    public function getIsFinishedAttribute()
+    public function isFinished()
     {
         $availableScanners = array_filter(config('siwecos.scanners'));
         $amountFinishedScanResults = 0;
 
         foreach ($this->results as $result) {
-            if ($result->has_error || $result->result !== null) {
+            if ($result->isFinished) {
                 $amountFinishedScanResults++;
             }
         }
