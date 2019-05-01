@@ -40,7 +40,7 @@ class StartScannerJob implements ShouldQueue
     public function handle()
     {
         $client = $this->client ?: new HTTPClient();
-        $logInfo = '\n' . 'Scan ID: ' . $this->scan->id . '\n' . 'Scan URL: ' . $this->scan->url . '\n' . 'Scanner: ' . $this->scannerCode . '\n' . 'Scanner-URL: ' . $this->scannerUrl;
+        $logInfo = PHP_EOL . 'Scan ID: ' . $this->scan->id . PHP_EOL . 'Scan URL: ' . $this->scan->url . PHP_EOL . 'Scanner: ' . $this->scannerCode . PHP_EOL . 'Scanner-URL: ' . $this->scannerUrl;
 
         \Log::debug('Preparing ScanResult' . $logInfo);
         $scanResult = $this->scan->results()->create([
@@ -51,7 +51,9 @@ class StartScannerJob implements ShouldQueue
         $response = $client->request('POST', $this->scannerUrl, ['json' => [
             'url' => $this->scan->url,
             'dangerLevel' => $this->scan->dangerLevel,
-            'callbackurls' => $this->scan->callbackurls
+            'callbackurls' => [
+                config('app.url') . '/api/v2/callback/' . $scanResult->id
+            ]
         ]]);
 
 
