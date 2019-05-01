@@ -40,16 +40,18 @@ class NotifyCallbacksJob implements ShouldQueue
         $hasAtLeastOneSuccessfulCallback = false;
 
         foreach ($this->scan->callbackurls as $callbackurl) {
-            $response = $client->request('POST', $callbackurl, [
-                'json' => $this->scan->results
-            ]);
+            try {
+                $response = $client->request('POST', $callbackurl, [
+                    'json' => $this->scan->results
+                ]);
 
-            if ($response->getStatusCode() === 200) {
-                Log::info('Scan results for Scan ID ' . $this->scan->id . ' successfully sent to: ' . $this->scan->callbackurls[0]);
-                $hasAtLeastOneSuccessfulCallback = true;
-            } else {
-                Log::warning('Scan results for Scan ID ' . $this->scan->id . ' could not be sent to: ' . $this->scan->callbackurls[0]);
-            }
+                if ($response->getStatusCode() === 200) {
+                    Log::info('Scan results for Scan ID ' . $this->scan->id . ' successfully sent to: ' . $this->scan->callbackurls[0]);
+                    $hasAtLeastOneSuccessfulCallback = true;
+                } else {
+                    Log::warning('Scan results for Scan ID ' . $this->scan->id . ' could not be sent to: ' . $this->scan->callbackurls[0]);
+                }
+            } catch (\Exception $e) { }
         }
 
         if ($hasAtLeastOneSuccessfulCallback) {
