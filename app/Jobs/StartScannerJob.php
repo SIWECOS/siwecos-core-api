@@ -48,22 +48,24 @@ class StartScannerJob implements ShouldQueue
         ]);
 
         \Log::debug('Sending scan start request' . $logInfo);
-        $response = $client->request('POST', $this->scannerUrl, ['json' => [
-            'url' => $this->scan->url,
-            'dangerLevel' => $this->scan->dangerLevel,
-            'callbackurls' => [
-                config('app.url') . '/api/v2/callback/' . $scanResult->id
-            ]
-        ]]);
+        try {
+            $response = $client->request('POST', $this->scannerUrl, ['json' => [
+                'url' => $this->scan->url,
+                'dangerLevel' => $this->scan->dangerLevel,
+                'callbackurls' => [
+                    config('app.url') . '/api/v2/callback/' . $scanResult->id
+                ]
+            ]]);
 
 
-        if ($response->getStatusCode() === 200) {
-            \Log::info('Scan successful started' . $logInfo);
-        } else {
-            \Log::critical('Failed to start scan' . $logInfo);
-            $scanResult->update([
-                'has_error' => true
-            ]);
-        }
+            if ($response->getStatusCode() === 200) {
+                \Log::info('Scan successful started' . $logInfo);
+            } else {
+                \Log::critical('Failed to start scan' . $logInfo);
+                $scanResult->update([
+                    'has_error' => true
+                ]);
+            }
+        } catch (\Exception $e) { }
     }
 }
