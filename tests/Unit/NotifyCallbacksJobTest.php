@@ -24,6 +24,7 @@ class NotifyCallbacksJobTest extends TestCase
 
         Log::swap(new LogFake);
         $this->scan = $this->generateScanWithResult();
+        $this->scan->update(['finished_at' => now()]);
     }
 
     /** @test */

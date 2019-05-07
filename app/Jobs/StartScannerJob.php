@@ -39,6 +39,10 @@ class StartScannerJob implements ShouldQueue
      */
     public function handle()
     {
+        if ($this->scan->started_at == null) {
+            $this->scan->update(['started_at' => now()]);
+        }
+
         $client = $this->client ?: new HTTPClient();
         $logInfo = PHP_EOL . 'Scan ID: ' . $this->scan->id . PHP_EOL . 'Scan URL: ' . $this->scan->url . PHP_EOL . 'Scanner: ' . $this->scannerCode . PHP_EOL . 'Scanner-URL: ' . $this->scannerUrl;
 

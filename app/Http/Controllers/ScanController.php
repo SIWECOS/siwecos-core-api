@@ -30,6 +30,7 @@ class ScanController extends Controller
         ]);
 
         if ($result->scan->isFinished() === true) {
+            $result->scan->update(['finished_at' => now()]);
             $this->dispatch(new NotifyCallbacksJob($result->scan));
         }
     }

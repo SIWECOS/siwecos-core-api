@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Scan extends Model
 {
     protected $fillable = [
-        'url', 'callbackurls', 'dangerLevel'
+        'url', 'callbackurls', 'dangerLevel', 'started_at', 'finished_at'
     ];
 
     protected $dates = [

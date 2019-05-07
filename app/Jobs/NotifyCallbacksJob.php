@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Scan;
 use App\HTTPClient;
 use Illuminate\Support\Facades\Log;
+use App\Http\Responses\ScanCallbackResponse;
 
 class NotifyCallbacksJob implements ShouldQueue
 {
@@ -42,7 +43,7 @@ class NotifyCallbacksJob implements ShouldQueue
         foreach ($this->scan->callbackurls as $callbackurl) {
             try {
                 $response = $client->request('POST', $callbackurl, [
-                    'json' => $this->scan->results
+                    'json' => (new ScanCallbackResponse($this->scan))
                 ]);
 
                 if ($response->getStatusCode() === 200) {
