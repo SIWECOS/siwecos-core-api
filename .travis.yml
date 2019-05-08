@@ -39,8 +39,8 @@ deploy:
       branch: develop
     script: >-
       docker tag siwecos-core-api siwecos/siwecos-core-api:develop &&
-      docker push siwecos/siwecos-core-api:develop &&
-      kubectl patch deployment siwecos-core-api --namespace staging -p '{"spec":{"template":{"metadata":{"labels":{"date":"`date +'%s'`", "commit":"$TRAVIS_COMMIT"}}}}}'
+      docker push siwecos/siwecos-core-api:develop # &&
+      # kubectl patch deployment siwecos-core-api --namespace staging -p '{"spec":{"template":{"metadata":{"labels":{"date":"`date +'%s'`", "commit":"$TRAVIS_COMMIT"}}}}}'
   - provider: script
     skip_cleanup: true
     on:
