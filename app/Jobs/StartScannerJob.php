@@ -44,13 +44,12 @@ class StartScannerJob implements ShouldQueue
         }
 
         $client = $this->client ?: new HTTPClient();
-        $logInfo = PHP_EOL . 'Scan ID: ' . $this->scan->id . PHP_EOL . 'Scan URL: ' . $this->scan->url . PHP_EOL . 'Scanner: ' . $this->scannerCode . PHP_EOL . 'Scanner-URL: ' . $this->scannerUrl;
 
-        \Log::debug('Preparing ScanResult' . $logInfo);
         $scanResult = $this->scan->results()->create([
             'scanner_code' => $this->scannerCode
         ]);
 
+        $logInfo = PHP_EOL . 'Scan ID: ' . $this->scan->id . PHP_EOL . 'ScanResult ID: ' . $scanResult->id . PHP_EOL . 'Scan URL: ' . $this->scan->url . PHP_EOL . 'Scanner: ' . $this->scannerCode . PHP_EOL . 'Scanner-URL: ' . $this->scannerUrl;
         \Log::debug('Sending scan start request' . $logInfo);
         try {
             $response = $client->request('POST', $this->scannerUrl, ['json' => [
@@ -70,6 +69,8 @@ class StartScannerJob implements ShouldQueue
                     'has_error' => true
                 ]);
             }
-        } catch (\Exception $e) { }
+        } catch (\Exception $e) {
+            \Log::debug('The following Exception was thrown: ' . PHP_EOL . $e);
+        }
     }
 }

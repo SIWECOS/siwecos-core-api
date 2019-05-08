@@ -52,7 +52,9 @@ class NotifyCallbacksJob implements ShouldQueue
                 } else {
                     Log::warning('Scan results for Scan ID ' . $this->scan->id . ' could not be sent to: ' . $this->scan->callbackurls[0]);
                 }
-            } catch (\Exception $e) { }
+            } catch (\Exception $e) {
+                \Log::debug('The following Exception was thrown: ' . PHP_EOL . $e);
+            }
         }
 
         if ($hasAtLeastOneSuccessfulCallback) {
