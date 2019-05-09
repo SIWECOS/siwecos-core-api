@@ -75,9 +75,11 @@ class ScanJob implements ShouldQueue
             Log::info('StatusCode for ' . $this->name . ' (' . $scanResult->scan_id . '): ' . $status);
             if ($status !== 200) {
                 $scanResult->result = self::getErrorArray($this->name, $status);
+                $scanResult->save();
             }
         } catch (Exception $ex) {
             $scanResult->result = self::getErrorArray($this->name, 500, $ex->getMessage());
+            $scanResult->save();
         }
     }
 
