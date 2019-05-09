@@ -188,3 +188,6 @@ The `TranslatableMessage`:
 
 Will be translated to: `The best number of all numbers is 42!`.
 
+### Test Order
+Please note that the scanner should keep the same order for each test on each run.
+This is useful for client reports to compare the results before and after changes where made.
