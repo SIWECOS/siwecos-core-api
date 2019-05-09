@@ -41,13 +41,12 @@ To ensure a high coding quality of your project, you are encouraged to follow th
 
 You have to implement one single endpoint that's reachable via a HTTP-POST Request that accepts the following JSON values:
 
-| Name             | Type                                                                            | Description                                                                                                                                                                              |
-| ---------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `url`            | `url`                                                                           | The URL that should be scanned                                                                                                                                                           |
-| `callbackurls`   | `array`                                                                         | A list of URLs that should receive the finished scan results                                                                                                                             |
-| `callbackurls.*` | `url`                                                                           | A URL that should receive the finished scan results                                                                                                                                      |
-| *`dangerLevel`*  | *`integer` (min: 0; max: 10)*                                                   | *Some tests in your scanner might affect the scanned service regarding availability or stability. With this parameter a user can define what kind of tests your scanner should perform.* |
-| *`userAgent`*    | *`string`*   *The `userAgent` string to use when contacting the scanned sites.* | *The `userAgent` string to use when contacting the scanned sites.*                                                                                                                       |
+| Name             | Type                          | Description                                                                                                                                                                              |
+| ---------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `url`            | `url`                         | The URL that should be scanned                                                                                                                                                           |
+| `callbackurls`   | `array`                       | A list of URLs that should receive the finished scan results                                                                                                                             |
+| `callbackurls.*` | `url`                         | A URL that should receive the finished scan results                                                                                                                                      |
+| *`dangerLevel`*  | *`integer` (min: 0; max: 10)* | *Some tests in your scanner might affect the scanned service regarding availability or stability. With this parameter a user can define what kind of tests your scanner should perform.* |
 
 You are free to implement further endpoints, maybe a HTTP-GET Requests to receive the results directly, but for SIWECOS the above listed is mandatory.
 
