@@ -31,11 +31,12 @@ class ScanCallbackResponseTest extends TestCase
 
         $response = new ScanCallbackResponse($scan->refresh());
 
-        $this->assertEquals(json_encode([
+        $this->assertJsonStringEqualsJsonString(json_encode([
             'url' => 'https://example.org',
             'dangerLevel' => '7',
             'started_at' => '2019-05-07 11:55:15',
             'finished_at' => '2019-05-07 11:55:15',
+            'version' => '2.0.0',
             'results' => [
                 [
                     'started_at' => now()->toDateTimeString(),
