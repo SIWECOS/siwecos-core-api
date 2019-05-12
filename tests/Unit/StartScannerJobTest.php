@@ -65,4 +65,24 @@ class StartScannerJobTest extends TestCase
         });
         $this->assertTrue($scan->hasError);
     }
+
+    /** @test */
+    public function all_successful_http_status_codes_are_handled_as_success()
+    {
+        $scan = factory(Scan::class)->create();
+
+        (new StartScannerJob($scan, 'testscanner', 'http://testscanner', $this->getMockedHttpClient([
+            new Response(200)
+        ])))->handle();
+        (new StartScannerJob($scan, 'testscanner', 'http://testscanner', $this->getMockedHttpClient([
+            new Response(201)
+        ])))->handle();
+        (new StartScannerJob($scan, 'testscanner', 'http://testscanner', $this->getMockedHttpClient([
+            new Response(202)
+        ])))->handle();
+
+        Log::assertLogged('info', function ($message) {
+            return Str::contains($message, 'Scan successful started');
+        }, 3);
+    }
 }

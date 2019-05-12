@@ -66,4 +66,28 @@ class NotifyCallbacksJobTest extends TestCase
             return Str::contains($message, 'Scan with ID ' . $this->scan->id . ' could not be sent to any given callbackurls.');
         });
     }
+
+    /** @test */
+    public function all_successful_http_status_codes_are_handled_as_success()
+    {
+        $scan = factory(Scan::class)->create([
+            'callbackurls' => [
+                'http://callback.one',
+                'http://callback.two',
+                'http://callback.three',
+            ]
+        ]);
+
+        $job = new NotifyCallbacksJob($scan, $this->getMockedHttpClient([
+            new Response(200),
+            new Response(201),
+            new Response(202),
+        ]));
+
+        $job->handle();
+
+        Log::assertLogged('info', function ($message) use ($scan) {
+            return Str::contains($message, 'Scan results for Scan ID ' . $scan->id . ' successfully sent to: ');
+        }, 3);
+    }
 }

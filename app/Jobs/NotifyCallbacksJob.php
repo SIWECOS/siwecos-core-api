@@ -46,7 +46,7 @@ class NotifyCallbacksJob implements ShouldQueue
                     'json' => (new ScanCallbackResponse($this->scan))
                 ]);
 
-                if ($response->getStatusCode() === 200) {
+                if (in_array($response->getStatusCode(), [200, 201, 202])) {
                     Log::info('Scan results for Scan ID ' . $this->scan->id . ' successfully sent to: ' . $this->scan->callbackurls[0]);
                     $hasAtLeastOneSuccessfulCallback = true;
                 } else {

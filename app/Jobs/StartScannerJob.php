@@ -61,7 +61,7 @@ class StartScannerJob implements ShouldQueue
             ]]);
 
 
-            if ($response->getStatusCode() === 200) {
+            if (in_array($response->getStatusCode(), [200, 201, 202])) {
                 \Log::info('Scan successful started' . $logInfo);
             } else {
                 \Log::critical('Failed to start scan' . $logInfo);
