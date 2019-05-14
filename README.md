@@ -151,6 +151,7 @@ There are several values you can choose from:
 | `success`  | Successful test                                                       | Raises the score                                        |
 | `warning`  | Attention, a faulty or bad configuration was detected; not `critical` | Reduces the score                                       |
 | `critical` | Critical missconfiguration; service or users are in danger            | Drops the score to a maximum of 20 points               |
+| `failed`   | The scanner could not execute the test                                | `score: 0` and `hasError: true`                         |
 
 ### Each `test.testDetails` Array [array]
 For each test you can provide further information via the `testDetails` array.
