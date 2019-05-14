@@ -5,13 +5,11 @@ php:
 
 cache:
   directories:
-    - "$HOME/google-cloud-sdk/"
     - "./vendor"
 
 dist: trusty
 
 before_script:
-  - composer self-update
   - composer install --no-interaction
 
 script:
@@ -20,17 +18,6 @@ script:
 
 before_deploy:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; export CLOUDSDK_CORE_DISABLE_PROMPTS=1; curl https://sdk.cloud.google.com | bash; fi
-  - source /home/travis/google-cloud-sdk/path.bash.inc
-  - gcloud --quiet version
-  - gcloud --quiet components update
-  - gcloud --quiet components update kubectl
-  - echo $GCLOUD_KEY | base64 --decode -i > ${HOME}/gcloud-service-key.json
-  - gcloud auth activate-service-account --key-file ${HOME}/gcloud-service-key.json
-  - gcloud --quiet config set project $GOOGLE_PROJECT_NAME
-  - gcloud --quiet config set container/cluster $GOOGLE_CLUSTER_NAME
-  - gcloud --quiet config set compute/zone $GOOGLE_COMPUTE_ZONE
-  - gcloud --quiet container clusters get-credentials $GOOGLE_CLUSTER_NAME
 
 deploy:
   - provider: script
@@ -39,16 +26,14 @@ deploy:
       branch: develop
     script: >-
       docker tag siwecos-core-api siwecos/siwecos-core-api:develop &&
-      docker push siwecos/siwecos-core-api:develop # &&
-      # kubectl patch deployment siwecos-core-api --namespace staging -p '{"spec":{"template":{"metadata":{"labels":{"date":"`date +'%s'`", "commit":"$TRAVIS_COMMIT"}}}}}'
+      docker push siwecos/siwecos-core-api:develop
   - provider: script
     skip_cleanup: true
     on:
       branch: master
     script: >-
       docker tag siwecos-core-api siwecos/siwecos-core-api:latest &&
-      docker push siwecos/siwecos-core-api:latest &&
-      kubectl patch deployment siwecos-core-api --namespace production -p '{"spec":{"template":{"metadata":{"labels":{"date":"`date +'%s'`", "commit":"$TRAVIS_COMMIT"}}}}}'
+      docker push siwecos/siwecos-core-api:latest
   - provider: script
     skip_cleanup: true
     on:

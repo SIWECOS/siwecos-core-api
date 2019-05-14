@@ -4,6 +4,7 @@ LABEL maintainer="Sascha Brendel <mail@lednerb.eu>"
 
 # Settings [Further information: https://github.com/SIWECOS/dockered-laravel#env-options]
 ENV ARTISAN_MIGRATE true
+ENV USE_SCHEDULER true
 
 # Copy application
 COPY . .
