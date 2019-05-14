@@ -108,7 +108,7 @@ Regarding the [Programming Requirements](#programming-requirements) you have to 
 The actual version number has to be included in the response.
 
 ### Global `hasError` Attribute [boolean]
-The global `hasError` should be set to `true` if the scanner could not perform it's tests.
+The global `hasError` should be set to `true` if the scanner could not perform its tests.
 An error case could be that the request to the given `url` does not send any response.
 
 ### Global `errorMessage` Attribute [TranslatableMessage|null]
