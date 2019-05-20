@@ -10,12 +10,12 @@ You can find a builded draft for the API V2 here: https://siwecos-core-api-v2-do
 
 See this project for a How-To use the Docker `slate` image: https://github.com/davidheryanto/slate-docker
 
-Make sure you first bild the image and than run the `docker run` command in the actual `siwecos-business-layer` directory on the latest `develop` branch.
+Make sure you first build the image and than run the `docker run` command in the actual `siwecos-business-layer` directory on the latest `develop` branch.
 
 # Scanner-Interface Documentation
 
 This documentation describes the Scanner-Interface for scanners that want to be used with the [SIWECOS/siwecos-core-api](https://github.com/SIWECOS/siwecos-core-api).
-Every scanner have to follow the listed rules and best practices in order to be integrated into the [SIWECOS](https://siwecos.de) project.
+Every scanner has to follow the listed rules and best practices in order to be integrated into the [SIWECOS](https://siwecos.de) project.
 
 
 ## Programming Requirements
@@ -25,7 +25,7 @@ At the moment, we have scanners written in Java and PHP, but feel free to use an
 To ensure a high coding quality of your project, you are encouraged to follow these guidelines:
 
 1. Document your code
-2. Write readable code, so programmers that are not familiar with your project and language can read and understand what you are doing
+2. Write readable code, so programmers not familiar with your project and language can read and understand what you are doing
 3. Test your code, ideally with automated tests (Unit-Tests, Integration-Tests, etc.)
 4. Reduce your dependencies to a reasonable amount
 6. Document how to use your scanner on arbitrary systems
@@ -39,7 +39,7 @@ To ensure a high coding quality of your project, you are encouraged to follow th
 
 ## Request Interface
 
-You have to implement one single endpoint that's reachable via a HTTP-POST Request that accepts the following JSON values:
+You have to implement one single endpoint which is reachable via a HTTP-POST Request accepting the following JSON values:
 
 | Name             | Type                          | Description                                                                                                                                                                              |
 | ---------------- | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -108,7 +108,7 @@ Regarding the [Programming Requirements](#programming-requirements) you have to 
 The actual version number has to be included in the response.
 
 ### Global `hasError` Attribute [boolean]
-The global `hasError` should be set to `true` if the scanner could not perform it's tests.
+The global `hasError` should be set to `true` if the scanner could not perform its tests.
 An error case could be that the request to the given `url` does not send any response.
 
 ### Global `errorMessage` Attribute [TranslatableMessage|null]
@@ -126,7 +126,7 @@ Please note, that all test cases should also follow a defined scheme.
 Further details regarding the test's structure are listed below.
 
 ### Each `test.name` Attribute [string]
-Each test must have an unique name that identifies the test.
+Each test must have an unique name which identifies the test.
 The `name` attribute must only consists of uppercased letters and underscores (SCREAMING_SNAKE_CASE).
 
 ### Each `test.hasError` Attribute [boolean]
@@ -191,4 +191,4 @@ Will be translated to: `The best number of all numbers is 42!`.
 
 ### Test Order
 Please note that the scanner should keep the same order for each test on each run.
-This is useful for client reports to compare the results before and after changes where made.
+This is useful for client reports to compare the results before and after changes were made.
