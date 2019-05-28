@@ -70,7 +70,7 @@ class StartScannerJob implements ShouldQueue
                 ]);
             }
         } catch (\Exception $e) {
-            \Log::debug('The following Exception was thrown: ' . PHP_EOL . $e);
+            \Log::critical('The following Exception was thrown: ' . PHP_EOL . $e);
         }
     }
 }

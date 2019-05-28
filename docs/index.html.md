@@ -10,6 +10,7 @@ toc_footers:
 
 includes:
   - scans
+  - logs
 
 search: true
 ---

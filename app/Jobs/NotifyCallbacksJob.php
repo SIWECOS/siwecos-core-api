@@ -9,7 +9,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Scan;
 use App\HTTPClient;
-use Illuminate\Support\Facades\Log;
 use App\Http\Responses\ScanCallbackResponse;
 
 class NotifyCallbacksJob implements ShouldQueue
@@ -47,22 +46,22 @@ class NotifyCallbacksJob implements ShouldQueue
                 ]);
 
                 if (in_array($response->getStatusCode(), [200, 201, 202])) {
-                    Log::info('Scan results for Scan ID ' . $this->scan->id . ' successfully sent to: ' . $this->scan->callbackurls[0]);
+                    \Log::info('Scan results for Scan ID ' . $this->scan->id . ' successfully sent to: ' . $this->scan->callbackurls[0]);
                     $hasAtLeastOneSuccessfulCallback = true;
                 } else {
-                    Log::warning('Scan results for Scan ID ' . $this->scan->id . ' could not be sent to: ' . $this->scan->callbackurls[0]);
+                    \Log::warning('Scan results for Scan ID ' . $this->scan->id . ' could not be sent to: ' . $this->scan->callbackurls[0]);
                 }
             } catch (\Exception $e) {
-                \Log::debug('The following Exception was thrown: ' . PHP_EOL . $e);
+                \Log::critical('The following Exception was thrown: ' . PHP_EOL . $e);
             }
         }
 
         if ($hasAtLeastOneSuccessfulCallback) {
             if ($this->scan->delete()) {
-                Log::info('Scan with ID ' . $this->scan->id . ' finished successfully.');
+                \Log::info('Scan with ID ' . $this->scan->id . ' finished successfully.');
             }
         } else {
-            Log::critical('Scan with ID ' . $this->scan->id . ' could not be sent to any given callbackurls.');
+            \Log::critical('Scan with ID ' . $this->scan->id . ' could not be sent to any given callbackurls.');
         }
     }
 }
