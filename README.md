@@ -1,10 +1,8 @@
 # SIWECOS-Core-API
 
+[![API DOCS](https://img.shields.io/badge/API-DOCS-blue.svg?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyBhcmlhLWhpZGRlbj0idHJ1ZSIgZm9jdXNhYmxlPSJmYWxzZSIgZGF0YS1wcmVmaXg9ImZhcyIgZGF0YS1pY29uPSJib29rIiBjbGFzcz0ic3ZnLWlubGluZS0tZmEgZmEtYm9vayBmYS13LTE0IiByb2xlPSJpbWciIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDQ0OCA1MTIiPjxwYXRoIGZpbGw9IiNmZmZmZmYiIGQ9Ik00NDggMzYwVjI0YzAtMTMuMy0xMC43LTI0LTI0LTI0SDk2QzQzIDAgMCA0MyAwIDk2djMyMGMwIDUzIDQzIDk2IDk2IDk2aDMyOGMxMy4zIDAgMjQtMTAuNyAyNC0yNHYtMTZjMC03LjUtMy41LTE0LjMtOC45LTE4LjctNC4yLTE1LjQtNC4yLTU5LjMgMC03NC43IDUuNC00LjMgOC45LTExLjEgOC45LTE4LjZ6TTEyOCAxMzRjMC0zLjMgMi43LTYgNi02aDIxMmMzLjMgMCA2IDIuNyA2IDZ2MjBjMCAzLjMtMi43IDYtNiA2SDEzNGMtMy4zIDAtNi0yLjctNi02di0yMHptMCA2NGMwLTMuMyAyLjctNiA2LTZoMjEyYzMuMyAwIDYgMi43IDYgNnYyMGMwIDMuMy0yLjcgNi02IDZIMTM0Yy0zLjMgMC02LTIuNy02LTZ2LTIwem0yNTMuNCAyNTBIOTZjLTE3LjcgMC0zMi0xNC4zLTMyLTMyIDAtMTcuNiAxNC40LTMyIDMyLTMyaDI4NS40Yy0xLjkgMTcuMS0xLjkgNDYuOSAwIDY0eiI+PC9wYXRoPjwvc3ZnPgo=)](https://siwecos.github.io/siwecos-core-api)
+
 With this project you can simply run any of the offical [SIWECOS](https://siwecos.de) scanners.
-
-## API-Documentation
-
-You can find a builded draft for the API V2 here: https://siwecos-core-api-v2-documentation.netlify.com/
 
 ### Editing the API-Documentation via Docker
 
@@ -28,13 +26,13 @@ To ensure a high coding quality of your project, you are encouraged to follow th
 2. Write readable code, so programmers not familiar with your project and language can read and understand what you are doing
 3. Test your code, ideally with automated tests (Unit-Tests, Integration-Tests, etc.)
 4. Reduce your dependencies to a reasonable amount
-6. Document how to use your scanner on arbitrary systems
-7. Document the tests your scanner performs (Reason, Possible results, Influence on the service/users/etc.)
-8. [Choose a license](https://choosealicense.com/) & [Check depending licenses](https://tldrlegal.com/) for your project
-9. Write a clean and readable `README.md` for your project
-10. Follow the [Semantic Versioning](https://semver.org/) guidelines and [keep a changelog](https://keepachangelog.com/en/1.0.0/)
-11. Provide a `Dockerfile` for a ready-to-use docker image and document how to use it within a *Quick-Start* section in the `README.md`
-12. Implement the following [Request-](#request-interface) and [Response-Interface](#response-interface) for your scanner
+5. Document how to use your scanner on arbitrary systems
+6. Document the tests your scanner performs (Reason, Possible results, Influence on the service/users/etc.)
+7. [Choose a license](https://choosealicense.com/) & [Check depending licenses](https://tldrlegal.com/) for your project
+8. Write a clean and readable `README.md` for your project
+9.  Follow the [Semantic Versioning](https://semver.org/) guidelines and [keep a changelog](https://keepachangelog.com/en/1.0.0/)
+10. Provide a `Dockerfile` for a ready-to-use docker image and document how to use it within a *Quick-Start* section in the `README.md`
+11. Implement the following [Request-](#request-interface) and [Response-Interface](#response-interface) for your scanner
 
 
 ## Request Interface
