@@ -13,6 +13,8 @@ use App\ScanResult;
 use Illuminate\Support\Facades\Log;
 use TiMacDonald\Log\LogFake;
 use Illuminate\Support\Str;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
 
 class StartScannerJobTest extends TestCase
 {
@@ -63,7 +65,24 @@ class StartScannerJobTest extends TestCase
         Log::assertLogged('critical', function ($message) {
             return Str::contains($message, 'Failed to start scan');
         });
-        $this->assertTrue($scan->hasError);
+        $this->assertTrue(ScanResult::first()->has_error);
+        $this->assertTrue($scan->has_error);
+    }
+
+    /** @test */
+    public function if_a_curl_exception_occurs_it_will_be_logged_and_the_scanResult_will_be_marked_as_failed()
+    {
+        $scan = factory(Scan::class)->create();
+
+        (new StartScannerJob($scan, 'TLS', 'http://tls-scanner/start', $this->getMockedHttpClient([
+            new RequestException("Error Communicating with Server", new Request('POST', 'test'))
+        ])))->handle();
+
+        Log::assertLogged('critical', function ($message) {
+            return Str::contains($message, 'Failed to start scan');
+        });
+
+        $this->assertTrue(ScanResult::first()->has_error);
     }
 
     /** @test */

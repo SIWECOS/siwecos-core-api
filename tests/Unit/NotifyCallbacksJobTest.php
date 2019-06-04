@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use TiMacDonald\Log\LogFake;
 use Illuminate\Support\Str;
 use App\Scan;
+use GuzzleHttp\Exception\RequestException;
+use GuzzleHttp\Psr7\Request;
 
 class NotifyCallbacksJobTest extends TestCase
 {
@@ -64,6 +66,25 @@ class NotifyCallbacksJobTest extends TestCase
 
         Log::assertLogged('critical', function ($message) {
             return Str::contains($message, 'Scan with ID ' . $this->scan->id . ' could not be sent to any given callbackurls.');
+        });
+    }
+
+    /** @test */
+    public function if_a_curl_exception_occures_it_will_be_logged()
+    {
+        $job = new NotifyCallbacksJob($this->scan, $this->getMockedHttpClient([
+            new RequestException("Error Communicating with Server", new Request('POST', 'test'))
+        ]));
+
+        $job->handle();
+
+        Log::assertLogged('critical', function ($message) {
+            return Str::contains($message, 'Scan results for Scan ID ' . $this->scan->id . ' could not be sent to: ' . $this->scan->callbackurls[0]);
+        });
+        $this->assertCount(1, Scan::all());
+
+        Log::assertLogged('critical', function ($message) {
+            return Str::contains($message, 'Error Communicating with Server');
         });
     }
 
