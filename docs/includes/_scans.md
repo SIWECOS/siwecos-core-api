@@ -65,17 +65,17 @@ A Scan can be started.
 {
     "url": "http:\/\/www.siwecos.de",
     "dangerLevel": 10,
-    "started_at": "2019-05-09 07:05:38",
-    "finished_at": "2019-05-09 07:05:55",
+    "startedAt": "2019-05-09 07:05:38",
+    "finishedAt": "2019-05-09 07:05:55",
     "results": [
         {
-          "started_at": "2019-05-09 07:05:38",
-          "finished_at": "2019-05-09 07:05:40",
+          "startedAt": "2019-05-09 07:05:38",
+          "finishedAt": "2019-05-09 07:05:40",
           // Scanner 1 results
         },
         {
-          "started_at": "2019-05-09 07:05:41",
-          "finished_at": "2019-05-09 07:05:52",
+          "startedAt": "2019-05-09 07:05:41",
+          "finishedAt": "2019-05-09 07:05:52",
           // Scanner 2 results
         },
         ...

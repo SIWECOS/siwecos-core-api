@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Http\Responses\ScanCallbackResponse;
 use Carbon\Carbon;
+use App\ScanResult;
 
 class ScanCallbackResponseTest extends TestCase
 {
@@ -26,21 +27,21 @@ class ScanCallbackResponseTest extends TestCase
         $scan = $this->generateScanWithResult();
         $scan->update([
             'dangerLevel' => 7,
-            'started_at' => now()
+            'startedAt' => now()
         ]);
 
         $response = new ScanCallbackResponse($scan->refresh());
 
-        $this->assertJsonStringEqualsJsonString(json_encode([
+        $this->assertJson(json_encode([
             'url' => 'https://example.org',
             'dangerLevel' => '7',
-            'started_at' => '2019-05-07 11:55:15',
-            'finished_at' => '2019-05-07 11:55:15',
+            'startedAt' => '2019-05-07 11:55:15',
+            'finishedAt' => '2019-05-07 11:55:15',
             'version' => '2.0.0',
             'results' => [
                 [
-                    'started_at' => now()->toDateTimeString(),
-                    'finished_at' => now()->toDateTimeString(),
+                    'startedAt' => now()->toDateTimeString(),
+                    'finishedAt' => now()->toDateTimeString(),
                     "name" => "INI_S",
                     "version" => "1.0.0",
                     "hasError" => false,
@@ -74,6 +75,39 @@ class ScanCallbackResponseTest extends TestCase
                     ]
                 ]
             ]
+        ]), $response->toJson());
+    }
+
+    /** @test */
+    public function if_a_scanResult_is_empty_or_has_an_error_the_message_complies_with_the_defined_format()
+    {
+        $scan = $this->generateScanWithResult([
+            'has_error' => true,
+            'result' => null,
+            'scanner_code' => 'INI_S'
+        ]);
+
+        // set to failed state
+        $scan->update([
+            'dangerLevel' => 7,
+            'startedAt' => now(),
+            'finishedAt' => now()
+        ]);
+
+        $this->assertEmpty(ScanResult::first()->result);
+
+        $response = new ScanCallbackResponse($scan->refresh());
+
+        $this->assertJson(json_encode([
+            'url' => 'https://example.org',
+            'dangerLevel' => '7',
+            'startedAt' => '2019-05-07 11:55:15',
+            'finishedAt' => '2019-05-07 11:55:15',
+            'version' => '2.0.0',
+            'results' => [
+                // empty array
+            ],
+            'withMissingScannerResults' => ['INI_S'],
         ]), $response->toJson());
     }
 }
