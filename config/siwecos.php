@@ -32,12 +32,7 @@ return [
         'HEADER' => env('HEADER_SCANNER_URL'),
         'PORT' => env('PORT_SCANNER_URL'),
         'HTTPS' => env('HTTPS_SCANNER_URL'),
-        'POP3' => env('POP3_SCANNER_URL'),
-        'POP3S' => env('POP3S_SCANNER_URL'),
-        'IMAP' => env('IMAP_SCANNER_URL'),
-        'IMAPS' => env('IMAPS_SCANNER_URL'),
-        'SMTP' => env('SMTP_SCANNER_URL'),
-        'SMTPS' => env('SMTPS_SCANNER_URL'),
+        'MAIL' => env('MAIL_SCANNER_URL'),
         'VERSION' => env('VERSION_SCANNER_URL'),
     ],
 ];
