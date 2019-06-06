@@ -67,6 +67,7 @@ A Scan can be started.
     "dangerLevel": 10,
     "startedAt": "2019-05-09 07:05:38",
     "finishedAt": "2019-05-09 07:05:55",
+    "withMissingScannerResults": ["INI_S", "INFOLEAK"],
     "results": [
         {
           "startedAt": "2019-05-09 07:05:38",
@@ -85,5 +86,12 @@ A Scan can be started.
 ```
 
 The result that will be send to the callbackurls has the following structure.
+
+<br><br>
+
+**NB:** <br>
+The `withMissingScannerResults` array will only be sent if there were conflicts in the Core-API so no result was delivered by the particular scanner.
+
+<br><br><br>
 
 For further information regarding the results please check the related scanner repo and the [Scanner Interface Documentation](https://github.com/SIWECOS/siwecos-core-api/tree/develop#scanner-interface-documentation).
