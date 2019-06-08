@@ -11,7 +11,7 @@ class AvailableScannersTest extends TestCase
     /** @test */
     public function a_collection_with_available_scanners_can_be_retrieved_from_config()
     {
-        $this->assertCount(13, config('siwecos.scanners'));
+        $this->assertCount(8, config('siwecos.scanners'));
 
         // filter all empty values
         $availableScanners = array_filter(config('siwecos.scanners'));
