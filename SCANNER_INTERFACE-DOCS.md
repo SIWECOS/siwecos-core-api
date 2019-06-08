@@ -130,13 +130,14 @@ A higher score value determines a more secure configuration.
 For each test a `scoreType` must be defined.
 There are several values you can choose from:
 
-| Value                                    | Description                                                           | Score-Influence                                         |
-| ---------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
-| `hidden`                                 | Hidden test; should not be displayed by the webapp                    | None                                                    |
-| `bonus`                                  | Featured configuration, recommended but not required                  | Raises the score if positive, no drop if not configured |
-| `success`                                | Successful test                                                       | Raises the score                                        |
-| `warning`                                | Attention, a faulty or bad configuration was detected; not `critical` | Reduces the score                                       |
-| `critic# Scanner-Interface Documentation |
+| Value      | Description                                                           | Score-Influence                                         |
+| ---------- | --------------------------------------------------------------------- | ------------------------------------------------------- |
+| `hidden`   | Hidden test; should not be displayed by the webapp                    | None                                                    |
+| `bonus`    | Featured configuration, recommended but not required                  | Raises the score if positive, no drop if not configured |
+| `success`  | Successful test                                                       | Raises the score                                        |
+| `warning`  | Attention, a faulty or bad configuration was detected; not `critical` | Reduces the score                                       |
+| `critical` | Critical missconfiguration; service or users are in danger            | Drops the score to a maximum of 20 points               |
+| `failed`   | The scanner could not execute the test                                | `score: 0` and `hasError: true`                         |
 
 This documentation describes the Scanner-Interface for scanners that want to be used with the [SIWECOS/siwecos-core-api](https://github.com/SIWECOS/siwecos-core-api).
 Every scanner has to follow the listed rules and best practices in order to be integrated into the [SIWECOS](https://siwecos.de) project.
@@ -317,8 +318,6 @@ Will be translated to: `The best number of all numbers is 42!`.
 ### Test Order
 Please note that the scanner should keep the same order for each test on each run.
 This is useful for client reports to compare the results before and after changes were made.
-al` | Critical missconfiguration; service or users are in danger            | Drops the score to a maximum of 20 points               |
-| `failed`   | The scanner could not execute the test                                | `score: 0` and `hasError: true`                         |
 
 ### Each `test.testDetails` Array [array]
 For each test you can provide further information via the `testDetails` array.
