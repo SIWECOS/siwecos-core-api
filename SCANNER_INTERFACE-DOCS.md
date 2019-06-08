@@ -171,6 +171,7 @@ You have to implement one single endpoint which is reachable via a HTTP-POST Req
 | `callbackurls`   | `array`                       | A list of URLs that should receive the finished scan results                                                                                                                             |
 | `callbackurls.*` | `url`                         | A URL that should receive the finished scan results                                                                                                                                      |
 | *`dangerLevel`*  | *`integer` (min: 0; max: 10)* | *Some tests in your scanner might affect the scanned service regarding availability or stability. With this parameter a user can define what kind of tests your scanner should perform.* |
+| *`userAgent`*    | *`string`*                    | *The `User-Agent` string the scanner must use while contacting the `url`; Set to a reasonable default*                                                                                   |
 
 You are free to implement further endpoints, maybe a HTTP-GET Requests to receive the results directly, but for SIWECOS the above listed is mandatory.
 
