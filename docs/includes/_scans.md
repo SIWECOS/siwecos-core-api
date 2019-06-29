@@ -65,18 +65,18 @@ A Scan can be started.
 {
     "url": "http:\/\/www.siwecos.de",
     "dangerLevel": 10,
-    "startedAt": "2019-05-09 07:05:38",
-    "finishedAt": "2019-05-09 07:05:55",
+    "startedAt": "2019-05-09T07:05:38Z",
+    "finishedAt": "2019-05-09T07:05:55Z",
     "withMissingScannerResults": ["INI_S", "INFOLEAK"],
     "results": [
         {
-          "startedAt": "2019-05-09 07:05:38",
-          "finishedAt": "2019-05-09 07:05:40",
+          "startedAt": "2019-05-09T07:05:38Z",
+          "finishedAt": "2019-05-09T07:05:40Z",
           // Scanner 1 results
         },
         {
-          "startedAt": "2019-05-09 07:05:41",
-          "finishedAt": "2019-05-09 07:05:52",
+          "startedAt": "2019-05-09T07:05:41Z",
+          "finishedAt": "2019-05-09T07:05:52Z",
           // Scanner 2 results
         },
         ...
