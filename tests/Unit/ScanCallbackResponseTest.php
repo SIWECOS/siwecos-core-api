@@ -32,16 +32,16 @@ class ScanCallbackResponseTest extends TestCase
 
         $response = new ScanCallbackResponse($scan->refresh());
 
-        $this->assertJson(json_encode([
+        $this->assertEquals(json_encode([
             'url' => 'https://example.org',
             'dangerLevel' => '7',
-            'startedAt' => '2019-05-07 11:55:15',
-            'finishedAt' => '2019-05-07 11:55:15',
+            'startedAt' => '2019-05-07T11:55:15Z',
+            'finishedAt' => '2019-05-07T11:55:15Z',
             'version' => '2.0.0',
             'results' => [
                 [
-                    'startedAt' => now()->toDateTimeString(),
-                    'finishedAt' => now()->toDateTimeString(),
+                    'startedAt' => now()->toIso8601ZuluString(),
+                    'finishedAt' => now()->toIso8601ZuluString(),
                     "name" => "INI_S",
                     "version" => "1.0.0",
                     "hasError" => false,
@@ -98,16 +98,17 @@ class ScanCallbackResponseTest extends TestCase
 
         $response = new ScanCallbackResponse($scan->refresh());
 
-        $this->assertJson(json_encode([
+
+        $this->assertEquals(json_encode([
             'url' => 'https://example.org',
             'dangerLevel' => '7',
-            'startedAt' => '2019-05-07 11:55:15',
-            'finishedAt' => '2019-05-07 11:55:15',
+            'startedAt' => '2019-05-07T11:55:15Z',
+            'finishedAt' => '2019-05-07T11:55:15Z',
             'version' => '2.0.0',
+            'withMissingScannerResults' => ['INI_S'],
             'results' => [
                 // empty array
             ],
-            'withMissingScannerResults' => ['INI_S'],
         ]), $response->toJson());
     }
 }
