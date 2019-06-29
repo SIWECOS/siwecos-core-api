@@ -19,7 +19,8 @@ To ensure a high coding quality of your project, you are encouraged to follow th
 8. Write a clean and readable `README.md` for your project
 9.  Follow the [Semantic Versioning](https://semver.org/) guidelines and [keep a changelog](https://keepachangelog.com/en/1.0.0/)
 10. Provide a `Dockerfile` for a ready-to-use docker image and document how to use it within a *Quick-Start* section in the `README.md`
-11. Implement the following [Request-](#request-interface) and [Response-Interface](#response-interface) for your scanner
+11. If you use any date and/or time strings in the response, use the ISO 8601 extended format with UTC timezone with the `Z` suffix
+12. Implement the following [Request-](#request-interface) and [Response-Interface](#response-interface) for your scanner
 
 
 ## Request Interface
