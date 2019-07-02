@@ -13,6 +13,9 @@ curl -X POST \
     "dangerLevel": 0,
     "callbackurls": [
       "http://172.17.0.1:9000"
+    ],
+    "scanners": [
+      "TLS", "HEADER", "INI_S"
     ]
   }'
 ```
@@ -27,6 +30,9 @@ Content-Type: application/json
   "dangerLevel": 0,
   "callbackurls": [
     "http://172.17.0.1:9000"
+  ],
+  "scanners" : [
+    "TLS", "HEADER", "INI_S"
   ]
 }
 ```
@@ -41,12 +47,14 @@ A Scan can be started.
 
 ### Query Parameters
 
-| Parameter      | Type                           | Description                                                |
-| -------------- | ------------------------------ | ---------------------------------------------------------- |
-| url            | `url`                          | The URL to the domain that should be scanned               |
-| dangerLevel    | `integer`, min: `0`, max: `10` | Define how dangerous the scanner's tests are allowed to be |
-| callbackurls   | `array`                        | The callbackurls to which the results should be sent       |
-| callbackurls.* | `url`                          | The URL that should receive the scan result                |
+| Parameter      | Type                           | Description                                                                       |
+| -------------- | ------------------------------ | --------------------------------------------------------------------------------- |
+| url            | `url`                          | The URL to the domain that should be scanned                                      |
+| dangerLevel    | `integer`, min: `0`, max: `10` | Define how dangerous the scanner's tests are allowed to be                        |
+| callbackurls   | `array`                        | The callbackurls to which the results should be sent                              |
+| callbackurls.* | `url`                          | The URL that should receive the scan result                                       |
+| *scanners*     | *`array`*                      | *A subset of available scanners that should be started*                           |
+| *scanners.\**  | *`string`*                     | *An available scanner name; valid entries are listed [here](#supported-scanners)* |
 
 
 ### Response Status Codes

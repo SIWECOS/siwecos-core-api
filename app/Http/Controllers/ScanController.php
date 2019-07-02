@@ -13,11 +13,17 @@ class ScanController extends Controller
 {
     public function start(ScanStartRequest $request)
     {
-        $availableScanners = array_filter(config('siwecos.scanners'));
+        $availableScanners = collect(config('siwecos.scanners'))->filter();
+        $requestedScanners = collect($request->json('scanners'));
 
         $scan = Scan::create($request->validated());
 
         foreach ($availableScanners as $name => $url) {
+            // Skip non-requested scanners
+            if ($requestedScanners->isNotEmpty() && !$requestedScanners->contains($name)) {
+                continue;
+            }
+
             $this->dispatch(new StartScannerJob($scan, $name, $url));
         }
     }

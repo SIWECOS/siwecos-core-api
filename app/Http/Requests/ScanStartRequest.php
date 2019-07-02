@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Contracts\Validation\Validator;
+use App\Rules\IsConfiguredScannerRule;
 
 class ScanStartRequest extends FormRequest
 {
@@ -40,7 +41,9 @@ class ScanStartRequest extends FormRequest
             'url' => ['required', 'url'],
             'callbackurls' => ['required', 'array'],
             'callbackurls.*' => ['url'],
-            'dangerLevel' => ['integer', 'min:0', 'max:10']
+            'dangerLevel' => ['integer', 'min:0', 'max:10'],
+            'scanners' => ['array'],
+            'scanners.*' => ['string', new IsConfiguredScannerRule()]
         ];
     }
 }
