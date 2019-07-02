@@ -311,6 +311,9 @@
     "dangerLevel": 0,
     "callbackurls": [
       "http://172.17.0.1:9000"
+    ],
+    "scanners": [
+      "TLS", "HEADER", "INI_S"
     ]
   }'</span>
 </code></pre><pre class="highlight http tab-http"><code><span class="nf">POST</span> <span class="nn">/api/v2/scan</span> <span class="k">HTTP</span><span class="o">/</span><span class="m">1.1</span>
@@ -322,6 +325,9 @@
   </span><span class="s2">"dangerLevel"</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w">
   </span><span class="s2">"callbackurls"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
     </span><span class="s2">"http://172.17.0.1:9000"</span><span class="w">
+  </span><span class="p">],</span><span class="w">
+  </span><span class="s2">"scanners"</span><span class="w"> </span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="s2">"TLS"</span><span class="p">,</span><span class="w"> </span><span class="s2">"HEADER"</span><span class="p">,</span><span class="w"> </span><span class="s2">"INI_S"</span><span class="w">
   </span><span class="p">]</span><span class="w">
 </span><span class="p">}</span><span class="w">
 </span></code></pre>
@@ -355,6 +361,16 @@
 <td>callbackurls.*</td>
 <td><code>url</code></td>
 <td>The URL that should receive the scan result</td>
+</tr>
+<tr>
+<td><em>scanners</em></td>
+<td><em><code>array</code></em></td>
+<td><em>A subset of available scanners that should be started</em></td>
+</tr>
+<tr>
+<td><em>scanners.*</em></td>
+<td><em><code>string</code></em></td>
+<td><em>An available scanner name; valid entries are listed <a href="#supported-scanners">here</a></em></td>
 </tr>
 </tbody></table>
 <h3 id='response-status-codes'>Response Status Codes</h3>
