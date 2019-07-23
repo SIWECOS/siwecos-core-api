@@ -13,6 +13,7 @@ class ScanCallbackResponse extends Model
         $this->dangerLevel = $scan->dangerLevel;
         $this->startedAt = $scan->created_at->toIso8601ZuluString();
         $this->finishedAt = now()->toIso8601ZuluString();
+        $this->hasError = $scan->hasError;
         $this->version = file(base_path('VERSION'), FILE_IGNORE_NEW_LINES)[0];
         $this->results = $this->getFormattedResults($scan);
     }

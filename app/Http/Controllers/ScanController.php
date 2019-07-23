@@ -32,7 +32,6 @@ class ScanController extends Controller
     {
         $result->update([
             'result' => $request->json()->all(),
-            'has_error' => $request->json('hasError'),
         ]);
 
         if ($result->scan->isFinished() === true) {

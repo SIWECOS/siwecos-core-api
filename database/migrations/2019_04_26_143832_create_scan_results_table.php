@@ -18,7 +18,7 @@ class CreateScanResultsTable extends Migration
             $table->bigInteger('scan_id')->unsigned();
             $table->string('scanner_code');
             $table->json('result')->nullable();
-            $table->boolean('has_error')->default(false);
+            $table->boolean('is_failed')->default(false);
             $table->timestamps();
 
             $table->foreign('scan_id')->references('id')->on('scans')->onDelete('cascade');

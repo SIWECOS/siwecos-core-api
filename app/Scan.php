@@ -44,14 +44,18 @@ class Scan extends Model
     }
 
     /**
-     * Check if an ScanResult has an error.
+     * Check if the Scan has an error.
      *
      * @return boolean
      */
     public function getHasErrorAttribute()
     {
+        if ($this->results->isEmpty()) {
+            return true;
+        }
+
         foreach ($this->results as $result) {
-            if ($result->has_error) {
+            if ($result->hasError || $result->is_failed) {
                 return true;
             }
         }

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ScanResult extends Model
 {
-    protected $fillable = ['scanner_code', 'result', 'has_error'];
+    protected $fillable = ['scanner_code', 'result', 'is_failed'];
 
     protected $hidden = [
         'id', 'scan_id'
@@ -16,14 +16,23 @@ class ScanResult extends Model
 
     protected $casts = [
         'result' => 'json',
-        'has_error' => 'boolean'
+        'is_failed' => 'boolean',
     ];
 
     public function getIsFinishedAttribute()
     {
-        if ($this->result->isNotEmpty() || $this->has_error) {
+        if ($this->result->isNotEmpty() || $this->is_failed === true) {
             return true;
         }
+        return false;
+    }
+
+    public function getHasErrorAttribute()
+    {
+        if ($this->is_failed || $this->result->get('hasError') == true) {
+            return true;
+        }
+
         return false;
     }
 

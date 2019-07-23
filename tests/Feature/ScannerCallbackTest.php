@@ -23,7 +23,6 @@ class ScannerCallbackTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals($scannerResponseJson, json_decode(ScanResult::first()->result));
-        $this->assertFalse(ScanResult::first()->has_error);
     }
 
     /** @test */
@@ -38,6 +37,6 @@ class ScannerCallbackTest extends TestCase
 
         $response->assertStatus(200);
         $this->assertEquals($scannerResponseJson, json_decode(ScanResult::first()->result));
-        $this->assertTrue(ScanResult::first()->has_error);
+        $this->assertTrue(ScanResult::first()->result->get('hasError'));
     }
 }

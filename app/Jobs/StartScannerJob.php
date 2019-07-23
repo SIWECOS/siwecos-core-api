@@ -66,14 +66,14 @@ class StartScannerJob implements ShouldQueue
             } else {
                 \Log::critical('Failed to start scan' . $logInfo);
                 $scanResult->update([
-                    'has_error' => true
+                    'is_failed' => true
                 ]);
             }
         } catch (\Exception $e) {
             \Log::critical('Failed to start scan' . $logInfo . PHP_EOL
                 . 'The following Exception was thrown: ' . PHP_EOL . $e);
             $scanResult->update([
-                'has_error' => true
+                'is_failed' => true
             ]);
         }
     }

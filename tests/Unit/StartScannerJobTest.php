@@ -82,7 +82,7 @@ class StartScannerJobTest extends TestCase
             return Str::contains($message, 'Failed to start scan');
         });
 
-        $this->assertTrue(ScanResult::first()->has_error);
+        $this->assertTrue(ScanResult::first()->is_failed);
     }
 
     /** @test */
