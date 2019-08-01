@@ -30,9 +30,9 @@ return [
         'INI_S' => env('INI_S_SCANNER_URL'),
         'INFOLEAK' => env('INFOLEAK_SCANNER_URL'),
         'HEADER' => env('HEADER_SCANNER_URL'),
-        'PORT' => env('PORT_SCANNER_URL'),
-        'HTTPS' => env('HTTPS_SCANNER_URL'),
         'MAIL' => env('MAIL_SCANNER_URL'),
+        'PORT' => env('PORT_SCANNER_URL'),
+        'TLS' => env('TLS_SCANNER_URL'),
         'VERSION' => env('VERSION_SCANNER_URL'),
     ],
 ];
