@@ -1,0 +1,11 @@
+{
+    "name": "HEADER",
+    "version": "1.5.4",
+    "hasError": true,
+    "errorMessage": {
+        "placeholder": "NO_HTTP_RESPONSE",
+        "values": null
+    },
+    "score": 0,
+    "tests": []
+}

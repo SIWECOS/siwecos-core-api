@@ -1,0 +1,33 @@
+{
+    "name": "INI_S",
+    "version": "1.0.0",
+    "hasError": false,
+    "errorMessage": null,
+    "score": 100,
+    "tests": [
+        {
+            "name": "PHISHING",
+            "hasError": false,
+            "errorMessage": null,
+            "score": 100,
+            "scoreType": "success",
+            "testDetails": []
+        },
+        {
+            "name": "SPAM",
+            "hasError": false,
+            "errorMessage": null,
+            "score": 100,
+            "scoreType": "success",
+            "testDetails": []
+        },
+        {
+            "name": "MALWARE",
+            "hasError": false,
+            "errorMessage": null,
+            "score": 100,
+            "scoreType": "success",
+            "testDetails": []
+        }
+    ]
+}

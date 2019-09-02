@@ -3,20 +3,70 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Log;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Scan extends Model
 {
-    protected $fillable = ['token_id', 'url', 'dangerLevel', 'callbackurls', 'status', 'freescan', 'recurrentscan'];
+    protected $fillable = [
+        'url', 'callbackurls', 'dangerLevel', 'started_at', 'finished_at'
+    ];
+
+    protected $dates = [
+        'started_at', 'finished_at'
+    ];
 
     protected $casts = [
-        'callbackurls' => 'collection',
-        'recurrentscan' => 'boolean',
-        'freescan' => 'boolean'
+        'callbackurls' => 'json',
+        'result' => 'json',
+    ];
+
+    protected $appends = [
+        'hasError'
     ];
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * Check if the scan is finished (all scan results were retrieved)
+     *
+     * @return boolean
+     */
+    public function isFinished()
+    {
+        $availableScanners = array_filter(config('siwecos.scanners'));
+        $amountFinishedScanResults = 0;
+
+        foreach ($this->results as $result) {
+            if ($result->isFinished) {
+                $amountFinishedScanResults++;
+            }
+        }
+
+        return count($availableScanners) === $amountFinishedScanResults;
+    }
+
+    /**
+     * Check if the Scan has an error.
+     *
+     * @return boolean
+     */
+    public function getHasErrorAttribute()
+    {
+        if ($this->results->isEmpty()) {
+            return true;
+        }
+
+        foreach ($this->results as $result) {
+            if ($result->hasError || $result->is_failed) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * A Scan can have many ScanResults
+     *
+     * @return HasMany
      */
     public function results()
     {
@@ -24,69 +74,16 @@ class Scan extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function token()
-    {
-        return $this->belongsTo(Token::class);
-    }
-
-    /**
-     * Returns the total score.
+     * Cascade onDelete for ScanResult's
      *
-     * @return int
+     * @return boolean
      */
-    public function getTotalScore()
+    public function delete()
     {
-        $score = 0;
+        $this->results->each(function ($result) {
+            $result->delete();
+        });
 
-        foreach ($this->results as $result) {
-            $score += $result->total_score;
-        }
-
-        return (int)round($score / Scan::getAvailableScanners()->count());
-    }
-
-    /**
-     * Returns the scan's progress as a percent integer.
-     */
-    public function getProgress()
-    {
-        $amountScans = self::getAvailableScanners()->count();
-
-        if ($amountScans) {
-            $doneResults = $this->results()
-                ->whereNotNull('result')
-                ->where('has_error', '=', '0')
-                ->where('result', '!=', '')->count();
-            $errResults = $this->results()
-                ->where('result', '=', '[]')
-                ->where('has_error', '=', '1')->count();
-
-            $progress = ceil((($doneResults + $errResults) / $amountScans) * 100);
-
-            return $progress;
-        }
-
-        throw new \Exception("NO SCANNER URLs ARE SET!");
-    }
-
-    /**
-     * Returns all configured scanners with name and URL.
-     */
-    public static function getAvailableScanners()
-    {
-        $scanners = collect();
-
-        foreach (getenv() as $key => $value) {
-            if (preg_match("/^SCANNER_(\w+)_URL$/", $key, $scanner_name)) {
-                $url = env($scanner_name[0]);
-                if ($url) {
-                    $scanners->push(['name' => $scanner_name[1], 'url' => $url]);
-                }
-            }
-        }
-
-        return $scanners;
+        return parent::delete();
     }
 }

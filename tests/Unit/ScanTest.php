@@ -6,49 +6,48 @@ use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Scan;
+use App\ScanResult;
 
 class ScanTest extends TestCase
 {
+
     use RefreshDatabase;
 
     /** @test */
-    public function a_scan_can_calculate_its_total_score_based_on_the_scan_results() {
+    public function a_scan_can_have_many_scanResults()
+    {
+        $scan = factory(Scan::class)->create();
+        $scan->results()->create(factory(ScanResult::class)->make()->toArray());
 
-        $scan = Scan::create([
-            'token_id' => 1,
-            'url' => 'http://testdomain',
-            'dangerLevel' => 0,
-        ]);
-
-        $scan->results()->create([
-            'result' => 'success',
-            'scanner_type' => 'testing',
-            'total_score' => 100,
-        ]);
-
-        $this->assertEquals(20, Scan::first()->getTotalScore());
-
-        $scan->results()->create([
-            'result' => 'success',
-            'scanner_type' => 'testing2',
-            'total_score' => 100,
-        ]);
-
-        $this->assertEquals(40, Scan::first()->getTotalScore());
+        $this->assertCount(1, Scan::all());
+        $this->assertCount(1, $scan->results);
     }
 
     /** @test */
-    public function the_correct_amount_of_available_scanners_get_calculated_when_five_are_set()
+    public function a_scan_knows_if_some_of_its_results_had_an_error()
     {
-        $this->assertEquals(5, Scan::getAvailableScanners()->count());
+        $scan = $this->generateScanWithResult();
+
+        $this->assertFalse($scan->hasError);
+
+        $this->addErrorResult($scan);
+        $this->assertTrue($scan->refresh()->hasError);
     }
 
     /** @test */
-    public function the_url_and_the_name_can_be_extracted_from_availableScanners_method()
+    public function a_scan_know_if_its_finished()
     {
-        $this->assertEquals(['name' => 'DOMXSS', 'url' => 'http://header-domxss-scanner/api/v1/domxss'], Scan::getAvailableScanners()[1]);
-        $this->assertEquals(['name' => 'INFOLEAK', 'url' => 'http://infoleak-scanner'], Scan::getAvailableScanners()[2]);
+        config([
+            'siwecos.scanners.INI_S' => 'http://ini-s-scanner',
+            'siwecos.scanners.HEADER' => 'http://header-scanner/api/v1/header'
+        ]);
+
+        $scan = $this->generateScanWithResult();
+
+        $this->assertFalse($scan->isFinished());
+
+        $this->addErrorResult($scan);
+
+        $this->assertTrue($scan->refresh()->isFinished());
     }
-
-
 }
