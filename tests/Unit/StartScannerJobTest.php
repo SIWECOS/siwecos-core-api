@@ -39,15 +39,15 @@ class StartScannerJobTest extends TestCase
     /** @test */
     public function a_scanner_can_be_started()
     {
-        $scan = factory(Scan::class)->create();
+        $scanResult = factory(Scan::class)->create()->results()->create(['scanner_code' => 'TLS']);
 
-        $job = new StartScannerJob($scan, 'TLS', 'http://tls-scanner/start', $this->getMockedHttpClient([
+        $job = new StartScannerJob($scanResult, $this->getMockedHttpClient([
             new Response(200)
         ]));
         $job->handle();
 
         $this->assertCount(1, ScanResult::all());
-        $this->assertFalse($scan->hasError);
+        $this->assertFalse($scanResult->scan->hasError);
         Log::assertLogged('info', function ($message) {
             return Str::contains($message, 'Scan successful started');
         });
@@ -56,9 +56,9 @@ class StartScannerJobTest extends TestCase
     /** @test */
     public function if_a_scanner_could_not_be_started_a_critical_log_message_will_be_logged()
     {
-        $scan = factory(Scan::class)->create();
+        $scanResult = factory(Scan::class)->create()->results()->create(['scanner_code' => 'TLS']);
 
-        (new StartScannerJob($scan, 'TLS', 'http://tls-scanner/start', $this->getMockedHttpClient([
+        (new StartScannerJob($scanResult, $this->getMockedHttpClient([
             new Response(500)
         ])))->handle();
 
@@ -66,7 +66,7 @@ class StartScannerJobTest extends TestCase
             return Str::contains($message, 'Failed to start scan');
         });
         $this->assertTrue(ScanResult::first()->has_error);
-        $this->assertTrue($scan->has_error);
+        $this->assertTrue($scanResult->scan->has_error);
     }
 
     /** @test */
@@ -74,7 +74,7 @@ class StartScannerJobTest extends TestCase
     {
         $scan = factory(Scan::class)->create();
 
-        (new StartScannerJob($scan, 'TLS', 'http://tls-scanner/start', $this->getMockedHttpClient([
+        (new StartScannerJob($scan->results()->create(['scanner_code' => 'TLS']), $this->getMockedHttpClient([
             new RequestException("Error Communicating with Server", new Request('POST', 'test'))
         ])))->handle();
 
@@ -88,15 +88,15 @@ class StartScannerJobTest extends TestCase
     /** @test */
     public function all_successful_http_status_codes_are_handled_as_success()
     {
-        $scan = factory(Scan::class)->create();
+        $scanResult = factory(Scan::class)->create()->results()->create(['scanner_code' => 'TLS']);
 
-        (new StartScannerJob($scan, 'testscanner', 'http://testscanner', $this->getMockedHttpClient([
+        (new StartScannerJob($scanResult, $this->getMockedHttpClient([
             new Response(200)
         ])))->handle();
-        (new StartScannerJob($scan, 'testscanner', 'http://testscanner', $this->getMockedHttpClient([
+        (new StartScannerJob($scanResult, $this->getMockedHttpClient([
             new Response(201)
         ])))->handle();
-        (new StartScannerJob($scan, 'testscanner', 'http://testscanner', $this->getMockedHttpClient([
+        (new StartScannerJob($scanResult, $this->getMockedHttpClient([
             new Response(202)
         ])))->handle();
 
