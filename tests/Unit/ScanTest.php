@@ -37,17 +37,13 @@ class ScanTest extends TestCase
     /** @test */
     public function a_scan_know_if_its_finished()
     {
-        config([
-            'siwecos.scanners.INI_S' => 'http://ini-s-scanner',
-            'siwecos.scanners.HEADER' => 'http://header-scanner/api/v1/header'
-        ]);
+        $scan = factory(Scan::class)->create();
+        $result = $scan->results()->create(['scanner_code' => 'TLS']);
 
-        $scan = $this->generateScanWithResult();
+        $this->assertFalse($scan->isFinished);
 
-        $this->assertFalse($scan->isFinished());
+        $result->update(['result' => json_decode(file_get_contents(base_path('tests/sampleScanResult.json')))]);
 
-        $this->addErrorResult($scan);
-
-        $this->assertTrue($scan->refresh()->isFinished());
+        $this->assertTrue($scan->refresh()->isFinished);
     }
 }

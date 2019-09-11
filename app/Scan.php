@@ -29,9 +29,8 @@ class Scan extends Model
      *
      * @return boolean
      */
-    public function isFinished()
+    public function getIsFinishedAttribute()
     {
-        $availableScanners = array_filter(config('siwecos.scanners'));
         $amountFinishedScanResults = 0;
 
         foreach ($this->results as $result) {
@@ -40,7 +39,7 @@ class Scan extends Model
             }
         }
 
-        return count($availableScanners) === $amountFinishedScanResults;
+        return count($this->results) === $amountFinishedScanResults;
     }
 
     /**

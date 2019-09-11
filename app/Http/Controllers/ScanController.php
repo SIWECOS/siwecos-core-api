@@ -18,13 +18,17 @@ class ScanController extends Controller
 
         $scan = Scan::create($request->validated());
 
-        foreach ($availableScanners as $name => $url) {
+        foreach ($availableScanners as $scanner_code => $url) {
             // Skip non-requested scanners
-            if ($requestedScanners->isNotEmpty() && !$requestedScanners->contains($name)) {
+            if ($requestedScanners->isNotEmpty() && !$requestedScanners->contains($scanner_code)) {
                 continue;
             }
 
-            $this->dispatch(new StartScannerJob($scan, $name, $url));
+            $scanResult = $scan->results()->create([
+                'scanner_code' => $scanner_code
+            ]);
+
+            $this->dispatch(new StartScannerJob($scanResult));
         }
     }
 
@@ -34,7 +38,7 @@ class ScanController extends Controller
             'result' => $request->json()->all(),
         ]);
 
-        if ($result->scan->isFinished() === true) {
+        if ($result->scan->isFinished === true) {
             $result->scan->update(['finished_at' => now()]);
             $this->dispatch(new NotifyCallbacksJob($result->scan));
         }

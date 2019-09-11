@@ -9,14 +9,13 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Scan;
 use App\HTTPClient;
+use App\ScanResult;
 
 class StartScannerJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $scan;
-    public $scannerCode;
-    public $scannerUrl;
+    public $scanResult;
     public $client;
 
     /**
@@ -24,11 +23,9 @@ class StartScannerJob implements ShouldQueue
      *
      * @return void
      */
-    public function __construct(Scan $scan, string $scannerCode, string $scannerUrl, HTTPClient $client = null)
+    public function __construct(ScanResult $scanResult, HTTPClient $client = null)
     {
-        $this->scan = $scan;
-        $this->scannerCode = $scannerCode;
-        $this->scannerUrl = $scannerUrl;
+        $this->scanResult = $scanResult;
         $this->client = $client;
     }
 
@@ -39,40 +36,34 @@ class StartScannerJob implements ShouldQueue
      */
     public function handle()
     {
-        if ($this->scan->started_at == null) {
-            $this->scan->update(['started_at' => now()]);
+        if ($this->scanResult->scan->started_at == null) {
+            $this->scanResult->scan->update(['started_at' => now()]);
         }
 
         $client = $this->client ?: new HTTPClient();
 
-        $scanResult = $this->scan->results()->create([
-            'scanner_code' => $this->scannerCode
-        ]);
-
-        $logInfo = PHP_EOL . 'Scan ID: ' . $this->scan->id . PHP_EOL . 'ScanResult ID: ' . $scanResult->id . PHP_EOL . 'Scan URL: ' . $this->scan->url . PHP_EOL . 'Scanner: ' . $this->scannerCode . PHP_EOL . 'Scanner-URL: ' . $this->scannerUrl;
-        \Log::debug('Sending scan start request' . $logInfo);
+        \Log::debug('Sending scan start request for scanner: ' . $this->scanResult->scanner_code);
         try {
-            $response = $client->request('POST', $this->scannerUrl, ['json' => [
-                'url' => $this->scan->url,
-                'dangerLevel' => $this->scan->dangerLevel,
+            $response = $client->request('POST', config('siwecos.scanners')[$this->scanResult->scanner_code], ['json' => [
+                'url' => $this->scanResult->scan->url,
+                'dangerLevel' => $this->scanResult->scan->dangerLevel,
                 'callbackurls' => [
-                    config('app.url') . '/api/v2/callback/' . $scanResult->id
+                    config('app.url') . '/api/v2/callback/' . $this->scanResult->id
                 ]
             ]]);
 
 
             if (in_array($response->getStatusCode(), [200, 201, 202])) {
-                \Log::info('Scan successful started' . $logInfo);
+                \Log::info('Scan successful started for scanner ' . $this->scanResult->scanner_code);
             } else {
-                \Log::critical('Failed to start scan' . $logInfo);
-                $scanResult->update([
+                \Log::critical('Failed to start scan for scanner ' . $this->scanResult->scanner_code);
+                $this->scanResult->update([
                     'is_failed' => true
                 ]);
             }
         } catch (\Exception $e) {
-            \Log::critical('Failed to start scan' . $logInfo . PHP_EOL
-                . 'The following Exception was thrown: ' . PHP_EOL . $e);
-            $scanResult->update([
+            \Log::critical('Failed to start scan for scanner ' . $this->scanResult->scanner_code . ' The following Exception was thrown: ' . $e);
+            $this->scanResult->update([
                 'is_failed' => true
             ]);
         }
