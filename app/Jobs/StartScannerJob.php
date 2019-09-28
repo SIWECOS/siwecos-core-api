@@ -49,7 +49,8 @@ class StartScannerJob implements ShouldQueue
                 'dangerLevel' => $this->scanResult->scan->dangerLevel,
                 'callbackurls' => [
                     config('app.url') . '/api/v2/callback/' . $this->scanResult->id
-                ]
+                ],
+                'userAgent' => config('siwecos.userAgent')
             ]]);
 
 
