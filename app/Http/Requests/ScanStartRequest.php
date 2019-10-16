@@ -41,7 +41,7 @@ class ScanStartRequest extends FormRequest
             'url' => ['required', 'string'],
             'callbackurls' => ['required', 'array'],
             'callbackurls.*' => ['url'],
-            'dangerLevel' => ['integer', 'min:0', 'max:10'],
+            'dangerLevel' => ['required', 'integer', 'min:0', 'max:10'],
             'scanners' => ['array'],
             'scanners.*' => ['string', new IsConfiguredScannerRule()]
         ];
