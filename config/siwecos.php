@@ -40,5 +40,6 @@ return [
         'IMAPS_TLS' => env('IMAPS_TLS_SCANNER_URL'),
         'SMTP_TLS' => env('SMTP_TLS_SCANNER_URL'),
         'SMTPS_TLS' => env('SMTPS_TLS_SCANNER_URL'),
+        'SMTP_MSA_TLS' => env('SMTP_MSA_TLS_SCANNER_URL'),
     ],
 ];
