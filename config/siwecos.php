@@ -34,5 +34,12 @@ return [
         'PORT' => env('PORT_SCANNER_URL'),
         'TLS' => env('TLS_SCANNER_URL'),
         'VERSION' => env('VERSION_SCANNER_URL'),
+        'POP3_TLS' => env('POP3_TLS_SCANNER_URL'),
+        'POP3S_TLS' => env('POP3S_TLS_SCANNER_URL'),
+        'IMAP_TLS' => env('IMAP_TLS_SCANNER_URL'),
+        'IMAPS_TLS' => env('IMAPS_TLS_SCANNER_URL'),
+        'SMTP_TLS' => env('SMTP_TLS_SCANNER_URL'),
+        'SMTPS_TLS' => env('SMTPS_TLS_SCANNER_URL'),
+        'SMTP_MSA_TLS' => env('SMTP_MSA_TLS_SCANNER_URL'),
     ],
 ];
